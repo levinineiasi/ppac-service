@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 
 // I could have simply downloaded the json file and loaded from resources, but decided to get it instead from URL
 @Profile("!local")
-@FeignClient(value = "countries", url = "https://raw.githubusercontent.com/", configuration = [CountryClientFeignConfig::class])
+@FeignClient(
+        value = "countries", url = "https://raw.githubusercontent.com/",
+        configuration = [CountryClientFeignConfig::class]
+)
 interface CloudCountryClient: CountryClient {
     @RequestMapping(
         method = [RequestMethod.GET],

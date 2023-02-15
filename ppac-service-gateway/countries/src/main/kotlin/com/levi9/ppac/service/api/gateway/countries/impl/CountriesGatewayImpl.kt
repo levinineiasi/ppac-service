@@ -1,3 +1,5 @@
+@file:Suppress("detekt.TooGenericExceptionCaught")
+
 package com.levi9.ppac.service.api.gateway.countries.impl
 
 import com.levi9.ppac.service.api.exception.CountryServiceException
