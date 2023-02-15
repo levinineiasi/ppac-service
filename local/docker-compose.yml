@@ -1,0 +1,32 @@
+version: '3.7'
+services:
+  ppac-service-qa:
+    build:
+      context: ..
+      dockerfile: local/Dockerfile
+    container_name: ppac-service-qa
+    environment:
+      SPRING_PROFILES: qa
+    ports:
+      - "8081:8080"
+
+  ppac-data-wiremock-api:
+    image: rodolpheche/wiremock:2.31.0
+    container_name: ppac-data-wiremock-api
+    volumes:
+      - ../wiremock/__files:/home/wiremock/__files
+      - ../wiremock/mappings:/home/wiremock/mappings
+    ports:
+      - "9000:8080"
+
+  ppac-service-local:
+    build:
+      context: ..
+      dockerfile: local/Dockerfile
+    container_name: ppac-service-local
+    environment:
+      SPRING_PROFILES: local
+    ports:
+      - "8080:8080"
+    depends_on:
+      - ppac-data-wiremock-api

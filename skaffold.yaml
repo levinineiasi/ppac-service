@@ -1,0 +1,20 @@
+apiVersion: skaffold/v2beta26
+kind: Config
+metadata:
+  name: ppac-service
+
+build:
+  local:
+    push: false
+    concurrency: 0
+  tagPolicy:
+    gitCommit:
+      variant: CommitSha
+      ignoreChanges: true
+  artifacts:
+    - image: ppac-service/ppac-service-api
+      context: ppac-service-assembly
+      docker:
+        buildArgs:
+          JAR_FILE: ./build/libs/ppac-service-assembly-latest.jar
+          INFO_APP_BUILD: "{{ .BUILD_ID }}"

@@ -1,0 +1,19 @@
+server:
+  shutdown: graceful
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: NEVER
+    include-exception: false
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+feature:
+  ppac-v1: false
+  ppac-service: false

@@ -1,0 +1,74 @@
+name: Main CI/CD
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+concurrency:
+  group: cicd-full-deployment
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  app-build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Cloning repo"
+        uses: actions/checkout@v3
+
+      - name: Setup Gradle Dependencies Cache
+        uses: actions/cache@v3
+        with:
+          path: ./.gradle-home/caches
+          key: ${{ runner.os }}-gradle-caches-${{ hashFiles('**/*.gradle', '**/*.gradle.kts') }}
+
+      - name: Setup Gradle Wrapper Cache
+        uses: actions/cache@v3
+        with:
+          path: ./.gradle-home/wrapper
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Setup Build Cache
+        uses: actions/cache@v3
+        with:
+          path: ./build-cache
+          key: ${{ runner.os }}-gradle-build-cache
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Gradle build
+        run: |-
+          export GRADLE_USER_HOME=./.gradle-home
+          ./gradlew build --build-cache
+
+      - name: Install Skaffold
+        run: |
+          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+          sudo install skaffold /usr/local/bin/
+          skaffold version
+
+      - name: Cache skaffold image builds & config
+        uses: actions/cache@v2
+        with:
+          path: ~/.skaffold/
+          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Build Docker image
+        run: |-
+          export BUILD_ID=$GITHUB_SHA
+          skaffold build --push=false
+
+# TODO: to be a full ci-cd would need to include deployment to an env,
+#  which is not in the scope of this assignment
