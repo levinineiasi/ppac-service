@@ -15,5 +15,14 @@ feign:
         loggerLevel: basic
 
 feature:
+  mvp: false
   ppac-v1: false
   ppac-service: false
+
+spring:
+  datasource:
+    hikari:
+      connectionTimeout: 20000
+      maximumPoolSize: 10
+  flyway:
+    enabled: false

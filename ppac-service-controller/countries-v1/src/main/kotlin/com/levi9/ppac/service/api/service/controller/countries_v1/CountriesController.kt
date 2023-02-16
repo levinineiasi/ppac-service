@@ -1,3 +1,5 @@
+@file:Suppress("detekt.PackageNaming")
+
 package com.levi9.ppac.service.api.service.controller.countries_v1
 
 import com.levi9.ppac.service.api.gateway.countries.CountriesGateway

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
 // I could have simply downloaded the json file and loaded from resources, but decided to get it instead from URL
-@Profile("local")
+@Profile("wiremocked")
 @FeignClient(value = "countries", url = "http://localhost:9000/", configuration = [CountryClientFeignConfig::class])
 interface LocalCountryClient: CountryClient {
     @RequestMapping(

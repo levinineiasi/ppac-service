@@ -1,3 +1,5 @@
+@file:Suppress("detekt.TooGenericExceptionCaught")
+
 package com.levi9.ppac.service.logging
 
 import ch.qos.logback.classic.Level

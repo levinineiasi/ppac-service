@@ -15,4 +15,8 @@ object CoreVersion {
     const val SPRING_CLOUD = "2021.0.0"
     const val AWAITILITY = "4.1.1"
     const val JUNIT = "5.8.2"
+    const val CLOUD_SQL_SOCKET_FACTORY = "1.6.1"
+    const val HIBERNATE = "5.6.7.Final"
+    const val HIBERNATE_VALIDATOR = "7.0.4.Final"
+    const val ORACLE = "21.6.0.0.1"
 }
