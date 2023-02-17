@@ -39,7 +39,11 @@ class StudentsController(
     ): ResponseEntity<Any> {
         return studentService?.let {
             val response = it.assignToCompany(studentId, companyId)
-            ResponseEntity(response, HttpStatus.CREATED)
+            if (response) {
+                ResponseEntity(HttpStatus.CREATED)
+            } else {
+                ResponseEntity(HttpStatus.NOT_FOUND)
+            }
         } ?: ResponseEntity("Feature flag for StudentsService not enabled", HttpStatus.NOT_IMPLEMENTED)
     }
 
