@@ -6,13 +6,13 @@ import java.util.UUID
 class Company(
     val id: UUID = UUID.randomUUID()
 ) {
-    lateinit var displayName: String
+    var displayName: String? = null
 
-    lateinit var fullName: String
+    var fullName: String? = null
 
     var logo: ByteArray? = null
 
-    var students: Set<Student> = emptySet()
+    var students: Set<Student>? = emptySet()
 
     companion object {
         fun parse(elem: CompanyEntity): Company {
@@ -20,7 +20,7 @@ class Company(
                 displayName = elem.displayName
                 fullName = elem.fullName
                 logo = elem.logo
-                students = elem.students.map { Student.parse(it) }.toSet()
+                students = elem.students?.map { Student.parse(it) }?.toSet()
             }
         }
 
@@ -29,7 +29,7 @@ class Company(
                 displayName = elem.displayName
                 fullName = elem.fullName
                 logo = elem.logo
-                students = elem.students.map { Student.parse(it) }.toSet()
+                students = elem.students?.map { Student.parse(it) }?.toSet()
             }
         }
     }

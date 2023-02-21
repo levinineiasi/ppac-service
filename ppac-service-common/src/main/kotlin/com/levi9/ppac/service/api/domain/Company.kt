@@ -12,14 +12,14 @@ data class Company (
     var id: UUID
 ) {
     @Column(name = "display_name")
-    lateinit var displayName: String
+    var displayName: String? = null
 
     @Column(name = "full_name")
-    lateinit var fullName: String
+    var fullName: String? = null
 
     @Column(name = "logo")
     var logo: ByteArray? = null
 
-    @OneToMany(mappedBy = "companyId")
-    lateinit var students: Set<Student>
+    @OneToMany(mappedBy = "companyId", fetch = FetchType.LAZY)
+    var students: Set<Student>? = null
 }

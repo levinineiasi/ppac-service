@@ -32,8 +32,8 @@ class StudentServiceImpl(
     override fun assignToCompany(studentId: UUID, companyId: UUID): Boolean {
         return companyRepository.findByIdOrNull(companyId)?.let { company ->
             studentRepository.findByIdOrNull(studentId)?.let { student ->
-                val newStudentsSet = company.students.toMutableSet()
-                newStudentsSet.add(student)
+                val newStudentsSet = company.students?.toMutableSet()
+                newStudentsSet?.add(student)
                 company.students = newStudentsSet
                 student.companyId = companyId
                 true
