@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["ppac-service"], havingValue = "true")
 internal class CountriesServiceImpl(
-    val countriesGateway: CountriesGateway
+    val `countriesGateway`: CountriesGateway
 ): CountriesService {
     override fun getRoute(origin: String, destination: String): List<String> {
         val countriesMap = countriesGateway.getCountries()
