@@ -30,7 +30,6 @@ dependencies {
     implementation(project(":ppac-service-common"))
     implementation(project(":ppac-service-controller:countries-v1"))
     implementation(project(":ppac-service-controller:mvp"))
-    implementation(project(":ppac-service-gateway:countries"))
     implementation(project(":ppac-service-impl"))
     testImplementation("org.awaitility:awaitility-kotlin")
     testImplementation("org.junit.jupiter:junit-jupiter-api")

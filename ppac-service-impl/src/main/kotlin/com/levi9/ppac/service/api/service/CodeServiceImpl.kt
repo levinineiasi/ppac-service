@@ -1,23 +1,38 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Code
+import com.levi9.ppac.service.api.data_classes.AccessCode
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.util.*
+import javax.transaction.Transactional
 
 @Service
 class CodeServiceImpl(
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository
-) : CodeService<Code> {
+) : CodeService<AccessCode> {
 
     @Transactional
-    override fun findAll(): List<Code> {
-        return codeRepository.findAll().map { Code.parse(it) }
+    override fun findAll(): List<AccessCode> {
+        return codeRepository.findAll().map { AccessCode.parse(it) }
+    }
+
+    @Transactional
+    override fun create(dto: AccessCode, displayName: String): AccessCode {
+
+        val company = Company().apply { this.displayName = displayName }
+
+        val persistedAccessCode = codeRepository.save(
+            AccessCode.parse(dto).apply {
+                id = UUID.randomUUID()
+                companyId = companyRepository.save(Company.parse(company)).id
+            }
+        )
+
+        return AccessCode.parse(persistedAccessCode)
     }
 
     @Transactional
@@ -27,23 +42,7 @@ class CodeServiceImpl(
         }
     }
 
-    @Transactional
-    override fun create(dto: Code, displayName: String): Code {
-
-        val company = Company().apply { this.displayName = displayName }
-
-        val persistedCode = codeRepository.save(
-            Code.parse(dto).apply {
-                id = UUID.randomUUID()
-                companyId = companyRepository.save(Company.parse(company)).id
-            }
-        )
-
-        return Code.parse(persistedCode)
-    }
-
-
-    override fun create(dto: Code): Code {
+    override fun create(dto: AccessCode): AccessCode {
         TODO("Not yet implemented")
     }
 }

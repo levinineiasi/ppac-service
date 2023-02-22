@@ -1,15 +1,17 @@
-create table companies
+CREATE TABLE CODES
 (
-    id           uuid not null primary key,
-    display_name varchar(255),
-    full_name    varchar(255),
-    logo         bytea
+    ID        UUID         NOT NULL PRIMARY KEY,
+    VALUE     VARCHAR(255) NOT NULL UNIQUE,
+    CODE_TYPE VARCHAR(7)   NOT NULL,
+    COMPANY_ID UUID
+
 );
 
-create table students
+CREATE TABLE COMPANIES
 (
-    id         uuid not null primary key,
-    company_id uuid,
-    first_name varchar(255),
-    last_name  varchar(255)
+    ID           UUID         NOT NULL PRIMARY KEY,
+    DISPLAY_NAME VARCHAR(255) NOT NULL,
+    FULL_NAME    VARCHAR(255),
+    LOGO         BYTEA
 );
+
