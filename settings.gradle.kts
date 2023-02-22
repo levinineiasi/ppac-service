@@ -34,11 +34,7 @@ buildCache {
 rootProject.name = "ppac-service"
 include("ppac-service-assembly")
 include("ppac-service-common")
-include("ppac-service-integration")
-include("ppac-service-integration:v1")
 include("ppac-service-controller")
 include("ppac-service-controller:countries-v1")
 include("ppac-service-controller:mvp")
-include("ppac-service-gateway")
-include("ppac-service-gateway:countries")
 include("ppac-service-impl")

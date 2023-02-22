@@ -29,9 +29,6 @@ class CompanyServiceImpl(
     @Transactional
     override fun deleteById(id: UUID) {
         companyRepository.findByIdOrNull(id)?.let {
-            it.students?.forEach { student ->
-                student.companyId = null
-            }
             companyRepository.deleteById(id)
         }
     }

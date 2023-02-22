@@ -1,7 +1,5 @@
 dependencies {
     implementation(project(":ppac-service-common"))
-    implementation(project(":ppac-service-integration:v1"))
-    implementation(project(":ppac-service-gateway:countries"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.hibernate:hibernate-envers")
