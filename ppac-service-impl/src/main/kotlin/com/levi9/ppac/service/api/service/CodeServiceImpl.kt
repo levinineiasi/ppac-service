@@ -25,10 +25,10 @@ class CodeServiceImpl(
 
         val company = Company().apply { this.displayName = displayName }
 
+        companyRepository.save(Company.parse(company))
         val persistedAccessCode = codeRepository.save(
             AccessCode.parse(dto).apply {
                 id = UUID.randomUUID()
-                companyId = companyRepository.save(Company.parse(company)).id
             }
         )
 
