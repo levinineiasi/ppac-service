@@ -9,18 +9,17 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name ="COMPANIES_CODES")
-data class CompanyCodeEntity (
+@Table(name = "COMPANIES_CODES")
+data class CompanyCodeEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "CODE_ID")
-    var code: UUID
+    @Column(name = "ID")
+    var id: UUID,
 
-){
+    @Column(name = "CODE_ID", nullable = false, unique = true)
+    var codeId: UUID,
 
-    @Column(name = "COMPANY_ID", nullable = false)
-    lateinit var companyId : UUID
-
-
-}
+    @Column(name = "COMPANY_ID", nullable = false, unique = true)
+    var companyId: UUID
+)

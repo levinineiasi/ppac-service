@@ -11,8 +11,7 @@ import javax.transaction.Transactional
 
 @Service
 class CodeServiceImpl(
-    val codeRepository: CodeRepository,
-    val companyRepository: CompanyRepository
+    val codeRepository: CodeRepository
 ) : CodeService<AccessCode> {
 
     @Transactional
@@ -21,11 +20,8 @@ class CodeServiceImpl(
     }
 
     @Transactional
-    override fun create(dto: AccessCode, displayName: String): AccessCode {
+    override fun create(dto: AccessCode): AccessCode {
 
-        val company = Company().apply { this.displayName = displayName }
-
-        companyRepository.save(Company.parse(company))
         val persistedAccessCode = codeRepository.save(
             AccessCode.parse(dto).apply {
                 id = UUID.randomUUID()
@@ -40,9 +36,5 @@ class CodeServiceImpl(
         codeRepository.findByIdOrNull(id)?.let {
             codeRepository.deleteById(id)
         }
-    }
-
-    override fun create(dto: AccessCode): AccessCode {
-        TODO("Not yet implemented")
     }
 }

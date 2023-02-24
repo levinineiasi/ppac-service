@@ -15,15 +15,15 @@ data class CompanyEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    var id: UUID
+    var id: UUID,
+
+    @Column(name = "DISPLAY_NAME", nullable = false)
+    var displayName: String
 ) {
-    @Column(name = "DISPLAY_NAME")
-    var displayName: String? = null
 
     @Column(name = "FULL_NAME")
     var fullName: String? = null
 
     @Column(name = "LOGO")
     var logo: ByteArray? = null
-
 }
