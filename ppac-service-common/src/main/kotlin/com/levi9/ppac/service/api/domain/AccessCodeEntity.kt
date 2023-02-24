@@ -19,10 +19,12 @@ import javax.validation.constraints.Pattern
 @Entity
 @Table(name = "CODES")
 data class AccessCodeEntity(
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     var id: UUID,
+
     @Column(name = "VALUE", unique = true, nullable = false)
     @NotNull
     @Min(value = 100000, message = "Value should have minimum 6 characters.")

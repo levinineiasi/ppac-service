@@ -8,41 +8,37 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.transaction.Transactional
+import kotlin.random.Random
 
 @Service
 class CodeServiceImpl(
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository
 ) : CodeService<AccessCode> {
-
     @Transactional
     override fun findAll(): List<AccessCode> {
         return codeRepository.findAll().map { AccessCode.parse(it) }
     }
 
-    @Transactional
-    override fun create(dto: AccessCode, displayName: String): AccessCode {
-
-        val company = Company().apply { this.displayName = displayName }
-
-        companyRepository.save(Company.parse(company))
-        val persistedAccessCode = codeRepository.save(
-            AccessCode.parse(dto).apply {
-                id = UUID.randomUUID()
-            }
-        )
-
-        return AccessCode.parse(persistedAccessCode)
+    override fun create(dto: AccessCode): AccessCode {
+        TODO("Not yet implemented")
     }
+
+    @Transactional
+    override fun createCompanyCode(adminValue: Int, displayName: String): AccessCode {
+
+        val accessCodeDTO = AccessCode(UUID.randomUUID(), Random.nextInt(100000, 999999))
+        codeRepository.save(AccessCode.parse(accessCodeDTO))
+        val companyDTO = Company(UUID.randomUUID(), displayName)
+        companyRepository.save(Company.parse(companyDTO))
+        return accessCodeDTO
+    }
+
 
     @Transactional
     override fun deleteById(id: UUID) {
         codeRepository.findByIdOrNull(id)?.let {
             codeRepository.deleteById(id)
         }
-    }
-
-    override fun create(dto: AccessCode): AccessCode {
-        TODO("Not yet implemented")
     }
 }

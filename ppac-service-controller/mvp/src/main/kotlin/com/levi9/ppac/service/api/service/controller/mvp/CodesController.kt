@@ -23,13 +23,12 @@ class CodesController(
         } ?: ResponseEntity("Feature flag for CompanyService not enabled", HttpStatus.NOT_IMPLEMENTED)
     }
 
-    @PostMapping("")
-    fun createCompany(
-        @RequestParam displayName: String,
-        @RequestBody dto: AccessCode
+    @PostMapping("/createCompanyCode/{adminCodeId}/{displayName}")
+    fun createCode(
+        @PathVariable adminCode: Int, @PathVariable displayName: String
     ): ResponseEntity<Any> {
         return accessCodeService?.let {
-            val responseDto = it.create(dto, displayName)
+            val responseDto = it.createCompanyCode(adminCode,displayName)
             ResponseEntity(responseDto, HttpStatus.CREATED)
         } ?: ResponseEntity("Feature flag for CompanyService not enabled", HttpStatus.NOT_IMPLEMENTED)
     }

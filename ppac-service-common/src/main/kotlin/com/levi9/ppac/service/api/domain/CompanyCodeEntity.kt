@@ -18,12 +18,13 @@ data class CompanyCodeEntity(
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     var id: UUID,
+
     @OneToOne
     @JoinColumn(name = "CODE_ID", referencedColumnName = "ID")
-    val codeId: AccessCodeEntity,
+    val accessCode: AccessCodeEntity,
 
     @OneToOne
     @JoinColumn(name = "COMPANY_ID", referencedColumnName = "ID")
-    val companyId: CompanyEntity
+    val company: CompanyEntity
 
 )

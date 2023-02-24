@@ -12,22 +12,20 @@ import java.util.*
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 class CompanyServiceImpl(
     val companyRepository: CompanyRepository
-): CompanyService<Company> {
+) : CompanyService<Company> {
     @Transactional
     override fun findAll(): List<Company> {
         return companyRepository.findAll().map { Company.parse(it) }
     }
 
-    @Transactional
     override fun create(dto: Company): Company {
-        val persistedCompany = companyRepository.save(
-            Company.parse(dto).apply { id = UUID.randomUUID() }
-        )
-        return Company.parse(persistedCompany)
+        TODO("Not yet implemented")
     }
+
 
     @Transactional
     override fun deleteById(id: UUID) {
+
         companyRepository.findByIdOrNull(id)?.let {
             companyRepository.deleteById(id)
         }
