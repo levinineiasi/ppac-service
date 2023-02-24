@@ -11,15 +11,16 @@ import javax.validation.constraints.Size
 
 @Entity
 @Table(name = "COMPANIES")
-data class CompanyEntity (
+data class CompanyEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
-    var id: UUID
-) {
+    var id: UUID,
+
     @Column(name = "DISPLAY_NAME", nullable = false)
     @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
-    lateinit var displayName: String
+    var displayName: String
+) {
 
     @Column(name = "FULL_NAME", nullable = true)
     @Size(min = 2, max = 50, message = "The full name length should have between 2 and 50 characters.")
@@ -27,5 +28,4 @@ data class CompanyEntity (
 
     @Column(name = "LOGO", nullable = true)
     var logo: ByteArray? = null
-
 }

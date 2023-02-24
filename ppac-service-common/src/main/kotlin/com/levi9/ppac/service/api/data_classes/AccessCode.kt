@@ -9,8 +9,10 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Pattern
 
 class AccessCode(
+
     @NotNull
     val id: UUID,
+
     @NotNull
     @Min(value = 100000, message = "Value should have minimum 6 characters.")
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
