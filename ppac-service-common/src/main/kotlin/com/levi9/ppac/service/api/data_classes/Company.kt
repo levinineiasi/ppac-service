@@ -5,10 +5,11 @@ import java.util.*
 import javax.validation.constraints.Size
 
 class Company(
-    val id: UUID = UUID.randomUUID()
-) {
+    val id: UUID,
+
     @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
-    lateinit var displayName: String
+    var displayName: String
+) {
 
     @Size(min = 2, max = 50, message = "The full name length should have between 2 and 50 characters.")
     var fullName: String? = null
@@ -17,16 +18,14 @@ class Company(
 
     companion object {
         fun parse(elem: CompanyEntity): Company {
-            return Company(elem.id).apply {
-                displayName = elem.displayName
+            return Company(elem.id,elem.displayName).apply {
                 fullName = elem.fullName
                 logo = elem.logo
             }
         }
 
         fun parse(elem: Company): CompanyEntity {
-            return CompanyEntity(elem.id).apply {
-                displayName = elem.displayName
+            return CompanyEntity(elem.id, elem.displayName).apply {
                 fullName = elem.fullName
                 logo = elem.logo
             }
