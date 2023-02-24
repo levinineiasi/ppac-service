@@ -17,13 +17,15 @@ data class CompanyEntity (
     @Column(name = "ID")
     var id: UUID
 ) {
-    @Column(name = "DISPLAY_NAME")
-    var displayName: String? = null
+    @Column(name = "DISPLAY_NAME", nullable = false)
+    @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
+    lateinit var displayName: String
 
-    @Column(name = "FULL_NAME")
+    @Column(name = "FULL_NAME", nullable = true)
+    @Size(min = 2, max = 50, message = "The full name length should have between 2 and 50 characters.")
     var fullName: String? = null
 
-    @Column(name = "LOGO")
+    @Column(name = "LOGO", nullable = true)
     var logo: ByteArray? = null
 
 }

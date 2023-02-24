@@ -32,8 +32,6 @@ data class AccessCodeEntity(
 
     @Column(name = "CODE_TYPE")
     @Enumerated(EnumType.STRING)
+    @Pattern(regexp = "^(ADMIN_CODE|COMPANY_CODE)$", message = "CodeType should have value ADMIN_CODE or COMPANY_CODE.")
     var type: CodeType? = CodeType.COMPANY_CODE
-
-    @Column(name = "COMPANY_ID")
-    var companyId: UUID? = null
 }

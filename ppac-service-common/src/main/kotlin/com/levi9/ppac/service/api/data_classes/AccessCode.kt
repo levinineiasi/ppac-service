@@ -25,7 +25,6 @@ class AccessCode(
             return AccessCode(elem.id, 0).apply {
                 value = elem.value
                 type = elem.type
-                companyId = elem.companyId
             }
         }
 
@@ -33,7 +32,6 @@ class AccessCode(
             return AccessCodeEntity(elem.id, 0).apply {
                 value = elem.value
                 type = elem.type
-                companyId = elem.companyId
             }
         }
     }
