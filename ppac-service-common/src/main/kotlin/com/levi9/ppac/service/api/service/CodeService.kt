@@ -4,5 +4,5 @@ import com.levi9.ppac.service.api.data_classes.AccessCode
 
 interface CodeService<T> : CrudService<T>{
 
-    fun createCompanyCode(adminValue: Int, displayName: String): T
+    fun createCompanyCode(displayName: String): T
 }
