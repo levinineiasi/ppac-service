@@ -4,6 +4,7 @@ import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import java.util.*
 
 class CompanyCode(
+
     val id: UUID,
 
     val accessCode: AccessCode,

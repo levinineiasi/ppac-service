@@ -6,14 +6,11 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
-import javax.validation.constraints.Pattern
 
 
 @Entity
@@ -21,7 +18,6 @@ import javax.validation.constraints.Pattern
 data class AccessCodeEntity(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     var id: UUID,
 
@@ -34,6 +30,6 @@ data class AccessCodeEntity(
 
     @Column(name = "CODE_TYPE")
     @Enumerated(EnumType.STRING)
-    @Pattern(regexp = "^(ADMIN_CODE|COMPANY_CODE)$", message = "CodeType should have value ADMIN_CODE or COMPANY_CODE.")
+//    @Pattern(regexp = "(ADMIN_CODE|COMPANY_CODE)", message = "CodeType should have value ADMIN_CODE or COMPANY_CODE.")
     var type: CodeType? = CodeType.COMPANY_CODE
 }
