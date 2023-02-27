@@ -6,6 +6,6 @@ import java.util.UUID
 
 interface CodeRepository : JpaRepository<AccessCodeEntity, UUID> {
 
-    fun findByValue(value: Int): AccessCodeEntity
+    fun findByValue(value: Int): AccessCodeEntity?
 
 }

@@ -15,5 +15,9 @@ class CompanyCode(
         fun parse(elem: CompanyCodeEntity): CompanyCode {
             return CompanyCode(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }
+
+        fun parse(elem: CompanyCode): CompanyCodeEntity {
+            return CompanyCodeEntity(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
+        }
     }
 }
