@@ -1,10 +1,9 @@
 package com.levi9.ppac.service.api.domain
 
 import java.util.*
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.OneToOne
@@ -15,15 +14,14 @@ import javax.persistence.Table
 data class CompanyCodeEntity(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     var id: UUID,
 
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "CODE_ID", referencedColumnName = "ID")
     val accessCode: AccessCodeEntity,
 
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.ALL])
     @JoinColumn(name = "COMPANY_ID", referencedColumnName = "ID")
     val company: CompanyEntity
 
