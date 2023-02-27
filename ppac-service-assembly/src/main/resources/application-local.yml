@@ -19,7 +19,7 @@ sql:
   business-read-only-password: postgres
 
   hibernate:
-#    ddl-auto: validate
+    ddl-auto: validate
   properties:
     hibernate:
       generate_statistics: false

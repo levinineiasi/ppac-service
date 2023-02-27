@@ -3,8 +3,6 @@ package com.levi9.ppac.service.api.domain
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.Table
 import javax.validation.constraints.Size
@@ -13,7 +11,6 @@ import javax.validation.constraints.Size
 @Table(name = "COMPANIES")
 data class CompanyEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ID")
     var id: UUID,
 

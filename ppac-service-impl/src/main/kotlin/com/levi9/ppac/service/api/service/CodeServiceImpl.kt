@@ -36,17 +36,17 @@ class CodeServiceImpl(
         }
 
         val accessCodeDTO = AccessCode(UUID.randomUUID(), value)
-        val savedAccessCode = codeRepository.save(AccessCode.parse(accessCodeDTO))
+        val accessCodeEntity = codeRepository.save(AccessCode.parse(accessCodeDTO))
 
         val companyDTO = Company(UUID.randomUUID(), displayName)
-        val savedCompany = companyRepository.save(Company.parse(companyDTO))
+        val companyEntity = companyRepository.save(Company.parse(companyDTO))
 
-        val companyCodeDTO = CompanyCode(UUID.randomUUID(), AccessCode.parse(savedAccessCode), Company.parse(savedCompany));
-        val savedCompanyCode = companyCodeRepository.save(CompanyCode.parse(companyCodeDTO))
+        val companyCodeDTO =
+            CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity));
+        val companyCodeEntity = companyCodeRepository.save(CompanyCode.parse(companyCodeDTO))
 
-        return CompanyCode.parse(savedCompanyCode)
+        return CompanyCode.parse(companyCodeEntity)
     }
-
 
     @Transactional
     override fun deleteById(id: UUID) {
