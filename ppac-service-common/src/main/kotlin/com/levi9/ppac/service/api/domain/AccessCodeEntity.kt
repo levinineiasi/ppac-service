@@ -1,6 +1,7 @@
 package com.levi9.ppac.service.api.domain
 
 import com.levi9.ppac.service.api.enums.CodeType
+import com.levi9.ppac.service.api.validator.ValidCodeType
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -30,6 +31,6 @@ data class AccessCodeEntity(
 
     @Column(name = "CODE_TYPE")
     @Enumerated(EnumType.STRING)
-//    @Pattern(regexp = "(ADMIN_CODE|COMPANY_CODE)", message = "CodeType should have value ADMIN_CODE or COMPANY_CODE.")
+    @ValidCodeType
     var type: CodeType? = CodeType.COMPANY_CODE
 }

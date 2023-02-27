@@ -2,6 +2,7 @@ package com.levi9.ppac.service.api.data_classes
 
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.enums.CodeType
+import com.levi9.ppac.service.api.validator.ValidCodeType
 import java.util.*
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
@@ -17,8 +18,7 @@ class AccessCode(
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
     var value: Int
 ) {
-
-//    @Pattern(regexp = "(ADMIN_CODE|COMPANY_CODE)", message = "CodeType should have value ADMIN_CODE or COMPANY_CODE.")
+    @ValidCodeType
     var type: CodeType? = CodeType.COMPANY_CODE
 
     companion object {
