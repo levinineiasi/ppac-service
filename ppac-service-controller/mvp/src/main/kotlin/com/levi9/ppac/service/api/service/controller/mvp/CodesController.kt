@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/api/v1/codes")
@@ -21,11 +22,15 @@ import java.util.*
 @Suppress("MagicNumber")
 class CodesController(
     val companyCodeService: CodeService<CompanyCode>?,
-    val authorizationService: AuthorizationService
+    val authorizationService: AuthorizationService,
+    val log: Logger = Logger.getLogger(CodesController::class.java.name)
 ) {
 
     @GetMapping("")
     fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
+
+        log.info("Returning all company codes from database.")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyCodeService?.let {
                 ResponseEntity(it.findAll(), HttpStatus.OK)
@@ -37,9 +42,12 @@ class CodesController(
 
     @PostMapping("/{displayName}")
     fun createCode(
-        @RequestHeader("AdminCode") adminCode: Int,
-        @PathVariable displayName: String
+            @RequestHeader("AdminCode") adminCode: Int,
+            @PathVariable displayName: String
     ): ResponseEntity<Any> {
+
+        log.info("Create company code for $displayName company.")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyCodeService?.let {
                 val responseDto = it.createCompanyCode(displayName)
@@ -51,9 +59,12 @@ class CodesController(
 
     @DeleteMapping("/{codeId}")
     fun deleteById(
-        @RequestHeader("AdminCode") adminCode: Int,
-        @PathVariable codeId: UUID
+            @RequestHeader("AdminCode") adminCode: Int,
+            @PathVariable codeId: UUID
     ): ResponseEntity<Any> {
+
+        log.info("Delete company code with code_id $codeId.")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyCodeService?.let {
                 it.deleteById(codeId)
