@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/v1/companies")
@@ -22,10 +23,15 @@ import java.util.*
 @Suppress("MagicNumber")
 class CompaniesController(
     val companyService: CompanyService<Company>?,
-    val authorizationService: AuthorizationService
+    val authorizationService: AuthorizationService,
+    val log: Logger = Logger.getLogger(CompaniesController::class.java.name)
+
 ) {
     @GetMapping("")
     fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
+
+        log.info("Returning all companies from database.")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyService?.let {
                 ResponseEntity(it.findAll(), HttpStatus.OK)
@@ -39,6 +45,9 @@ class CompaniesController(
         @RequestHeader("AdminCode") adminCode: Int,
         @RequestBody dto: Company
     ): ResponseEntity<Any> {
+
+        log.info("Create new company with name ${dto.displayName}.")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyService?.let {
                 val responseDto = it.create(dto)
@@ -53,6 +62,9 @@ class CompaniesController(
         @RequestHeader("AdminCode") adminCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
+
+        log.info("Delete company with id $companyId .")
+
         if (authorizationService.isAdmin(adminCode)) {
             return companyService?.let {
                 it.deleteById(companyId)
