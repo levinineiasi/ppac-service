@@ -1,0 +1,17 @@
+version: '3.7'
+services:
+  ppac-service-docker-release:
+    image: ghcr.io/levinineiasi/ppac-service:COMMIT_SHA
+    container_name: ppac-service-docker-release
+    restart: always
+    environment:
+      SPRING_PROFILES: docker
+    ports:
+      - "8000:8080"
+    networks:
+      - db_bridge-network
+
+networks:
+  db_bridge-network:
+    name: db_bridge-network
+    external: true

@@ -26,3 +26,5 @@ spring:
       maximumPoolSize: 10
   flyway:
     enabled: false
+  config:
+    use-legacy-processing: true
