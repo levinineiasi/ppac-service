@@ -9,5 +9,7 @@ Make sure to replace any path to your machine path
 
 ## Backend setup
 ```echo "some_api_token" | docker login ghcr.io -u levinineiasi --password-stdin```
-
+<br><br>
+Make sure to edit ```docker-compose-service.yml``` file to put actual image id, instead of placeholder ```COMMIT_SHA```
+<br><br>
 Execute `docker-compose -f .\docker-compose-service.yml up -d` in this directory to start backend service.
