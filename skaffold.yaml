@@ -12,7 +12,7 @@ build:
       variant: CommitSha
       ignoreChanges: true
   artifacts:
-    - image: ghcr.io/ppac-service/ppac-service-api
+    - image: ghcr.io/levinineiasi/ppac-service
       context: ppac-service-assembly
       docker:
         buildArgs:
