@@ -7,7 +7,9 @@ import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import java.util.logging.Logger
 import javax.transaction.Transactional
@@ -15,27 +17,30 @@ import kotlin.random.Random
 
 @Service
 class CodeServiceImpl(
-        val codeRepository: CodeRepository,
-        val companyRepository: CompanyRepository,
-        val companyCodeRepository: CompanyCodeRepository,
+    val codeRepository: CodeRepository,
+    val companyRepository: CompanyRepository,
+    val companyCodeRepository: CompanyCodeRepository,
 
-        val log: Logger = Logger.getLogger(CodeServiceImpl::class.java.name)
+    val log: Logger = Logger.getLogger(CodeServiceImpl::class.java.name)
 
 ) : CodeService<CompanyCode> {
-    @Transactional
-    override fun findAll(): List<CompanyCode> {
+
+    override fun findAll(adminCode: Int): List<CompanyCode> {
+        if (!codeRepository.isAdminCode(adminCode)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        }
         return companyCodeRepository.findAll().map { CompanyCode.parse(it) }
     }
 
-    override fun create(dto: CompanyCode): CompanyCode {
-        TODO("Not yet implemented")
-    }
-
     @Transactional
-    override fun createCompanyCode(displayName: String): CompanyCode {
+    override fun createCompanyCode(adminCode: Int, displayName: String): CompanyCode {
+
+        if (!codeRepository.isAdminCode(adminCode)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        }
 
         var value = Random.nextInt(100000, 999999);
-        while (codeRepository.findByValue(value) != null) {
+        while (codeRepository.isCodeIdPresent(value)) {
             value = Random.nextInt(100000, 999999);
         }
 
@@ -52,7 +57,7 @@ class CodeServiceImpl(
         log.info("Inserted companyEntity with id ${companyEntity.id} into database.")
 
         val companyCodeDTO =
-                CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity));
+            CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity));
         val companyCodeEntity = companyCodeRepository.save(CompanyCode.parse(companyCodeDTO))
 
         log.info("Inserted companyCodeEntity with id ${companyCodeEntity.id} into database.")
@@ -60,8 +65,19 @@ class CodeServiceImpl(
         return CompanyCode.parse(companyCodeEntity)
     }
 
+    override fun checkAdminCode(adminCode: Int): Boolean {
+        if (codeRepository.isAdminCode(adminCode)) {
+            return true
+        }
+        return false
+    }
+
     @Transactional
-    override fun deleteById(id: UUID) {
+    override fun deleteById(adminCode: Int, id: UUID) {
+        if (!codeRepository.isAdminCode(adminCode)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        }
+
         companyCodeRepository.findByIdOrNull(id)?.let {
             companyCodeRepository.deleteById(id)
         }

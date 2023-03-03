@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.service
 
-interface CodeService<T> : CrudService<T>{
+interface CodeService<T> : CrudService<T> {
 
-    fun createCompanyCode(displayName: String): T
+    fun createCompanyCode(adminCode: Int, displayName: String): T
+
+    fun checkAdminCode(adminCode: Int): Boolean
 }
