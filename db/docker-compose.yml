@@ -11,3 +11,9 @@ services:
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
       - '5434:5432'
+    networks:
+      - bridge-network
+
+networks:
+  bridge-network:
+    driver: bridge

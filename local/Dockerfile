@@ -3,9 +3,14 @@ COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
 RUN gradle --watch-fs build --no-daemon
 
-ENV SPRING_PROFILES=dev
+FROM openjdk:17-slim
+
+ENV SPRING_PROFILES=docker
 
 EXPOSE 8080
 
-# here we start server in a simpler way, through gradle
-ENTRYPOINT ["gradle", "bootRun", "--args='--spring.profiles.active=${SPRING_PROFILES}'"]
+RUN mkdir /opt/app
+
+COPY --from=build /home/gradle/src/ppac-service-assembly/build/libs/*.jar /opt/app/app.jar
+
+CMD java -Djavax.net.ssl.trustStore -XX:MaxRAMPercentage=50.0 -XX:InitialRAMPercentage=50.0 -Dspring.profiles.active=${SPRING_PROFILES} -jar /opt/app/app.jar

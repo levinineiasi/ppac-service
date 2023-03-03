@@ -40,3 +40,7 @@ dependencies {
 tasks.named<BootJar>("bootJar") {
     archiveVersion.set("latest")
 }
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
+}

@@ -1,0 +1,29 @@
+feature:
+  mvp: true
+  ppac-v1: true
+  ppac-service: true
+
+sql:
+  instance: ppac-postgres-local:5432
+  database: postgres-local
+  schema: public
+  db-admin-username: db_admin
+  db-admin-password: postgres
+  app-admin-username: db_admin
+  app-admin-password: postgres
+  read-write-username: db_admin
+  read-write-password: postgres
+  read-only-username: db_admin
+  read-only-password: postgres
+  business-read-only-username: db_admin
+  business-read-only-password: postgres
+
+  hibernate:
+    ddl-auto: validate
+  properties:
+    hibernate:
+      generate_statistics: false
+    org:
+      hibernate:
+        envers:
+          audit_table_suffix: _audit_log
