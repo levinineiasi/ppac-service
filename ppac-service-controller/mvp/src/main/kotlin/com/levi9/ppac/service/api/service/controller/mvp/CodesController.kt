@@ -1,7 +1,6 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.CompanyCode
-import com.levi9.ppac.service.api.service.AuthorizationService
 import com.levi9.ppac.service.api.service.CodeService
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
@@ -22,55 +21,54 @@ import java.util.logging.Logger
 @Suppress("MagicNumber")
 class CodesController(
     val companyCodeService: CodeService<CompanyCode>?,
-    val authorizationService: AuthorizationService,
     val log: Logger = Logger.getLogger(CodesController::class.java.name)
 ) {
+
+    @GetMapping("/checkAdminCode")
+    fun checkAdminCode(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
+        val isAdminCode = companyCodeService?.checkAdminCode(adminCode)
+        if (isAdminCode!!) {
+            return ResponseEntity(HttpStatus.OK)
+        }
+        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    }
 
     @GetMapping("")
     fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
 
         log.info("Returning all company codes from database.")
 
-        if (authorizationService.isAdmin(adminCode)) {
-            return companyCodeService?.let {
-                ResponseEntity(it.findAll(), HttpStatus.OK)
-            } ?: ResponseEntity("Feature flag for CompanyService not enabled", HttpStatus.NOT_IMPLEMENTED)
-        }
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
-
+        return companyCodeService?.let {
+            ResponseEntity(it.findAll(adminCode), HttpStatus.OK)
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @PostMapping("/{displayName}")
     fun createCode(
-            @RequestHeader("AdminCode") adminCode: Int,
-            @PathVariable displayName: String
+        @RequestHeader("AdminCode") adminCode: Int,
+        @PathVariable displayName: String
     ): ResponseEntity<Any> {
 
         log.info("Create company code for $displayName company.")
 
-        if (authorizationService.isAdmin(adminCode)) {
-            return companyCodeService?.let {
-                val responseDto = it.createCompanyCode(displayName)
-                ResponseEntity(responseDto, HttpStatus.CREATED)
-            } ?: ResponseEntity("Feature flag for CompanyService not enabled", HttpStatus.NOT_IMPLEMENTED)
-        }
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        return companyCodeService?.let {
+            val responseDto = it.createCompanyCode(adminCode, displayName)
+            ResponseEntity(responseDto, HttpStatus.CREATED)
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @DeleteMapping("/{codeId}")
     fun deleteById(
-            @RequestHeader("AdminCode") adminCode: Int,
-            @PathVariable codeId: UUID
+        @RequestHeader("AdminCode") adminCode: Int,
+        @PathVariable codeId: UUID
     ): ResponseEntity<Any> {
 
         log.info("Delete company code with code_id $codeId.")
 
-        if (authorizationService.isAdmin(adminCode)) {
-            return companyCodeService?.let {
-                it.deleteById(codeId)
-                ResponseEntity(HttpStatus.NO_CONTENT)
-            } ?: ResponseEntity("Feature flag for CompanyService not enabled", HttpStatus.NOT_IMPLEMENTED)
-        }
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+        return companyCodeService?.let {
+            it.deleteById(adminCode, codeId)
+            ResponseEntity(HttpStatus.NO_CONTENT)
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+
     }
 }

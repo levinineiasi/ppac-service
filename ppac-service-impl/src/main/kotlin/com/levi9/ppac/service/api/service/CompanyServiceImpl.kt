@@ -14,17 +14,12 @@ class CompanyServiceImpl(
     val companyRepository: CompanyRepository
 ) : CompanyService<Company> {
     @Transactional
-    override fun findAll(): List<Company> {
+    override fun findAll(adminCode: Int): List<Company> {
         return companyRepository.findAll().map { Company.parse(it) }
     }
 
-    override fun create(dto: Company): Company {
-        TODO("Not yet implemented")
-    }
-
-
     @Transactional
-    override fun deleteById(id: UUID) {
+    override fun deleteById(adminCode: Int, id: UUID) {
 
         companyRepository.findByIdOrNull(id)?.let {
             companyRepository.deleteById(id)
