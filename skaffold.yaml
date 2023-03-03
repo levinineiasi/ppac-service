@@ -5,14 +5,14 @@ metadata:
 
 build:
   local:
-    push: false
+    push: true
     concurrency: 0
   tagPolicy:
     gitCommit:
       variant: CommitSha
       ignoreChanges: true
   artifacts:
-    - image: ppac-service/ppac-service-api
+    - image: ghcr.io/ppac-service/ppac-service-api
       context: ppac-service-assembly
       docker:
         buildArgs:
