@@ -69,7 +69,7 @@ jobs:
       - name: Build Docker image
         run: |-
           export BUILD_ID=$GITHUB_SHA
-          docker login ghcr.io -u levinineiasi -p $GHCR_ACCESS_TOKEN
+          docker login ghcr.io -u levinineiasi -p ${{ secrets.GHCR_ACCESS_TOKEN }}
           skaffold build --push=true
 
 # TODO: to be a full ci-cd would need to include deployment to an env,
