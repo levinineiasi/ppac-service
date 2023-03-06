@@ -27,8 +27,8 @@ import java.util.logging.Logger
 @Suppress("MagicNumber")
 class CodesController(
     val companyCodeService: CodeService<CompanyCode>?,
-    val log: Logger = Logger.getLogger(CodesController::class.java.name)
 ) {
+    val log: Logger = Logger.getLogger(CodesController::class.java.name)
 
     @Operation(
         summary = "Check if user has admin rights",

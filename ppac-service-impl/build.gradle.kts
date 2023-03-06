@@ -12,6 +12,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-data-rest")
     implementation("org.springdoc:springdoc-openapi-ui")
     implementation("org.springdoc:springdoc-openapi-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.fasterxml.jackson.core:jackson-databind")

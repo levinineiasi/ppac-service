@@ -10,7 +10,7 @@ import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
 @Schema(description = "Model for a access code.")
-class AccessCode(
+data class AccessCode(
 
     @NotNull
     val id: UUID,

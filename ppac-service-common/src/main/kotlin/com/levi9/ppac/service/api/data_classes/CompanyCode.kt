@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
 @Schema(description = "Model for a company code.")
-class CompanyCode(
+data class CompanyCode(
 
     @JsonIgnore
     val id: UUID,
