@@ -18,10 +18,10 @@ class CodeServiceImpl(
         val codeRepository: CodeRepository,
         val companyRepository: CompanyRepository,
         val companyCodeRepository: CompanyCodeRepository,
-
-        val log: Logger = Logger.getLogger(CodeServiceImpl::class.java.name)
-
 ) : CodeService<CompanyCode> {
+
+    val log: Logger = Logger.getLogger(CodeServiceImpl::class.java.name)
+
     @Transactional
     override fun findAll(): List<CompanyCode> {
         return companyCodeRepository.findAll().map { CompanyCode.parse(it) }

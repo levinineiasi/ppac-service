@@ -23,8 +23,9 @@ import java.util.logging.Logger
 class CodesController(
     val companyCodeService: CodeService<CompanyCode>?,
     val authorizationService: AuthorizationService,
-    val log: Logger = Logger.getLogger(CodesController::class.java.name)
+
 ) {
+    val log: Logger = Logger.getLogger(CodesController::class.java.name)
 
     @GetMapping("")
     fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {

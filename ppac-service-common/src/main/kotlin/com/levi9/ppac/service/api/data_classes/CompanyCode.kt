@@ -3,7 +3,7 @@ package com.levi9.ppac.service.api.data_classes
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import java.util.*
 
-class CompanyCode(
+data class CompanyCode(
 
     val id: UUID,
 

@@ -4,7 +4,7 @@ import com.levi9.ppac.service.api.domain.CompanyEntity
 import java.util.*
 import javax.validation.constraints.Size
 
-class Company(
+data class Company(
     val id: UUID,
 
     @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
