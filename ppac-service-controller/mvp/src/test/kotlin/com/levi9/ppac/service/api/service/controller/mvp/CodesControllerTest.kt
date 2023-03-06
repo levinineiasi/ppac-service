@@ -31,7 +31,7 @@ class CodesControllerTest(@Autowired val mockMvc: MockMvc) {
 
     @Test
     fun `first test`() {
-        every { codeService.findAll() } returns companyCodeList
+        every { codeService.findAll(123456) } returns companyCodeList
 
         mockMvc.get(allCodesUrl) {
             header("AdminCode", "234567")
@@ -40,7 +40,7 @@ class CodesControllerTest(@Autowired val mockMvc: MockMvc) {
                     content { contentType(MediaType.APPLICATION_JSON) }
                     jsonPath("\$.[0].id") { value(idCompanyCode)}
                 }
-        verify(exactly = 1) { codeService.findAll() }
+        verify(exactly = 1) { codeService.findAll(123456) }
 
 //        mockMvc.perform(requestBuilder)
 //                .andExpect(MockMvcResultMatchers.status().isOk)

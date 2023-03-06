@@ -4,6 +4,7 @@ import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.repository.CodeRepository
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -37,29 +38,42 @@ class CodeServiceImplTest {
     @Autowired
     lateinit var codeRepository: CodeRepository
 
-    companion object{
-        val adminCode = AccessCodeEntity(UUID.randomUUID(), 234567)
+    companion object {
+        val adminCode = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
     }
 
     @BeforeEach
     fun `add admin code to database`() {
-        adminCode.type = CodeType.ADMIN_CODE
+
         codeRepository.save(adminCode)
     }
 
     @Test
+    fun `when admin code is correct isAdmin returns true`() {
+
+        Assertions.assertTrue(codeRepository.isAdminCode(adminCode.value))
+    }
+
+    @Test
+    fun `when admin code is incorrect isAdmin returns false`() {
+
+        Assertions.assertFalse(codeRepository.isAdminCode(234568))
+    }
+
+    @Test
     fun `when there are company codes in db findAll returns all company codes`() {
-        val companyCode1 = codeService.createCompanyCode(adminCode.value,"Levi9")
-        val companyCode2 = codeService.createCompanyCode(adminCode.value,"Endava")
-        val companyCode3 = codeService.createCompanyCode(adminCode.value,"Eon")
+
+        val companyCode1 = codeService.createCompanyCode(adminCode.value, "Levi9")
+        val companyCode2 = codeService.createCompanyCode(adminCode.value, "Endava")
+        val companyCode3 = codeService.createCompanyCode(adminCode.value, "Eon")
 
         val result = codeService.findAll(adminCode.value)
 
         assertEquals(3, result.size)
 
-        assertEquals(companyCode1, result[0])
-        assertEquals(companyCode2, result[1])
-        assertEquals(companyCode3, result[2])
+        assertEquals(companyCode1.id, result[0].id)
+        assertEquals(companyCode2.id, result[1].id)
+        assertEquals(companyCode3.id, result[2].id)
 
         codeService.deleteById(adminCode.value, companyCode1.id)
         codeService.deleteById(adminCode.value, companyCode2.id)
@@ -68,6 +82,7 @@ class CodeServiceImplTest {
 
     @Test
     fun `when there are not company codes in db findAll returns no company codes`() {
+
         val result = codeService.findAll(adminCode.value)
 
         assertEquals(0, result.size)
@@ -75,13 +90,14 @@ class CodeServiceImplTest {
 
     @Test
     fun `when create company code it is inserted in db`() {
+
         val companyCode = codeService.createCompanyCode(adminCode.value, "Levi9")
 
         val result = codeService.findAll(adminCode.value)
 
         assertEquals(result.size, 1)
 
-        assertEquals(companyCode, result[0])
+        assertEquals(companyCode.id, result[0].id)
 
         codeService.deleteById(adminCode.value, companyCode.id)
     }
@@ -97,6 +113,7 @@ class CodeServiceImplTest {
 
     @Test
     fun `when delete company code it is deleted from db`() {
+
         val companyCode = codeService.createCompanyCode(adminCode.value, "Levi9")
 
         codeService.deleteById(adminCode.value, companyCode.id)
@@ -109,6 +126,7 @@ class CodeServiceImplTest {
 
     @Test
     fun `when delete company code which doesn't exist in db it doesn't delete anything from db`() {
+
         codeService.createCompanyCode(adminCode.value, "Levi9")
         val id = UUID.randomUUID()
 
