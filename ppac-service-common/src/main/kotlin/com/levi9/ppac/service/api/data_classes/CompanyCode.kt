@@ -1,14 +1,26 @@
 package com.levi9.ppac.service.api.data_classes
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
+import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
+@Schema(description = "Model for a company code.")
 class CompanyCode(
 
+    @JsonIgnore
     val id: UUID,
 
+    @field:Schema(
+        description = "Access code of the company",
+        nullable = false
+    )
     val accessCode: AccessCode,
 
+    @field:Schema(
+        description = "The company",
+        nullable = false
+    )
     val company: Company
 ) {
 

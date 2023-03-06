@@ -81,6 +81,9 @@ allprojects {
             dependency("org.junit.jupiter:junit-jupiter-engine:${CoreVersion.JUNIT}")
             dependency("org.junit.jupiter:junit-jupiter:${CoreVersion.JUNIT}")
             dependency("org.junit.jupiter:junit-jupiter-api:${CoreVersion.JUNIT}")
+            dependency("org.springdoc:springdoc-openapi-data-rest:${CoreVersion.OPENAPI}")
+            dependency("org.springdoc:springdoc-openapi-ui:${CoreVersion.OPENAPI}")
+            dependency("org.springdoc:springdoc-openapi-kotlin:${CoreVersion.OPENAPI}")
         }
     }
 

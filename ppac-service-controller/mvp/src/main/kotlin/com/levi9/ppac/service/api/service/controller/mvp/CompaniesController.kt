@@ -1,7 +1,14 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.Company
+import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.service.CompanyService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
+import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -23,6 +30,24 @@ class CompaniesController(
     val log: Logger = Logger.getLogger(CompaniesController::class.java.name)
 
 ) {
+
+    @Operation(
+        summary = "Retrieves all companies",
+        description = "Returns all companies"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = Company::class) )
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
+    )
     @GetMapping("")
     fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
 
@@ -33,6 +58,23 @@ class CompaniesController(
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
+    @Operation(
+        summary = "Deletes a company",
+        description = "Deletes a company by it's ID"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = Company::class)
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
+    )
     @DeleteMapping("/{companyId}")
     fun deleteById(
         @RequestHeader("AdminCode") adminCode: Int,
