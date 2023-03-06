@@ -8,6 +8,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.hibernate:hibernate-validator")
     implementation("io.konform:konform")
+    implementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springdoc:springdoc-openapi-data-rest")
     implementation("org.springdoc:springdoc-openapi-ui")
     implementation("org.springdoc:springdoc-openapi-kotlin")
@@ -15,4 +16,5 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.fasterxml.jackson.core:jackson-databind")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    testImplementation("org.junit.jupiter:junit-jupiter-api")
 }
