@@ -1,7 +1,6 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.Company
-import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CompanyService
 import io.swagger.v3.oas.annotations.Operation
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
-import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/v1/companies")

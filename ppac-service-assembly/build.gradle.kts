@@ -26,7 +26,6 @@ dependencies {
     implementation("org.hibernate:hibernate-validator")
     implementation("com.h2database:h2")
     implementation(project(":ppac-service-common"))
-    implementation(project(":ppac-service-controller:countries-v1"))
     implementation(project(":ppac-service-controller:mvp"))
     implementation(project(":ppac-service-impl"))
     testImplementation("org.awaitility:awaitility-kotlin")

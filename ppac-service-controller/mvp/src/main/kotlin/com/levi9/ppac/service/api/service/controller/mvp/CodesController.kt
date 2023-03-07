@@ -4,12 +4,15 @@ import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.CodeService
+import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,9 +24,11 @@ import java.util.logging.Logger
 @RequestMapping("/api/v1/codes")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
+@OpenAPIDefinition(info = Info(title = "PPAC API"))
+@Tag(name = "Codes Controller")
 class CodesController(
     private val securityContext: SecurityContext<Int>,
-    private val codeService: CodeService<CompanyCode>?,
+    private val codeService: CodeService<CompanyCode>?
 ) {
     @Operation(
         summary = "Check if user has admin rights",
@@ -60,7 +65,7 @@ class CodesController(
                 )]
             ),
             ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            ApiResponse(responseCode = "204", description = "No Content")
         ]
     )
     @GetMapping("")
@@ -68,9 +73,12 @@ class CodesController(
 
         logger.info("Returning all company codes from database.")
 
-        return codeService?.let {
-            ResponseEntity(it.findAll(), HttpStatus.OK)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        val listCompanies = codeService!!.findAll()
+        if (listCompanies.isEmpty()) {
+            return ResponseEntity("The requested resource has no content.", HttpStatus.NO_CONTENT)
+        }
+        return ResponseEntity(listCompanies, HttpStatus.OK)
+
     }
 
     @Operation(
@@ -88,8 +96,7 @@ class CodesController(
                     )
                 )]
             ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            ApiResponse(responseCode = "401", description = "Unauthorized")
         ]
     )
     @PostMapping("/{displayName}")
@@ -103,7 +110,7 @@ class CodesController(
         return codeService?.let {
             val responseDto = it.createCompanyCode(displayName)
             ResponseEntity(responseDto, HttpStatus.CREATED)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        }!!
     }
 
     @Operation(summary = "Deletes access code for a company")
@@ -122,9 +129,9 @@ class CodesController(
 
         logger.info("Delete company code with code_id $codeId.")
 
-        return codeService?.let {
-            it.deleteById(codeId)
+        return codeService.let {
+            it!!.deleteById(codeId)
             ResponseEntity(HttpStatus.NO_CONTENT)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        }
     }
 }

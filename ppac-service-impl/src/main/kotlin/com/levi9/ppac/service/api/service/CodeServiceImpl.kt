@@ -8,12 +8,11 @@ import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException
+import org.webjars.NotFoundException
 import java.util.*
-import java.util.logging.Logger
 import javax.transaction.Transactional
 import kotlin.random.Random
 
@@ -78,8 +77,7 @@ class CodeServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        companyCodeRepository.findByIdOrNull(id)?.let {
-            companyCodeRepository.deleteById(id)
-        }
+        companyCodeRepository.findById(id).orElseThrow { NotFoundException("The resource was not found") }
+        companyCodeRepository.deleteById(id)
     }
 }

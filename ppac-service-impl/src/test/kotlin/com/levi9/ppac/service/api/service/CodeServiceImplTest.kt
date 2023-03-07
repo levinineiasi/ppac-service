@@ -77,9 +77,9 @@ class CodeServiceImplTest {
 
         assertEquals(3, result.size)
 
-        assertEquals(companyCode1.id, result[0].id)
-        assertEquals(companyCode2.id, result[1].id)
-        assertEquals(companyCode3.id, result[2].id)
+        assertEquals(companyCode1, result[0])
+        assertEquals(companyCode2, result[1])
+        assertEquals(companyCode3, result[2])
 
         codeService.deleteById(companyCode1.id)
         codeService.deleteById(companyCode2.id)
@@ -107,15 +107,6 @@ class CodeServiceImplTest {
 
         codeService.deleteById(companyCode.id)
     }
-
-//    @Test
-//    fun `when create company code with display name length shorter than 2 is not inserted in db`() {
-//        val companyCode = codeService.createCompanyCode("L")
-//
-//        val result = codeService.findAll()
-//
-//        assertEquals(0, result.size)
-//    } // asta va merge dupa ce va functiona size-ul de la display name
 
     @Test
     fun `when delete company code it is deleted from db`() {
