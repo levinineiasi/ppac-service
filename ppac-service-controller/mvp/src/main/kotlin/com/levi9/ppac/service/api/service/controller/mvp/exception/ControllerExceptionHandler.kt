@@ -1,4 +1,4 @@
-package com.levi9.ppac.service.api.service.controller.mvp.exceptionHandler
+package com.levi9.ppac.service.api.service.controller.mvp.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

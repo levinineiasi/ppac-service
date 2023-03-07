@@ -1,4 +1,4 @@
-package com.levi9.ppac.service.logging
+package com.levi9.ppac.service.api.logging
 
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.core.env.AbstractEnvironment

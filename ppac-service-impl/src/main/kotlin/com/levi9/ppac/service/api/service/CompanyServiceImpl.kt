@@ -3,6 +3,7 @@ package com.levi9.ppac.service.api.service
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
+import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -14,13 +15,14 @@ import java.util.*
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 class CompanyServiceImpl(
-    val companyRepository: CompanyRepository,
-    val codeRepository: CodeRepository
+    private val securityContext: SecurityContext<Int>,
+    private val companyRepository: CompanyRepository,
+    private val codeRepository: CodeRepository
 ) : CompanyService<Company> {
     @Transactional
-    override fun findAll(adminCode: Int): List<Company> {
+    override fun findAll(): List<Company> {
 
-        if (!codeRepository.isAdminCode(adminCode)) {
+        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
@@ -28,9 +30,9 @@ class CompanyServiceImpl(
     }
 
     @Transactional
-    override fun deleteById(adminCode: Int, id: UUID) {
+    override fun deleteById(id: UUID) {
 
-        if (!codeRepository.isAdminCode(adminCode)) {
+        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 

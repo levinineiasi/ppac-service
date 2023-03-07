@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.CompanyCode
+import com.levi9.ppac.service.api.logging.logger
+import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.CodeService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -11,13 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 import java.util.logging.Logger
 
@@ -26,10 +22,9 @@ import java.util.logging.Logger
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
 class CodesController(
-    val companyCodeService: CodeService<CompanyCode>?,
+    private val securityContext: SecurityContext<Int>,
+    private val codeService: CodeService<CompanyCode>?,
 ) {
-    val log: Logger = Logger.getLogger(CodesController::class.java.name)
-
     @Operation(
         summary = "Check if user has admin rights",
         description = "Returns UNAUTHORIZED if the code received is not for admin access"
@@ -41,10 +36,12 @@ class CodesController(
         ]
     )
     @GetMapping("/checkAdminCode")
-    fun checkAdminCode(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
-        val isAdminCode = companyCodeService?.checkAdminCode(adminCode)
-        if (isAdminCode!!) {
-            return ResponseEntity(HttpStatus.OK)
+    fun checkAdminCode(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
+        if (securityContext.accessCodeIsSet()) {
+            val isAdminCode = codeService?.isAdminCode(securityContext.getAccessCode())
+            if (isAdminCode!!) {
+                return ResponseEntity(HttpStatus.OK)
+            }
         }
         return ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
@@ -67,12 +64,12 @@ class CodesController(
         ]
     )
     @GetMapping("")
-    fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
+    fun findAll(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
 
-        log.info("Returning all company codes from database.")
+        logger.info("Returning all company codes from database.")
 
-        return companyCodeService?.let {
-            ResponseEntity(it.findAll(adminCode), HttpStatus.OK)
+        return codeService?.let {
+            ResponseEntity(it.findAll(), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -97,14 +94,14 @@ class CodesController(
     )
     @PostMapping("/{displayName}")
     fun createCode(
-        @RequestHeader("AdminCode") adminCode: Int,
+        @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable displayName: String
     ): ResponseEntity<Any> {
 
-        log.info("Create company code for $displayName company.")
+        logger.info("Create company code for $displayName company.")
 
-        return companyCodeService?.let {
-            val responseDto = it.createCompanyCode(adminCode, displayName)
+        return codeService?.let {
+            val responseDto = it.createCompanyCode(displayName)
             ResponseEntity(responseDto, HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
@@ -119,14 +116,14 @@ class CodesController(
     )
     @DeleteMapping("/{codeId}")
     fun deleteById(
-        @RequestHeader("AdminCode") adminCode: Int,
+        @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable codeId: UUID
     ): ResponseEntity<Any> {
 
-        log.info("Delete company code with code_id $codeId.")
+        logger.info("Delete company code with code_id $codeId.")
 
-        return companyCodeService?.let {
-            it.deleteById(adminCode, codeId)
+        return codeService?.let {
+            it.deleteById(codeId)
             ResponseEntity(HttpStatus.NO_CONTENT)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }

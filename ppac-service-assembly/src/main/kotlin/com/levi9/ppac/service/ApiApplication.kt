@@ -1,6 +1,6 @@
 package com.levi9.ppac.service
 
-import com.levi9.ppac.service.logging.PropertyLogger
+import com.levi9.ppac.service.api.logging.PropertyLogger
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.boot.runApplication

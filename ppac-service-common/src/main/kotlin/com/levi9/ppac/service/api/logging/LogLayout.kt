@@ -1,6 +1,6 @@
 @file:Suppress("detekt.TooGenericExceptionCaught")
 
-package com.levi9.ppac.service.logging
+package com.levi9.ppac.service.api.logging
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.ILoggingEvent
@@ -9,8 +9,8 @@ import ch.qos.logback.core.LayoutBase
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.levi9.ppac.service.api.config.ApiConfig
 import com.levi9.ppac.service.api.exception.MarkerDescriptor
-import com.levi9.ppac.service.config.ApiConfig
 
 class LogLayout : LayoutBase<ILoggingEvent>() {
     private val mapper: ObjectMapper = ApiConfig().getObjectMapper()

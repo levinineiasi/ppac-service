@@ -1,6 +1,6 @@
 @file:Suppress("detekt.MagicNumber")
 
-package com.levi9.ppac.service.config
+package com.levi9.ppac.service.api.config
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonGenerator

@@ -2,6 +2,7 @@ package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.data_classes.CompanyCode
+import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CompanyService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -26,9 +27,7 @@ import java.util.logging.Logger
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
 class CompaniesController(
-    val companyService: CompanyService<Company>?,
-    val log: Logger = Logger.getLogger(CompaniesController::class.java.name)
-
+    private val companyService: CompanyService<Company>?
 ) {
 
     @Operation(
@@ -49,12 +48,12 @@ class CompaniesController(
         ]
     )
     @GetMapping("")
-    fun findAll(@RequestHeader("AdminCode") adminCode: Int): ResponseEntity<Any> {
+    fun findAll(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
 
-        log.info("Returning all companies from database.")
+        logger.info("Returning all companies from database.")
 
         return companyService?.let {
-            ResponseEntity(it.findAll(adminCode), HttpStatus.OK)
+            ResponseEntity(it.findAll(), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -77,14 +76,14 @@ class CompaniesController(
     )
     @DeleteMapping("/{companyId}")
     fun deleteById(
-        @RequestHeader("AdminCode") adminCode: Int,
+        @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
 
-        log.info("Delete company with id $companyId .")
+        logger.info("Delete company with id $companyId .")
 
         return companyService?.let {
-            it.deleteById(adminCode, companyId)
+            it.deleteById(companyId)
             ResponseEntity(HttpStatus.NO_CONTENT)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
