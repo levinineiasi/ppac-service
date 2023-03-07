@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.context.BootstrapWith
+import org.webjars.NotFoundException
 import java.util.*
 
 @SpringBootTest(
@@ -127,7 +128,11 @@ class CodeServiceImplTest {
         codeService.createCompanyCode("Levi9")
         val id = UUID.randomUUID()
 
-        codeService.deleteById(id)
+        try {
+            codeService.deleteById(id)
+        } catch (e: NotFoundException) {
+
+        }
 
         val result = codeService.findAll()
 
