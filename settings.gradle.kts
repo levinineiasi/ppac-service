@@ -35,6 +35,5 @@ rootProject.name = "ppac-service"
 include("ppac-service-assembly")
 include("ppac-service-common")
 include("ppac-service-controller")
-include("ppac-service-controller:countries-v1")
 include("ppac-service-controller:mvp")
 include("ppac-service-impl")

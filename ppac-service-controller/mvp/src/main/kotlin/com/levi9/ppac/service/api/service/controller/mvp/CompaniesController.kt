@@ -1,7 +1,6 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.levi9.ppac.service.api.data_classes.Company
-import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.service.CompanyService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
@@ -27,9 +26,10 @@ import java.util.logging.Logger
 @Suppress("MagicNumber")
 class CompaniesController(
     val companyService: CompanyService<Company>?,
-    val log: Logger = Logger.getLogger(CompaniesController::class.java.name)
 
 ) {
+
+    val log: Logger = Logger.getLogger(CompaniesController::class.java.name)
 
     @Operation(
         summary = "Retrieves all companies",
