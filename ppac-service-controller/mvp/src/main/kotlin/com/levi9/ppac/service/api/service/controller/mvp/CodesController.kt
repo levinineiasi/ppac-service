@@ -24,7 +24,7 @@ import java.util.logging.Logger
 @RequestMapping("/api/v1/codes")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
-@OpenAPIDefinition(info = Info(title = "PPAC API"))
+@OpenAPIDefinition(info = Info(title = "PPAC API - codes endpoint"))
 @Tag(name = "Codes Controller")
 class CodesController(
     private val securityContext: SecurityContext<Int>,
