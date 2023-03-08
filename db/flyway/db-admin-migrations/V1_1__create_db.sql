@@ -1,15 +1,23 @@
-create table companies
+CREATE TABLE  IF NOT EXISTS CODES
 (
-    id           uuid not null primary key,
-    display_name varchar(255),
-    full_name    varchar(255),
-    logo         bytea
+    ID        UUID     PRIMARY KEY,
+    VALUE     INTEGER  UNIQUE CHECK (VALUE BETWEEN 100000 AND 999999),
+    CODE_TYPE VARCHAR(12) CHECK (CODE_TYPE IN ('ADMIN_CODE','COMPANY_CODE'))
 );
 
-create table students
+CREATE TABLE  IF NOT EXISTS COMPANIES
 (
-    id         uuid not null primary key,
-    company_id uuid,
-    first_name varchar(255),
-    last_name  varchar(255)
+    ID           UUID  PRIMARY KEY,
+    DISPLAY_NAME VARCHAR(30) NOT NULL UNIQUE,
+    FULL_NAME    VARCHAR(50) DEFAULT NULL UNIQUE,
+    LOGO         BYTEA DEFAULT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS COMPANIES_CODES
+(
+    ID           UUID  PRIMARY KEY,
+    CODE_ID  UUID  NOT NULL UNIQUE,
+    COMPANY_ID UUID NOT NULL UNIQUE,
+    FOREIGN KEY (CODE_ID) REFERENCES CODES(ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (COMPANY_ID) REFERENCES COMPANIES(ID) ON DELETE CASCADE ON UPDATE CASCADE
 );

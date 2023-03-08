@@ -10,8 +10,13 @@ allprojects{
         implementation("io.konform:konform")
         implementation(project(":ppac-service-common"))
         implementation("org.junit.jupiter:junit-jupiter")
+        implementation("org.springdoc:springdoc-openapi-data-rest")
+        implementation("org.springdoc:springdoc-openapi-ui")
+        implementation("org.springdoc:springdoc-openapi-kotlin")
         testImplementation(kotlin("test"))
         testImplementation("org.springframework.boot:spring-boot-starter-test")
+        testImplementation("io.mockk:mockk:1.13.4")
+        testImplementation("com.ninja-squad:springmockk:3.0.1")
         tasks.test { useJUnitPlatform() }
     }
 }

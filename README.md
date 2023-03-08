@@ -1,5 +1,5 @@
 # PPAC Service
-[Requirements](Requirement.md) document.
+http://localhost:8080/swagger-ui/index.html
 ## System overview
 [![Main CI/CD](https://github.com/levinineiasi/ppac-service/actions/workflows/cicd-full.yaml/badge.svg)](https://github.com/levinineiasi/ppac-service/actions/workflows/cicd-full.yaml)
 ### 1) Pipeline

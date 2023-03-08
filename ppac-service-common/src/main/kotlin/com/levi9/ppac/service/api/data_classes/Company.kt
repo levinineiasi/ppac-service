@@ -1,35 +1,56 @@
 package com.levi9.ppac.service.api.data_classes
 
-import com.levi9.ppac.service.api.domain.Company as CompanyEntity
-import java.util.UUID
+import com.levi9.ppac.service.api.domain.CompanyEntity
+import io.swagger.v3.oas.annotations.media.Schema
+import java.util.*
+import javax.validation.constraints.Size
 
-class Company(
-    val id: UUID = UUID.randomUUID()
+@Schema(description = "Model for a company.")
+data class Company(
+    val id: UUID,
+
+    @field:Schema(
+        description = "Name to be displayed of the company",
+        example = "Levi9",
+        type = "String",
+        minLength = 2,
+        maxLength = 30,
+        nullable = false
+    )
+    @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
+    var displayName: String
 ) {
-    var displayName: String? = null
 
+    @field:Schema(
+        description = "Full name of the company",
+        example = "Levi9 Global Sourcing",
+        type = "String",
+        minLength = 2,
+        maxLength = 50,
+        nullable = true
+    )
+    @Size(min = 2, max = 50, message = "The full name length should have between 2 and 50 characters.")
     var fullName: String? = null
 
+    @field:Schema(
+        description = "Logo of the company",
+        type = "ByteArray",
+        nullable = true
+    )
     var logo: ByteArray? = null
-
-    var students: Set<Student>? = emptySet()
 
     companion object {
         fun parse(elem: CompanyEntity): Company {
-            return Company(elem.id).apply {
-                displayName = elem.displayName
+            return Company(elem.id,elem.displayName).apply {
                 fullName = elem.fullName
                 logo = elem.logo
-                students = elem.students?.map { Student.parse(it) }?.toSet()
             }
         }
 
         fun parse(elem: Company): CompanyEntity {
-            return CompanyEntity(elem.id).apply {
-                displayName = elem.displayName
+            return CompanyEntity(elem.id, elem.displayName).apply {
                 fullName = elem.fullName
                 logo = elem.logo
-                students = elem.students?.map { Student.parse(it) }?.toSet()
             }
         }
     }

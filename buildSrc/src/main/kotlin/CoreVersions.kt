@@ -19,4 +19,5 @@ object CoreVersion {
     const val HIBERNATE = "5.6.7.Final"
     const val HIBERNATE_VALIDATOR = "7.0.4.Final"
     const val ORACLE = "21.6.0.0.1"
+    const val OPENAPI = "1.6.11"
 }
