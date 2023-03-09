@@ -112,26 +112,4 @@ class CodesController(
             ResponseEntity(responseDto, HttpStatus.CREATED)
         }!!
     }
-
-    @Operation(summary = "Deletes access code for a company")
-    @ApiResponses(
-        value = [
-            ApiResponse(responseCode = "204", description = "No content"),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
-        ]
-    )
-    @DeleteMapping("/{codeId}")
-    fun deleteById(
-        @RequestHeader("AccessCode") accessCode: Int,
-        @PathVariable codeId: UUID
-    ): ResponseEntity<Any> {
-
-        logger.info("Delete company code with code_id $codeId.")
-
-        return codeService.let {
-            it!!.deleteById(codeId)
-            ResponseEntity(HttpStatus.NO_CONTENT)
-        }
-    }
 }
