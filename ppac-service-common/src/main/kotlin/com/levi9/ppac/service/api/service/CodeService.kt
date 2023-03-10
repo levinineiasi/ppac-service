@@ -8,5 +8,5 @@ interface CodeService<T> : CrudService<T> {
 
     fun isAdminCode(accessCode: Int): Boolean
 
-    fun isCompanyCode(accessCode: Int, codeId: UUID): Boolean
+    fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean
 }

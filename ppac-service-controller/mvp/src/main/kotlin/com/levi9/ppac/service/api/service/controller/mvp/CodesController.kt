@@ -52,7 +52,7 @@ class CodesController(
 
     @Operation(
         summary = "Check if user has company rights",
-        description = "Returns UNAUTHORIZED if the code received and codeId doesn't match"
+        description = "Returns UNAUTHORIZED if the code received and companyId doesn't match"
     )
     @ApiResponses(
         value = [ApiResponse(responseCode = "200", description = "OK"), ApiResponse(
@@ -60,13 +60,13 @@ class CodesController(
             description = "Unauthorized"
         )]
     )
-    @GetMapping("/checkCompanyCode/{codeId}")
+    @GetMapping("/checkCompanyCode/{companyId}")
     fun checkCompanyCode(
         @RequestHeader("AccessCode") accessCode: Int,
-        @PathVariable codeId: UUID
+        @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
         if (securityContext.accessCodeIsSet()) {
-            val isCompanyCode = codeService?.isCompanyCode(securityContext.getAccessCode(), codeId)
+            val isCompanyCode = codeService?.isCompanyCode(securityContext.getAccessCode(), companyId)
             if (isCompanyCode!!) {
                 return ResponseEntity(HttpStatus.OK)
             }

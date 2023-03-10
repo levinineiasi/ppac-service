@@ -59,7 +59,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when admin code is correct isAdmin returns true`() {
+    fun `when admin code is correct isAdminCode returns true`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -67,7 +67,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when admin code is incorrect isAdmin returns false`() {
+    fun `when admin code is incorrect isAdminCode returns false`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -75,7 +75,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when company code is correct and codeId match isAdmin returns true`() {
+    fun `when company code is correct and companyId match isCompanyCode returns true`() {
 
         insertCompanyInDb()
 
@@ -83,7 +83,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when company code is incorrect and codeId match isAdmin returns false`() {
+    fun `when company code is incorrect and companyId doesn't isCompanyCode returns false`() {
 
         insertCompanyInDb()
 
@@ -92,7 +92,7 @@ class CodeServiceImplTest {
 
 
     @Test
-    fun `when company code is correct and codeId doesn't match isAdmin returns false`() {
+    fun `when company code is correct and companyId doesn't match isCompanyCode returns false`() {
 
         insertCompanyInDb()
 
