@@ -65,10 +65,11 @@ class CodeServiceImpl(
     }
 
     override fun isAdminCode(accessCode: Int): Boolean {
-        if (codeRepository.isAdminCode(accessCode)) {
-            return true
-        }
-        return false
+        return  codeRepository.isAdminCode(accessCode)
+    }
+
+    override fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean {
+        return codeRepository.isCompanyCode(accessCode, companyId)
     }
 
     @Transactional
