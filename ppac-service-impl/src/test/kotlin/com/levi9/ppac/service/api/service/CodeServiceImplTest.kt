@@ -2,14 +2,15 @@ package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
+import com.levi9.ppac.service.api.domain.CompanyCodeEntity
+import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.security.RequestScopedSecurityContext
-import com.levi9.ppac.service.api.security.SecurityContext
+import com.levi9.ppac.service.api.repository.CompanyCodeRepository
+import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.service.config.TestConfig
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -18,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTestContextBootstrapper
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.context.BootstrapWith
@@ -45,32 +45,66 @@ class CodeServiceImplTest {
     @Autowired
     lateinit var codeRepository: CodeRepository
 
+    @Autowired
+    lateinit var companyRepository: CompanyRepository
+
+    @Autowired
+    lateinit var companyCodeRepository: CompanyCodeRepository
+
     companion object {
-        val adminCode = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
-    }
-
-    @BeforeEach
-    fun `add admin code to database`() {
-
-        codeRepository.save(adminCode)
+        val codeEntityForAdmin = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
+        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
+        val company = CompanyEntity(UUID.randomUUID(), "Levi9")
+        val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
     }
 
     @Test
     fun `when admin code is correct isAdmin returns true`() {
 
-        Assertions.assertTrue(codeRepository.isAdminCode(adminCode.value))
+        codeRepository.save(codeEntityForAdmin)
+
+        Assertions.assertTrue(codeRepository.isAdminCode(codeEntityForAdmin.value))
     }
 
     @Test
     fun `when admin code is incorrect isAdmin returns false`() {
 
+        codeRepository.save(codeEntityForAdmin)
+
         Assertions.assertFalse(codeRepository.isAdminCode(234568))
+    }
+
+    @Test
+    fun `when company code is correct and codeId match isAdmin returns true`() {
+
+        insertCompanyInDb()
+
+        Assertions.assertTrue(codeRepository.isCompanyCode(codeEntityForCompany.value, company.id))
+    }
+
+    @Test
+    fun `when company code is incorrect and codeId match isAdmin returns false`() {
+
+        insertCompanyInDb()
+
+        Assertions.assertFalse(codeRepository.isCompanyCode(654321, company.id))
+    }
+
+
+    @Test
+    fun `when company code is correct and codeId doesn't match isAdmin returns false`() {
+
+        insertCompanyInDb()
+
+        Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value,UUID.randomUUID()))
     }
 
     @Test
     fun `when there are company codes in db findAll returns all company codes`() {
 
-        val companyCode1 = codeService.createCompanyCode( "Levi9")
+        codeRepository.save(codeEntityForAdmin)
+
+        val companyCode1 = codeService.createCompanyCode("Levi9")
         val companyCode2 = codeService.createCompanyCode("Endava")
         val companyCode3 = codeService.createCompanyCode("Eon")
 
@@ -90,6 +124,8 @@ class CodeServiceImplTest {
     @Test
     fun `when there are not company codes in db findAll returns no company codes`() {
 
+        codeRepository.save(codeEntityForAdmin)
+
         val result = codeService.findAll()
 
         assertEquals(0, result.size)
@@ -97,6 +133,8 @@ class CodeServiceImplTest {
 
     @Test
     fun `when create company code it is inserted in db`() {
+
+        codeRepository.save(codeEntityForAdmin)
 
         val companyCode = codeService.createCompanyCode("Levi9")
 
@@ -112,6 +150,8 @@ class CodeServiceImplTest {
     @Test
     fun `when delete company code it is deleted from db`() {
 
+        codeRepository.save(codeEntityForAdmin)
+
         val companyCode = codeService.createCompanyCode("Levi9")
 
         codeService.deleteById(companyCode.id)
@@ -124,6 +164,8 @@ class CodeServiceImplTest {
 
     @Test
     fun `when delete company code which doesn't exist in db it doesn't delete anything from db`() {
+
+        codeRepository.save(codeEntityForAdmin)
 
         codeService.createCompanyCode("Levi9")
         val id = UUID.randomUUID()
@@ -138,5 +180,11 @@ class CodeServiceImplTest {
 
         assertEquals(1, result.size)
 
+    }
+
+    fun insertCompanyInDb() {
+        codeRepository.save(codeEntityForCompany)
+        companyRepository.save(company)
+        companyCodeRepository.save(companyCodeEntity)
     }
 }
