@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import java.util.logging.Logger
 
 @RestController
 @RequestMapping("/api/v1/codes")
@@ -52,6 +51,30 @@ class CodesController(
     }
 
     @Operation(
+        summary = "Check if user has company rights",
+        description = "Returns UNAUTHORIZED if the code received and codeId doesn't match"
+    )
+    @ApiResponses(
+        value = [ApiResponse(responseCode = "200", description = "OK"), ApiResponse(
+            responseCode = "401",
+            description = "Unauthorized"
+        )]
+    )
+    @GetMapping("/checkCompanyCode/{codeId}")
+    fun checkCompanyCode(
+        @RequestHeader("AccessCode") accessCode: Int,
+        @PathVariable codeId: UUID
+    ): ResponseEntity<Any> {
+        if (securityContext.accessCodeIsSet()) {
+            val isCompanyCode = codeService?.isCompanyCode(securityContext.getAccessCode(), codeId)
+            if (isCompanyCode!!) {
+                return ResponseEntity(HttpStatus.OK)
+            }
+        }
+        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    }
+
+    @Operation(
         summary = "Retrieves all codes",
         description = "Returns all company codes"
     )
@@ -78,7 +101,6 @@ class CodesController(
             return ResponseEntity("The requested resource has no content.", HttpStatus.NO_CONTENT)
         }
         return ResponseEntity(listCompanies, HttpStatus.OK)
-
     }
 
     @Operation(
