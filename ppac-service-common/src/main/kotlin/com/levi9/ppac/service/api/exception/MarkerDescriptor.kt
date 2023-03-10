@@ -9,4 +9,7 @@ enum class MarkerDescriptor(
 ) {
     HTTP_GATEWAY_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error when calling external service"),
     LOG_MESSAGE_LOST(HttpStatus.INTERNAL_SERVER_ERROR, "Log message was lost"),
+
+    REQUEST_COMPLETION_PROCESSING(HttpStatus.OK, "Request processed"),
+    REQUEST_START_PROCESSING(HttpStatus.OK, "Received incoming request")
 }

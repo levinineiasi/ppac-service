@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.util.*
 
 @RestController
-@RequestMapping("/v1/companies")
+@RequestMapping("/api/v1/companies")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
 class CompaniesController(
