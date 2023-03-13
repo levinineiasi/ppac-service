@@ -3,6 +3,7 @@ package com.levi9.ppac.service.api.data_classes
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
+import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
 @Schema(description = "Model for a company.")
@@ -10,47 +11,65 @@ data class Company(
     val id: UUID,
 
     @field:Schema(
-        description = "Name to be displayed of the company",
+        description = "Name of the company",
         example = "Levi9",
         type = "String",
         minLength = 2,
         maxLength = 30,
         nullable = false
     )
-    @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
-    var displayName: String
+    @Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+    var name: String
 ) {
+    @field:Schema(
+            description = "Logo of the company",
+            type = "ByteArray",
+            nullable = true
+    )
+    var logo: ByteArray? = null
 
     @field:Schema(
-        description = "Full name of the company",
-        example = "Levi9 Global Sourcing",
+        description = "Description of the company",
+        example = "Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers. We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.",
+        type = "String",
+        minLength = 2,
+        maxLength = 300,
+        nullable = true
+    )
+    @Size(min = 2, max = 300, message = "The description length should have between 2 and 50 characters.")
+    var description: String? = null
+
+    @field:Schema(
+        description = "Email of the company",
+        example = "info@levi9.com",
         type = "String",
         minLength = 2,
         maxLength = 50,
         nullable = true
     )
-    @Size(min = 2, max = 50, message = "The full name length should have between 2 and 50 characters.")
-    var fullName: String? = null
+    @Size(min = 2, max = 50, message = "The email length should have between 2 and 300 characters.")
+    @Email(message = "The company email should be a valid one.")
+    var email: String? = null
 
-    @field:Schema(
-        description = "Logo of the company",
-        type = "ByteArray",
-        nullable = true
-    )
-    var logo: ByteArray? = null
+    var openings: List<Opening>? = null
+
 
     companion object {
         fun parse(elem: CompanyEntity): Company {
-            return Company(elem.id,elem.displayName).apply {
-                fullName = elem.fullName
+            return Company(elem.id,elem.name).apply {
                 logo = elem.logo
+                description = elem.description
+                email = elem.email
+                openings = elem.openings?.map { Opening.parse(it) }
             }
         }
 
         fun parse(elem: Company): CompanyEntity {
-            return CompanyEntity(elem.id, elem.displayName).apply {
-                fullName = elem.fullName
+            return CompanyEntity(elem.id, elem.name).apply {
                 logo = elem.logo
+                description = elem.description
+                email = elem.email
+                openings = elem.openings?.map { Opening.parse(it) }
             }
         }
     }

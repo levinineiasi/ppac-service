@@ -80,4 +80,12 @@ class CodeServiceImpl(
         companyCodeRepository.findById(id).orElseThrow { NotFoundException("The resource was not found") }
         companyCodeRepository.deleteById(id)
     }
+
+    override fun findById(id: UUID): CompanyCode {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateById(id: UUID, updatedObject: CompanyCode): CompanyCode {
+        TODO("Not yet implemented")
+    }
 }
