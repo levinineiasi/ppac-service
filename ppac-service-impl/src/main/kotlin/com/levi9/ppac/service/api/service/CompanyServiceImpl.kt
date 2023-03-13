@@ -1,6 +1,7 @@
 package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.data_classes.Company
+import com.levi9.ppac.service.api.data_classes.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
@@ -19,6 +20,12 @@ class CompanyServiceImpl(
     private val companyRepository: CompanyRepository,
     private val codeRepository: CodeRepository
 ) : CompanyService<Company> {
+    @Transactional
+    override fun addOpening(id: UUID, opening: Opening): Opening {
+
+        TODO()
+    }
+
     @Transactional
     override fun findAll(): List<Company> {
 

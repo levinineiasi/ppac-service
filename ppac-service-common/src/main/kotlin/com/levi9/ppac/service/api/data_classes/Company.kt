@@ -7,6 +7,7 @@ import javax.validation.constraints.Size
 
 @Schema(description = "Model for a company.")
 data class Company(
+
     val id: UUID,
 
     @field:Schema(
