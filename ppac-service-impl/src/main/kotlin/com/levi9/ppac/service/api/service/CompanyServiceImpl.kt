@@ -24,12 +24,17 @@ class CompanyServiceImpl(
 
     @Transactional
     override fun findAll(): List<Company> {
-        return companyRepository.findAll().map { Company.parse(it) }
+        return companyRepository.findAll().map { companyEntity ->
+            val activeOpenings = companyEntity.openings?.filter { it.available }
+            companyEntity.openings = activeOpenings
+            Company.parse(companyEntity) }
     }
 
     @Transactional
     override fun findById(id: UUID): Company {
         val company = companyRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val activeOpenings = company.openings?.filter { it.available }
+        company.openings = activeOpenings
         return Company.parse(company)
     }
 
