@@ -5,6 +5,7 @@ server:
     include-binding-errors: always
     include-stacktrace: NEVER
     include-exception: false
+  allowed-origins: "*"
 
 feign:
   client:
