@@ -2,9 +2,12 @@ package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.data_classes.Trainer
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
+import com.levi9.ppac.service.api.repository.OpeningRepository
+import com.levi9.ppac.service.api.repository.TrainerRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.repository.findByIdOrNull
@@ -20,13 +23,30 @@ class CompanyServiceImpl(
     private val securityContext: SecurityContext<Int>,
     private val companyRepository: CompanyRepository,
     private val codeRepository: CodeRepository,
+    private val openingRepository: OpeningRepository,
+    private val trainerRepository: TrainerRepository,
     private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
 
     @Transactional
-    override fun addOpening(id: UUID, opening: Opening): Opening {
+    override fun addOpening(companyId: UUID, opening: Opening): Opening {
 
-        TODO()
+        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), companyId)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+        }
+
+        opening.trainers.forEach {
+            trainerRepository.findByIdOrNull(it.id) ?: trainerRepository.save(Trainer.parse(it.apply {
+                id = UUID.randomUUID()
+            }))
+        }
+
+        return Opening.parse(
+            openingRepository.save(
+                Opening.parse(
+                    opening.apply { id = UUID.randomUUID() })
+            )
+        )
     }
 
     @Transactional
@@ -34,12 +54,13 @@ class CompanyServiceImpl(
         return companyRepository.findAll().map { companyEntity ->
             val activeOpenings = companyEntity.openings?.filter { it.available }
             companyEntity.openings = activeOpenings
-            Company.parse(companyEntity) }
+            Company.parse(companyEntity)
+        }
     }
 
     @Transactional
     override fun findById(id: UUID): Company {
-        val company = companyRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val company = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         val activeOpenings = company.openings?.filter { it.available }
         company.openings = activeOpenings
         return Company.parse(company)
@@ -52,12 +73,12 @@ class CompanyServiceImpl(
         }
 
         val company = companyRepository.findById(id)
-                .apply{
-                    this.get().name = updatedObject.name
-                    this.get().logo = updatedObject.logo
-                    this.get().description = updatedObject.description
-                    this.get().email = updatedObject.email
-                }
+            .apply {
+                this.get().name = updatedObject.name
+                this.get().logo = updatedObject.logo
+                this.get().description = updatedObject.description
+                this.get().email = updatedObject.email
+            }
 
         return Company.parse(companyRepository.save(company.get()))
     }

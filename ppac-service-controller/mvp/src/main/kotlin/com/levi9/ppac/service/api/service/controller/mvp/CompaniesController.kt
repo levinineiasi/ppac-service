@@ -85,6 +85,23 @@ class CompaniesController(
     }
 
 
+    @Operation(
+        summary = "Add an opening to a company",
+        description = "Add an opening to company specified by it's id"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    schema = Schema(implementation = Opening::class)
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
+    )
     @PostMapping("{companyId}/openings")
     fun addOpening(
         @RequestHeader("AccessCode") accessCode: Int,
@@ -97,7 +114,7 @@ class CompaniesController(
         return companyService?.let {
             val responseDto = it.addOpening(companyId, opening)
             ResponseEntity(responseDto, HttpStatus.CREATED)
-        }!!
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
 

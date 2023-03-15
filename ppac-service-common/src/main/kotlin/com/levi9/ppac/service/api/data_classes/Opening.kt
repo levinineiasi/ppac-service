@@ -3,35 +3,41 @@ package com.levi9.ppac.service.api.data_classes
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import io.swagger.v3.oas.annotations.media.Schema
+import org.springframework.lang.Nullable
 import java.util.*
-
-
+import javax.validation.constraints.NotNull
 @Schema(description = "Model for an opening.")
 data class Opening(
 
-        val id: UUID,
+    var id: UUID,
 
-        var keyWords: List<String>,
+    var keyWords: List<String>,
 
-        var customKeyWords: List<String>,
+    var customKeyWords: List<String>,
 
-        var hasTechnicalInterview: Boolean,
+    @NotNull
+    var hasTechnicalInterview: Boolean,
 
-        var hasTechnicalTest: Boolean,
+    @NotNull
+    var hasTechnicalTest: Boolean,
 
-        var periodCount: Int,
+    @NotNull
+    var periodCount: Int,
 
-        var periodType: PeriodType = PeriodType.WEEKS,
+    var periodType: PeriodType = PeriodType.WEEKS,
 
-        var openPositions: Int,
+    @NotNull
+    var openPositions: Int,
 
-        var acceptOnClosingOpportunity: Boolean,
+    @NotNull
+    var acceptOnClosingOpportunity: Boolean,
 
-        var signAgreement: Boolean,
+    @NotNull
+    var signAgreement: Boolean,
 
-        var trainers: List<Trainer>,
+    var trainers: List<Trainer>,
 
-        var available: Boolean = true,
+    var available: Boolean = true,
 ) {
     var title: String? = null
 
