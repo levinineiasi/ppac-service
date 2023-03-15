@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
@@ -49,13 +50,38 @@ class CompaniesController(
         ]
     )
     @GetMapping("")
-    fun findAll(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
+    fun findAll(): ResponseEntity<Any> {
 
         logger.info("Returning all companies from database.")
 
         return companyService?.let {
             ResponseEntity(it.findAll(), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
+    @GetMapping("/{id}")
+    fun findById(@PathVariable id: UUID): ResponseEntity<Any> {
+
+        logger.info("Returning company by id from database.")
+
+        return companyService?.let {
+            ResponseEntity(it.findById(id), HttpStatus.OK)
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    }
+
+    @PutMapping("/{id}")
+    fun updateById(
+        @RequestHeader("AccessCode") accessCode: Int,
+        @PathVariable id: UUID,
+        @RequestBody updatedCompany: Company
+    ): ResponseEntity<Any> {
+
+        logger.info("Update company with id $id.")
+
+        return companyService?.let {
+            val responseDto = it.updateById(id, updatedCompany)
+            ResponseEntity(responseDto, HttpStatus.CREATED)
+        }!!
     }
 
 

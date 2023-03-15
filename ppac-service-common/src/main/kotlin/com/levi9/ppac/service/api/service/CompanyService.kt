@@ -5,4 +5,6 @@ import java.util.UUID
 
 interface CompanyService<T> : CrudService<T> {
     fun addOpening(id: UUID, opening: Opening): Opening
+    fun findById(id: UUID): T
+    fun updateById(id: UUID, updatedObject: T): T
 }

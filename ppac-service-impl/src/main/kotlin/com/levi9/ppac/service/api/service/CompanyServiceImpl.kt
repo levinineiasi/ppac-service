@@ -3,6 +3,7 @@ package com.levi9.ppac.service.api.service
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.data_classes.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
+import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -18,8 +19,10 @@ import java.util.*
 class CompanyServiceImpl(
     private val securityContext: SecurityContext<Int>,
     private val companyRepository: CompanyRepository,
-    private val codeRepository: CodeRepository
+    private val codeRepository: CodeRepository,
+    private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
+
     @Transactional
     override fun addOpening(id: UUID, opening: Opening): Opening {
 
@@ -28,12 +31,35 @@ class CompanyServiceImpl(
 
     @Transactional
     override fun findAll(): List<Company> {
+        return companyRepository.findAll().map { companyEntity ->
+            val activeOpenings = companyEntity.openings?.filter { it.available }
+            companyEntity.openings = activeOpenings
+            Company.parse(companyEntity) }
+    }
 
-        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
+    @Transactional
+    override fun findById(id: UUID): Company {
+        val company = companyRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val activeOpenings = company.openings?.filter { it.available }
+        company.openings = activeOpenings
+        return Company.parse(company)
+    }
+
+    @Transactional
+    override fun updateById(id: UUID, updatedObject: Company): Company {
+        if (!companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        return companyRepository.findAll().map { Company.parse(it) }
+        val company = companyRepository.findById(id)
+                .apply{
+                    this.get().name = updatedObject.name
+                    this.get().logo = updatedObject.logo
+                    this.get().description = updatedObject.description
+                    this.get().email = updatedObject.email
+                }
+
+        return Company.parse(companyRepository.save(company.get()))
     }
 
     @Transactional
