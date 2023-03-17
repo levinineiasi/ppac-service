@@ -30,6 +30,5 @@ data class CompanyEntity(
     var email: String? = null
 
     @OneToMany(cascade = [CascadeType.ALL])
-    @JoinColumn(name = "ID", referencedColumnName = "ID")
-    var openings: List<OpeningEntity>? = null
+    var openings: List<OpeningEntity> = emptyList()
 }

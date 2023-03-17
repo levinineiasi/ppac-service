@@ -10,9 +10,9 @@ import javax.persistence.Table
 @Table(name = "TRAINERS")
 class TrainerEntity(
 
-        @Id
-        @Column(name = "ID")
-        var id: UUID,
+    @Id
+    @Column(name = "ID")
+    var id: UUID,
 
     @Column(name = "NAME", nullable = false)
     var name: String,
@@ -23,7 +23,7 @@ class TrainerEntity(
     @Column(name = "LINKEDIN_URL", nullable = true)
     var linkedinURL: String,
 
-        ) {
+    ) {
 
     @Column(name = "AVATAR", nullable = true)
     var avatar: String? = null
