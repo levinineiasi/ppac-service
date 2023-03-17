@@ -8,11 +8,10 @@ import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 import org.webjars.NotFoundException
 import java.util.*
+import javax.naming.AuthenticationException
 import javax.transaction.Transactional
 import kotlin.random.Random
 
@@ -26,7 +25,7 @@ class CodeServiceImpl(
 
     override fun findAll(): List<CompanyCode> {
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
         return companyCodeRepository.findAll().map { CompanyCode.parse(it) }
     }
@@ -35,12 +34,12 @@ class CodeServiceImpl(
     override fun createCompanyCode(displayName: String): CompanyCode {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
-        var value = Random.nextInt(100000, 999999);
+        var value = Random.nextInt(100000, 999999)
         while (codeRepository.isCodeIdPresent(value)) {
-            value = Random.nextInt(100000, 999999);
+            value = Random.nextInt(100000, 999999)
         }
 
         logger.info("Generated $value value for $displayName company.")
@@ -56,7 +55,7 @@ class CodeServiceImpl(
         logger.info("Inserted companyEntity with id ${companyEntity.id} into database.")
 
         val companyCodeDTO =
-            CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity));
+            CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity))
         val companyCodeEntity = companyCodeRepository.save(CompanyCode.parse(companyCodeDTO))
 
         logger.info("Inserted companyCodeEntity with id ${companyCodeEntity.id} into database.")
@@ -64,18 +63,22 @@ class CodeServiceImpl(
         return CompanyCode.parse(companyCodeEntity)
     }
 
-    override fun isAdminCode(accessCode: Int): Boolean {
-        return  codeRepository.isAdminCode(accessCode)
+    override fun checkAdminCode(){
+        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
+            throw AuthenticationException()
+        }
     }
 
-    override fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean {
-        return codeRepository.isCompanyCode(accessCode, companyId)
+     override fun checkCompanyCode(companyId: UUID) {
+        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), companyId)) {
+            throw AuthenticationException()
+        }
     }
 
     @Transactional
     override fun deleteById(id: UUID) {
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         companyCodeRepository.findById(id).orElseThrow { NotFoundException("The resource was not found") }

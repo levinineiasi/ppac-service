@@ -6,7 +6,7 @@ interface CodeService<T> : CrudService<T> {
 
     fun createCompanyCode(displayName: String): T
 
-    fun isAdminCode(accessCode: Int): Boolean
+    fun checkAdminCode()
 
-    fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean
+    fun checkCompanyCode(companyId: UUID)
 }

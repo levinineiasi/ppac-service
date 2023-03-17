@@ -4,6 +4,7 @@ import com.levi9.ppac.service.api.data_classes.CompanyCode
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.CodeService
+import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.info.Info
@@ -16,8 +17,12 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/v1/codes")
@@ -25,6 +30,7 @@ import java.util.*
 @Suppress("MagicNumber")
 @OpenAPIDefinition(info = Info(title = "PPAC API - codes endpoint"))
 @Tag(name = "Codes Controller")
+@Validated
 class CodesController(
     private val securityContext: SecurityContext<Int>,
     private val codeService: CodeService<CompanyCode>?
@@ -40,14 +46,14 @@ class CodesController(
         ]
     )
     @GetMapping("/checkAdminCode")
-    fun checkAdminCode(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
-        if (securityContext.accessCodeIsSet()) {
-            val isAdminCode = codeService?.isAdminCode(securityContext.getAccessCode())
-            if (isAdminCode!!) {
-                return ResponseEntity(HttpStatus.OK)
-            }
-        }
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+    fun checkAdminCode(
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Header AccessCode invalid format.")
+        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        accessCode: Int
+    ): ResponseEntity<Any> {
+            codeService?.checkAdminCode()
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
     }
 
     @Operation(
@@ -62,16 +68,14 @@ class CodesController(
     )
     @GetMapping("/checkCompanyCode/{companyId}")
     fun checkCompanyCode(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Header AccessCode invalid format.")
+        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        accessCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
-        if (securityContext.accessCodeIsSet()) {
-            val isCompanyCode = codeService?.isCompanyCode(securityContext.getAccessCode(), companyId)
-            if (isCompanyCode!!) {
-                return ResponseEntity(HttpStatus.OK)
-            }
-        }
-        return ResponseEntity(HttpStatus.UNAUTHORIZED)
+         codeService?.checkCompanyCode(companyId)
+        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
     }
 
     @Operation(
@@ -92,13 +96,17 @@ class CodesController(
         ]
     )
     @GetMapping("")
-    fun findAll(@RequestHeader("AccessCode") accessCode: Int): ResponseEntity<Any> {
+    fun findAll(
+        @Min(value = 100000, message = "Header AccessCode invalid.")
+        @Max(value = 999999, message = "Header AccessCode invalid.")
+        @RequestHeader("AccessCode") accessCode: Int
+    ): ResponseEntity<Any> {
 
         logger.info("Returning all company codes from database.")
 
         val listCompanies = codeService!!.findAll()
         if (listCompanies.isEmpty()) {
-            return ResponseEntity("The requested resource has no content.", HttpStatus.NO_CONTENT)
+            return ResponseEntity(ResponseMessages.NO_CONTENT, HttpStatus.NO_CONTENT)
         }
         return ResponseEntity(listCompanies, HttpStatus.OK)
     }
@@ -123,8 +131,13 @@ class CodesController(
     )
     @PostMapping("/{displayName}")
     fun createCode(
-        @RequestHeader("AccessCode") accessCode: Int,
-        @PathVariable displayName: String
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Header AccessCode invalid format.")
+        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        accessCode: Int,
+        @PathVariable
+        @Size(min = 2, max = 10, message = "Company name invalid length.")
+        displayName: String
     ): ResponseEntity<Any> {
 
         logger.info("Create company code for $displayName company.")

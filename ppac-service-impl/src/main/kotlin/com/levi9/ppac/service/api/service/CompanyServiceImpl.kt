@@ -6,11 +6,10 @@ import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 import java.util.*
+import javax.naming.AuthenticationException
 
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
@@ -23,7 +22,7 @@ class CompanyServiceImpl(
     override fun findAll(): List<Company> {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         return companyRepository.findAll().map { Company.parse(it) }
@@ -33,7 +32,7 @@ class CompanyServiceImpl(
     override fun deleteById(id: UUID) {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         companyRepository.findByIdOrNull(id)?.let {
