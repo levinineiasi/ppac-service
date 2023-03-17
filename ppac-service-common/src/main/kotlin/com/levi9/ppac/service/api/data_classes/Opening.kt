@@ -38,6 +38,7 @@ data class Opening(
     var trainers: List<Trainer>,
 
     var available: Boolean = true,
+
 ) {
     var title: String? = null
 
@@ -66,7 +67,7 @@ data class Opening(
                     elem.acceptOnClosingOpportunity,
                     elem.signAgreement,
                     elem.trainers.map { Trainer.parse(it) },
-                    elem.available
+                    elem.available,
             ).apply {
                 title = elem.title
                 description = elem.description
@@ -90,7 +91,7 @@ data class Opening(
                     elem.acceptOnClosingOpportunity,
                     elem.signAgreement,
                     elem.trainers.map { Trainer.parse(it) } ,
-                    elem.available
+                    elem.available ,
             ).apply {
                 title = elem.title
                 description = elem.description

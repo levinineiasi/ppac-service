@@ -1,18 +1,10 @@
 package com.levi9.ppac.service.api.domain
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import com.levi9.ppac.service.api.enums.PeriodType
+import net.minidev.json.annotate.JsonIgnore
 import java.util.*
-import javax.persistence.CascadeType
-import javax.persistence.CollectionTable
-import javax.persistence.Column
-import javax.persistence.ElementCollection
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.Id
-import javax.persistence.JoinColumn
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "OPENINGS")
@@ -58,8 +50,9 @@ data class OpeningEntity(
         @JoinColumn(name = "ID", referencedColumnName = "ID")
         var trainers: List<TrainerEntity>,
 
-    @Column(name = "AVAILABLE", nullable = false)
-    var available: Boolean = true,
+        @Column(name = "AVAILABLE", nullable = false)
+        var available: Boolean = true,
+
 ) {
 
     @Column(name = "TITLE", nullable = true)

@@ -1,6 +1,7 @@
 package com.levi9.ppac.service.api.data_classes
 
 import com.levi9.ppac.service.api.domain.CompanyEntity
+import com.levi9.ppac.service.api.domain.OpeningEntity
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 import javax.validation.constraints.Email
@@ -70,7 +71,7 @@ data class Company(
                 logo = elem.logo
                 description = elem.description
                 email = elem.email
-                openings = elem.openings?.map { Opening.parse(it) }
+                openings = elem.openings?.map { Opening.parse(it) }!!
             }
         }
     }
