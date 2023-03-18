@@ -1,9 +1,11 @@
 package com.levi9.ppac.service.api.domain
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import java.util.*
 import javax.persistence.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
+import kotlin.collections.ArrayList
 
 @Entity
 @Table(name = "COMPANIES")
@@ -29,6 +31,7 @@ data class CompanyEntity(
     @Email(message = "The company email should be a valid one.")
     var email: String? = null
 
+    //@JsonManagedReference
     @OneToMany(cascade = [CascadeType.ALL])
-    var openings: List<OpeningEntity> = emptyList()
+    var openings: List<OpeningEntity> = ArrayList<OpeningEntity>()
 }

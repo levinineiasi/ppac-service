@@ -29,24 +29,24 @@ class CompanyServiceImpl(
 ) : CompanyService<Company> {
 
     @Transactional
-    override fun addOpening(companyId: UUID, opening: Opening): Opening {
+    override fun addOpening(id: UUID, opening: Opening): Opening {
 
-        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), companyId)) {
+        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
         opening.trainers.forEach {
             trainerRepository.findByIdOrNull(it.id) ?: trainerRepository.save(Trainer.parse(it.apply {
-                id = UUID.randomUUID()
+                this.id = UUID.randomUUID()
             }))
         }
+        val savedOpening = openingRepository.save(Opening.parse(opening.apply { this.id = UUID.randomUUID() }))
 
-        return Opening.parse(
-            openingRepository.save(
-                Opening.parse(
-                    opening.apply { id = UUID.randomUUID() })
-            )
-        )
+        val company = companyRepository.findByIdOrNull(id)!!
+        company.openings += savedOpening
+        companyRepository.save(company)
+
+        return Opening.parse(savedOpening)
     }
 
     @Transactional
@@ -60,7 +60,7 @@ class CompanyServiceImpl(
 
     @Transactional
     override fun findById(id: UUID): Company {
-        val company = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        val company = companyRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
         val activeOpenings = company.openings?.filter { it.available }
         company.openings = activeOpenings
         return Company.parse(company)
