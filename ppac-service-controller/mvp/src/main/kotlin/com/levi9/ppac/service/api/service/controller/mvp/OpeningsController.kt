@@ -56,7 +56,7 @@ class OpeningsController(
     ): ResponseEntity<Any> {
 
         return openingService?.let {
-            val responseDto = it.availability(openingId, available)
+            val responseDto = it.changeAvailability(openingId, available)
             ResponseEntity(responseDto, HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }

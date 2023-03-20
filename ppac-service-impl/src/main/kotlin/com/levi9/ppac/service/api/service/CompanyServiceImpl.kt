@@ -35,11 +35,6 @@ class CompanyServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        opening.trainers.forEach {
-            trainerRepository.findByIdOrNull(it.id) ?: trainerRepository.save(Trainer.parse(it.apply {
-                this.id = UUID.randomUUID()
-            }))
-        }
         val savedOpening = openingRepository.save(Opening.parse(opening.apply { this.id = UUID.randomUUID() }))
 
         val company = companyRepository.findByIdOrNull(id)!!
@@ -60,7 +55,7 @@ class CompanyServiceImpl(
 
     @Transactional
     override fun findById(id: UUID): Company {
-        val company = companyRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val company = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         val activeOpenings = company.openings?.filter { it.available }
         company.openings = activeOpenings
         return Company.parse(company)
