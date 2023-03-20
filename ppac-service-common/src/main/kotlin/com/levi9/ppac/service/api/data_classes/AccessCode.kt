@@ -5,6 +5,8 @@ import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.validator.ValidCodeType
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
@@ -35,21 +37,32 @@ data class AccessCode(
         type = "String",
         defaultValue = "COMPANY_CODE",
         nullable = true
-        )
+    )
     @ValidCodeType
     var type: CodeType? = CodeType.COMPANY_CODE
 
     companion object {
         fun parse(elem: AccessCodeEntity): AccessCode {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(elem)
+            if (violations.isNotEmpty()) {
+                println("sa")
+            }
             return AccessCode(elem.id, elem.value).apply {
-               type = elem.type
+                type = elem.type
             }
         }
 
         fun parse(elem: AccessCode): AccessCodeEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(elem)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
+            }
             return AccessCodeEntity(elem.id, elem.value).apply {
                 type = elem.type
             }
+
         }
     }
 }

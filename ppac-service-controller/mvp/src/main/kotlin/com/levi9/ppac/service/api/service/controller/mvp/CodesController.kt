@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
-import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/v1/codes")
@@ -32,7 +31,6 @@ import javax.validation.constraints.Size
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
-    private val securityContext: SecurityContext<Int>,
     private val codeService: CodeService<CompanyCode>?
 ) {
     @Operation(
@@ -136,7 +134,7 @@ class CodesController(
         @Max(value = 999999, message = "Header AccessCode invalid format.")
         accessCode: Int,
         @PathVariable
-        @Size(min = 2, max = 10, message = "Company name invalid length.")
+//        @Size(min = 2, max = 10, message = "Company name invalid length.")
         displayName: String
     ): ResponseEntity<Any> {
 

@@ -15,7 +15,7 @@ data class CompanyEntity(
     var id: UUID,
 
     @Column(name = "DISPLAY_NAME", nullable = false)
-    @Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characters.")
+    @get:Size(min = 2, max = 30, message = "The displayed name length should have between 2 and 30 characterss.")
     var displayName: String
 ) {
 

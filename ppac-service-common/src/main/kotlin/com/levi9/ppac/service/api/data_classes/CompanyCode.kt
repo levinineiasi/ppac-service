@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
+import javax.validation.Validation
 
 @Schema(description = "Model for a company code.")
 data class CompanyCode(
@@ -26,10 +27,20 @@ data class CompanyCode(
 
     companion object {
         fun parse(elem: CompanyCodeEntity): CompanyCode {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(elem)
+            if (violations.isNotEmpty()) {
+                println("sa")
+            }
             return CompanyCode(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }
 
         fun parse(elem: CompanyCode): CompanyCodeEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(elem)
+            if (violations.isNotEmpty()) {
+                println("sa")
+            }
             return CompanyCodeEntity(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }
     }

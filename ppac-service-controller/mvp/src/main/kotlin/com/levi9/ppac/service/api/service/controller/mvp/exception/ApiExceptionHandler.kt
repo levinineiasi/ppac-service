@@ -76,6 +76,7 @@ class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage)
     }
 
+
     @ExceptionHandler(DataIntegrityViolationException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
     fun handleExceptionDataIntegrityViolationException(ex: DataIntegrityViolationException): ResponseEntity<String> {

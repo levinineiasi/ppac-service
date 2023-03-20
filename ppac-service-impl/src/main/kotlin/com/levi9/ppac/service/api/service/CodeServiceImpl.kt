@@ -30,7 +30,6 @@ class CodeServiceImpl(
         return companyCodeRepository.findAll().map { CompanyCode.parse(it) }
     }
 
-    @Transactional
     override fun createCompanyCode(displayName: String): CompanyCode {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
