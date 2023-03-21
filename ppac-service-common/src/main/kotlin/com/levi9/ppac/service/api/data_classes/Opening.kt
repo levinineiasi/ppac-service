@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull
 @Schema(description = "Model for an opening.")
 data class Opening(
 
-    var id: UUID,
+    var id: UUID = UUID.randomUUID(),
 
     var keyWords: List<String>,
 

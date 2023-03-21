@@ -7,4 +7,5 @@ import java.util.UUID
 
 interface CompanyRepository : JpaRepository<CompanyEntity, UUID> {
     fun findFirstByOpenings_Id(openingId: UUID): CompanyEntity?
+    fun findCompanyEntitiesByOpenings_Trainers_Id(trainerId:UUID): List<CompanyEntity>
 }

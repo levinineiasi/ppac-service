@@ -20,7 +20,6 @@ class OpeningServiceImpl(
     private val companyRepository: CompanyRepository
 ) : OpeningService<Opening> {
 
-    //TODO U can update trainer's details even if u are from other company when updating your opening
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {
 
@@ -33,6 +32,15 @@ class OpeningServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
+        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpenings_Trainers_Id(it.id) }
+            .flatten()
+            .toSet()
+
+        println(companySet)
+
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id))
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
         return Opening.parse(
             openingRepository.save(
                 Opening.parse(
@@ -44,7 +52,8 @@ class OpeningServiceImpl(
     @Transactional
     override fun changeAvailability(openingId: UUID, available: Boolean): Opening {
 
-        openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        val openingEntity =
+            openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val company =
             companyRepository.findFirstByOpenings_Id(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
@@ -53,10 +62,10 @@ class OpeningServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        openingRepository.updateAvailability(available, openingId)
+        openingEntity.available = available
 
         return Opening.parse(
-            openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            openingRepository.save(openingEntity)
         )
 
     }

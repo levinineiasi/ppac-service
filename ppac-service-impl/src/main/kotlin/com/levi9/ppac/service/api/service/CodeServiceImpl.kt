@@ -67,7 +67,7 @@ class CodeServiceImpl(
     }
 
     override fun isAdminCode(accessCode: Int): Boolean {
-        return  codeRepository.isAdminCode(accessCode)
+        return codeRepository.isAdminCode(accessCode)
     }
 
     override fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean {

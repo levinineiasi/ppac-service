@@ -15,13 +15,9 @@ data class OpeningEntity(
     var id: UUID,
 
     @ElementCollection
-    @CollectionTable(name = "KEYWORDS", joinColumns = [JoinColumn(name = "id")])
-    @Column(name = "KEYWORDS")
     var keyWords: List<String>,
 
     @ElementCollection
-    @CollectionTable(name = "CUSTOM_KEYWORDS", joinColumns = [JoinColumn(name = "id")])
-    @Column(name = "CUSTOM_KEYWORDS")
     var customKeyWords: List<String>,
 
     @Column(name = "HAS_TECHNICAL_INTERVIEW", nullable = false)
@@ -49,10 +45,10 @@ data class OpeningEntity(
     @OneToMany(cascade = [CascadeType.ALL])
     var trainers: List<TrainerEntity>,
 
-        @Column(name = "AVAILABLE", nullable = false)
-        var available: Boolean = true,
+    @Column(name = "AVAILABLE", nullable = false)
+    var available: Boolean = true,
 
-) {
+    ) {
 
     @Column(name = "TITLE", nullable = true)
     var title: String? = null

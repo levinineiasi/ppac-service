@@ -7,7 +7,7 @@ import java.util.*
 @Schema(description = "Model for a trainer.")
 data class Trainer(
 
-    var id: UUID,
+    var id: UUID = UUID.randomUUID(),
 
     var name: String,
 

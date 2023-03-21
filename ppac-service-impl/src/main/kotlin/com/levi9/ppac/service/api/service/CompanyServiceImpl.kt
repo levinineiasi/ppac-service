@@ -2,12 +2,10 @@ package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.data_classes.Opening
-import com.levi9.ppac.service.api.data_classes.Trainer
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
-import com.levi9.ppac.service.api.repository.TrainerRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.repository.findByIdOrNull
@@ -24,7 +22,6 @@ class CompanyServiceImpl(
     private val companyRepository: CompanyRepository,
     private val codeRepository: CodeRepository,
     private val openingRepository: OpeningRepository,
-    private val trainerRepository: TrainerRepository,
     private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
 
@@ -34,6 +31,15 @@ class CompanyServiceImpl(
         if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
+
+        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpenings_Trainers_Id(it.id) }
+            .flatten()
+            .toSet()
+
+        println(companySet)
+
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val savedOpening = openingRepository.save(Opening.parse(opening.apply { this.id = UUID.randomUUID() }))
 
