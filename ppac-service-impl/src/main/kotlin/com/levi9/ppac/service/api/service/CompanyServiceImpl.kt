@@ -39,13 +39,15 @@ class CompanyServiceImpl(
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        val openingEntity = openingRepository.save(Opening.parse(opening.apply { this.id = UUID.randomUUID() }))
+        val openingDTO = opening.apply { this.id = UUID.randomUUID() }
+        val openingEntity = Opening.parse(openingDTO)
+        val savedOpening = openingRepository.save(openingEntity)
 
         val companyEntity = companyRepository.findByIdOrNull(id)!!
-        companyEntity.openings += openingEntity
+        companyEntity.openings += savedOpening
         companyRepository.save(companyEntity)
 
-        return Opening.parse(openingEntity)
+        return Opening.parse(savedOpening)
     }
 
     @Transactional
