@@ -52,6 +52,11 @@ data class Company(
     @Email(message = "The company email should be a valid one.")
     var email: String? = null
 
+    @field:Schema(
+            description = "List of openings",
+            type = "List<Opening>",
+            nullable = true
+    )
     var openings: List<Opening>? = null
 
 

@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,6 +30,7 @@ import javax.validation.Valid
 @RequestMapping("/api/v1/companies")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 @Suppress("MagicNumber")
+@Tag(name = "Companies Controller")
 class CompaniesController(
     private val companyService: CompanyService<Company>?
 ) {
@@ -46,7 +48,6 @@ class CompaniesController(
                     array = ArraySchema(schema = Schema(implementation = Company::class))
                 )]
             ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
             ApiResponse(responseCode = "404", description = "Not Found")
         ]
     )
@@ -59,7 +60,22 @@ class CompaniesController(
             ResponseEntity(it.findAll(), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
-
+    @Operation(
+            summary = "Retrieves company by id",
+            description = "Returns a company by id"
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(
+                        responseCode = "200",
+                        content = [Content(
+                                mediaType = "application/json",
+                                array = ArraySchema(schema = Schema(implementation = Company::class))
+                        )]
+                ),
+                ApiResponse(responseCode = "404", description = "Not Found")
+            ]
+    )
     @GetMapping("/{id}")
     fun findById(@PathVariable id: UUID): ResponseEntity<Any> {
 
@@ -70,6 +86,23 @@ class CompaniesController(
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
+    @Operation(
+            summary = "Update a company",
+            description = "Update a company"
+    )
+    @ApiResponses(
+            value = [
+                ApiResponse(
+                        responseCode = "201",
+                        content = [Content(
+                                mediaType = "application/json",
+                                array = ArraySchema(schema = Schema(implementation = Company::class))
+                        )]
+                ),
+                ApiResponse(responseCode = "401", description = "Unauthorized"),
+                ApiResponse(responseCode = "404", description = "Not Found")
+            ]
+    )
     @PutMapping("/{id}")
     fun updateById(
         @RequestHeader("AccessCode") accessCode: Int,
@@ -88,12 +121,12 @@ class CompaniesController(
 
     @Operation(
         summary = "Add an opening to a company",
-        description = "Add an opening to company specified by it's id"
+        description = "Add an opening to company specified by its id"
     )
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200",
+                responseCode = "201",
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(implementation = Opening::class)
@@ -126,11 +159,7 @@ class CompaniesController(
     @ApiResponses(
         value = [
             ApiResponse(
-                responseCode = "200",
-                content = [Content(
-                    mediaType = "application/json",
-                    schema = Schema(implementation = Company::class)
-                )]
+                responseCode = "204"
             ),
             ApiResponse(responseCode = "401", description = "Unauthorized"),
             ApiResponse(responseCode = "404", description = "Not Found")
