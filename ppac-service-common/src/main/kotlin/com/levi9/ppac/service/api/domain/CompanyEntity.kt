@@ -30,7 +30,7 @@ data class CompanyEntity(
     var description: String? = null
 
     @Column(name = "EMAIL", nullable = true)
-    @Size(min = 2, max = 50, message = "The email length should have between 2 and 300 characters.")
+    @Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
     @Email(message = "The company email should be a valid one.")
     var email: String? = null
 

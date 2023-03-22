@@ -54,7 +54,7 @@ data class Opening(
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "dd-MM-yyyy")
-    @FutureOrPresent(message = "Date should be future or present (DTO)")
+    @FutureOrPresent(message = "Date should be from future or present")
     var startDate: LocalDate? = null
 
     companion object {

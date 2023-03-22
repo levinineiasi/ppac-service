@@ -74,6 +74,6 @@ data class OpeningEntity(
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)
-    @FutureOrPresent(message = "Date should be future or present")
+    @FutureOrPresent(message = "Date should be from future or present")
     var startDate: LocalDate? = null
 }
