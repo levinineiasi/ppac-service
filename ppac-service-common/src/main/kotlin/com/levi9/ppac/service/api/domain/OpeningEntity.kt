@@ -1,10 +1,18 @@
 package com.levi9.ppac.service.api.domain
 
-import com.fasterxml.jackson.annotation.JsonBackReference
 import com.levi9.ppac.service.api.enums.PeriodType
-import net.minidev.json.annotate.JsonIgnore
+import java.time.LocalDate
 import java.util.*
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Column
+import javax.persistence.ElementCollection
+import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.Id
+import javax.persistence.OneToMany
+import javax.persistence.Table
+import javax.validation.constraints.FutureOrPresent
 
 @Entity
 @Table(name = "OPENINGS")
@@ -66,5 +74,6 @@ data class OpeningEntity(
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)
-    var startDate: String? = null
+    @FutureOrPresent(message = "Date should be future or present")
+    var startDate: LocalDate? = null
 }

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1/companies")
@@ -106,7 +107,7 @@ class CompaniesController(
     fun addOpening(
         @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable companyId: UUID,
-        @RequestBody opening: Opening
+        @RequestBody @Valid opening: Opening
     ): ResponseEntity<Any> {
 
         logger.info("Create an opening for company with id $companyId.")

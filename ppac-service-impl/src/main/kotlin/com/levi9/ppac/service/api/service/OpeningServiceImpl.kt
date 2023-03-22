@@ -36,8 +36,6 @@ class OpeningServiceImpl(
             .flatten()
             .toSet()
 
-        println(companySet)
-
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id))
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 

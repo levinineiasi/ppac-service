@@ -1,11 +1,14 @@
 package com.levi9.ppac.service.api.data_classes
 
+import com.fasterxml.jackson.annotation.JsonFormat
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import io.swagger.v3.oas.annotations.media.Schema
-import org.springframework.lang.Nullable
+import java.time.LocalDate
 import java.util.*
+import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.NotNull
+
 @Schema(description = "Model for an opening.")
 data class Opening(
 
@@ -39,7 +42,7 @@ data class Opening(
 
     var available: Boolean = true,
 
-) {
+    ) {
     var title: String? = null
 
     var description: String? = null
@@ -50,24 +53,26 @@ data class Opening(
 
     var recruitmentProcess: String? = null
 
-    var startDate: String? = null
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @FutureOrPresent(message = "Date should be future or present (DTO)")
+    var startDate: LocalDate? = null
 
     companion object {
 
         fun parse(elem: OpeningEntity): Opening {
             return Opening(
-                    elem.id,
-                    elem.keyWords,
-                    elem.customKeyWords,
-                    elem.hasTechnicalInterview,
-                    elem.hasTechnicalTest,
-                    elem.periodCount,
-                    elem.periodType,
-                    elem.openPositions,
-                    elem.acceptOnClosingOpportunity,
-                    elem.signAgreement,
-                    elem.trainers.map { Trainer.parse(it) },
-                    elem.available,
+                elem.id,
+                elem.keyWords,
+                elem.customKeyWords,
+                elem.hasTechnicalInterview,
+                elem.hasTechnicalTest,
+                elem.periodCount,
+                elem.periodType,
+                elem.openPositions,
+                elem.acceptOnClosingOpportunity,
+                elem.signAgreement,
+                elem.trainers.map { Trainer.parse(it) },
+                elem.available,
             ).apply {
                 title = elem.title
                 description = elem.description
@@ -80,18 +85,18 @@ data class Opening(
 
         fun parse(elem: Opening): OpeningEntity {
             return OpeningEntity(
-                    elem.id,
-                    elem.keyWords,
-                    elem.customKeyWords,
-                    elem.hasTechnicalInterview,
-                    elem.hasTechnicalTest,
-                    elem.periodCount,
-                    elem.periodType,
-                    elem.openPositions,
-                    elem.acceptOnClosingOpportunity,
-                    elem.signAgreement,
-                    elem.trainers.map { Trainer.parse(it) } ,
-                    elem.available ,
+                elem.id,
+                elem.keyWords,
+                elem.customKeyWords,
+                elem.hasTechnicalInterview,
+                elem.hasTechnicalTest,
+                elem.periodCount,
+                elem.periodType,
+                elem.openPositions,
+                elem.acceptOnClosingOpportunity,
+                elem.signAgreement,
+                elem.trainers.map { Trainer.parse(it) },
+                elem.available,
             ).apply {
                 title = elem.title
                 description = elem.description

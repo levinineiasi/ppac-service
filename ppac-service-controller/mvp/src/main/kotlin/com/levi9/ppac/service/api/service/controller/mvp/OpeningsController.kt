@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1/openings")
@@ -38,7 +39,7 @@ class OpeningsController(
     fun updateById(
         @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable openingId: UUID,
-        @RequestBody opening: Opening
+        @RequestBody @Valid opening: Opening
     ): ResponseEntity<Any> {
 
         return openingService?.let {
