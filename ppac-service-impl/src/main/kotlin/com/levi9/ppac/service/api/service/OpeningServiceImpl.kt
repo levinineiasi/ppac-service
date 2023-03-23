@@ -26,13 +26,13 @@ class OpeningServiceImpl(
         openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val company =
-            companyRepository.findFirstByOpenings_Id(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpenings_Trainers_Id(it.id) }
+        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
             .flatten()
             .toSet()
 
@@ -54,7 +54,7 @@ class OpeningServiceImpl(
             openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val company =
-            companyRepository.findFirstByOpenings_Id(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)

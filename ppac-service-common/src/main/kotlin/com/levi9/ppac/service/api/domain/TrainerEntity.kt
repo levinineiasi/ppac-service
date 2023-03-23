@@ -20,10 +20,9 @@ class TrainerEntity(
     @Column(name = "DESCRIPTION", nullable = false)
     var description: String,
 
-    @Column(name = "LINKEDIN_URL", nullable = true)
-    var linkedinURL: String,
-
     ) {
+    @Column(name = "LINKEDIN_URL", nullable = true)
+    var linkedinURL: String? = null
 
     @Column(name = "AVATAR", nullable = true)
     var avatar: String? = null

@@ -7,7 +7,6 @@ import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
-import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
@@ -22,8 +21,7 @@ class CodeServiceImpl(
     val securityContext: SecurityContext<Int>,
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository,
-    val companyCodeRepository: CompanyCodeRepository,
-    val openingRepository: OpeningRepository
+    val companyCodeRepository: CompanyCodeRepository
 ) : CodeService<CompanyCode> {
 
     override fun findAll(): List<CompanyCode> {

@@ -35,5 +35,5 @@ data class CompanyEntity(
     var email: String? = null
 
     @OneToMany(cascade = [CascadeType.ALL])
-    var openings: List<OpeningEntity> = ArrayList<OpeningEntity>()
+    var openings: List<OpeningEntity> = ArrayList()
 }

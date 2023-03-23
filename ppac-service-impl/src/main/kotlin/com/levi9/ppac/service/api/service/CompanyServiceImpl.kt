@@ -32,7 +32,7 @@ class CompanyServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpenings_Trainers_Id(it.id) }
+        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
             .flatten()
             .toSet()
 
@@ -53,18 +53,18 @@ class CompanyServiceImpl(
     @Transactional
     override fun findAll(): List<Company> {
         return companyRepository.findAll().map { companyEntity ->
-            val activeOpenings = companyEntity.openings?.filter { it.available }
-            companyEntity.openings = activeOpenings
-            Company.parse(companyEntity)
+            val activeOpenings = companyEntity.openings.filter { it.available }
+            val companyEntityWithActiveOpenings = companyEntity.copy().apply { openings = activeOpenings }
+            Company.parse(companyEntityWithActiveOpenings)
         }
     }
 
     @Transactional
     override fun findById(id: UUID): Company {
-        val company = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
-        val activeOpenings = company.openings?.filter { it.available }
-        company.openings = activeOpenings
-        return Company.parse(company)
+        val companyEntity = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        val activeOpenings = companyEntity.openings.filter { it.available }
+        val companyEntityWithActiveOpenings = companyEntity.copy().apply { openings = activeOpenings }
+        return Company.parse(companyEntityWithActiveOpenings)
     }
 
     @Transactional

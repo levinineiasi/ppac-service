@@ -2,7 +2,6 @@ package com.levi9.ppac.service.api.data_classes
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
-import com.levi9.ppac.service.api.domain.OpeningEntity
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 

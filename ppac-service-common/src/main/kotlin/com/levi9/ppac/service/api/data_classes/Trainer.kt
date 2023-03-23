@@ -23,17 +23,17 @@ data class Trainer(
             type = "String",
             nullable = false
     )
-    var description: String,
+    var description: String
 
+    ) {
     @field:Schema(
             description = "The trainer's Linkedin url",
             example = "https://www.linkedin.com/in/popescu-ion",
             type = "String",
-            nullable = false
+            nullable = true
     )
-    var linkedinURL: String,
+    var linkedinURL: String? = null
 
-    ) {
     @field:Schema(
             description = "The trainer's avatar",
             type = "String",
@@ -47,8 +47,8 @@ data class Trainer(
                 elem.id,
                 elem.name,
                 elem.description,
-                elem.linkedinURL
             ).apply {
+                linkedinURL = elem.linkedinURL
                 avatar = elem.avatar
             }
         }
@@ -58,8 +58,8 @@ data class Trainer(
                 elem.id,
                 elem.name,
                 elem.description,
-                elem.linkedinURL
             ).apply {
+                linkedinURL = elem.linkedinURL
                 avatar = elem.avatar
             }
         }

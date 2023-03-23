@@ -57,7 +57,7 @@ data class Company(
             type = "List<Opening>",
             nullable = true
     )
-    var openings: List<Opening>? = null
+    var openings: List<Opening>? = emptyList()
 
 
     companion object {
