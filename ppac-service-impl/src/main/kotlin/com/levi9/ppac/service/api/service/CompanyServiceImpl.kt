@@ -28,7 +28,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun addOpening(id: UUID, opening: Opening): Opening {
 
-        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
@@ -69,7 +69,8 @@ class CompanyServiceImpl(
 
     @Transactional
     override fun updateById(id: UUID, updatedObject: Company): Company {
-        if (!companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
+
+        require(companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
@@ -87,7 +88,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun deleteById(id: UUID) {
 
-        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
+        require(codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 

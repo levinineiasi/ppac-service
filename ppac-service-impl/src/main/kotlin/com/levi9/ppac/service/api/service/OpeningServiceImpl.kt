@@ -28,7 +28,7 @@ class OpeningServiceImpl(
         val company =
             companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
@@ -36,8 +36,9 @@ class OpeningServiceImpl(
             .flatten()
             .toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id))
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+        }
 
         return Opening.parse(
             openingRepository.save(
@@ -56,7 +57,7 @@ class OpeningServiceImpl(
         val company =
             companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
