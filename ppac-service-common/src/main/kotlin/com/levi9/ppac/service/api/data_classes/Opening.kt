@@ -165,18 +165,18 @@ data class Opening(
 
         fun parse(elem: OpeningEntity): Opening {
             return Opening(
-                elem.id,
-                elem.keyWords,
-                elem.customKeyWords,
-                elem.hasTechnicalInterview,
-                elem.hasTechnicalTest,
-                elem.periodCount,
-                elem.periodType,
-                elem.openPositions,
-                elem.acceptOnClosingOpportunity,
-                elem.signAgreement,
-                elem.trainers.map { Trainer.parse(it) },
-                elem.available,
+                    elem.id,
+                    elem.keyWords,
+                    elem.customKeyWords,
+                    elem.hasTechnicalInterview,
+                    elem.hasTechnicalTest,
+                    elem.periodCount,
+                    elem.periodType,
+                    elem.openPositions,
+                    elem.acceptOnClosingOpportunity,
+                    elem.signAgreement,
+                    elem.trainers.map { Trainer.parse(it) },
+                    elem.available,
             ).apply {
                 title = elem.title
                 description = elem.description
@@ -189,18 +189,18 @@ data class Opening(
 
         fun parse(elem: Opening): OpeningEntity {
             return OpeningEntity(
-                elem.id,
-                elem.keyWords,
-                elem.customKeyWords,
-                elem.hasTechnicalInterview,
-                elem.hasTechnicalTest,
-                elem.periodCount,
-                elem.periodType,
-                elem.openPositions,
-                elem.acceptOnClosingOpportunity,
-                elem.signAgreement,
-                elem.trainers.map { Trainer.parse(it) },
-                elem.available,
+                    elem.id,
+                    elem.keyWords,
+                    elem.customKeyWords,
+                    elem.hasTechnicalInterview,
+                    elem.hasTechnicalTest,
+                    elem.periodCount,
+                    elem.periodType,
+                    elem.openPositions,
+                    elem.acceptOnClosingOpportunity,
+                    elem.signAgreement,
+                    elem.trainers.map { Trainer.parse(it) },
+                    elem.available,
             ).apply {
                 title = elem.title
                 description = elem.description

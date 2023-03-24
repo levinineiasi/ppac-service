@@ -10,17 +10,17 @@ import javax.persistence.Table
 @Table(name = "TRAINERS")
 class TrainerEntity(
 
-    @Id
-    @Column(name = "ID")
-    var id: UUID,
+        @Id
+        @Column(name = "ID")
+        var id: UUID,
 
-    @Column(name = "NAME", nullable = false)
-    var name: String,
+        @Column(name = "NAME", nullable = false)
+        var name: String,
 
-    @Column(name = "DESCRIPTION", nullable = false)
-    var description: String,
+        @Column(name = "DESCRIPTION", nullable = false)
+        var description: String,
 
-    ) {
+        ) {
     @Column(name = "LINKEDIN_URL", nullable = true)
     var linkedinURL: String? = null
 

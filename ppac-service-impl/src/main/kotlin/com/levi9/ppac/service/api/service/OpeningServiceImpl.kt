@@ -26,25 +26,26 @@ class OpeningServiceImpl(
         openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val company =
-            companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+                companyRepository.findFirstByOpeningsId(openingId)
+                        ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
         val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
-            .flatten()
-            .toSet()
+                .flatten()
+                .toSet()
 
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
 
         return Opening.parse(
-            openingRepository.save(
-                Opening.parse(
-                    opening.apply { id = openingId })
-            )
+                openingRepository.save(
+                        Opening.parse(
+                                opening.apply { id = openingId })
+                )
         )
     }
 
@@ -52,10 +53,11 @@ class OpeningServiceImpl(
     override fun changeAvailability(openingId: UUID, available: Boolean): Opening {
 
         val openingEntity =
-            openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+                openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         val company =
-            companyRepository.findFirstByOpeningsId(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+                companyRepository.findFirstByOpeningsId(openingId)
+                        ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
         require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
@@ -64,16 +66,14 @@ class OpeningServiceImpl(
         openingEntity.available = available
 
         return Opening.parse(
-            openingRepository.save(openingEntity)
+                openingRepository.save(openingEntity)
         )
-
     }
 
     @Transactional
     override fun findAll(): List<Opening> {
         return openingRepository.findAll()
-            .filter { it.available }
-            .map { Opening.parse(it) }
+                .filter { it.available }
+                .map { Opening.parse(it) }
     }
-
 }

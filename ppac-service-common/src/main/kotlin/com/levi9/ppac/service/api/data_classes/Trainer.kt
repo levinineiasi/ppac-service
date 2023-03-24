@@ -44,9 +44,9 @@ data class Trainer(
     companion object {
         fun parse(elem: TrainerEntity): Trainer {
             return Trainer(
-                elem.id,
-                elem.name,
-                elem.description,
+                    elem.id,
+                    elem.name,
+                    elem.description,
             ).apply {
                 linkedinURL = elem.linkedinURL
                 avatar = elem.avatar
@@ -55,9 +55,9 @@ data class Trainer(
 
         fun parse(elem: Trainer): TrainerEntity {
             return TrainerEntity(
-                elem.id,
-                elem.name,
-                elem.description,
+                    elem.id,
+                    elem.name,
+                    elem.description,
             ).apply {
                 linkedinURL = elem.linkedinURL
                 avatar = elem.avatar
