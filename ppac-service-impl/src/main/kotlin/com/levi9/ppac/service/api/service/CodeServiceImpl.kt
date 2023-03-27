@@ -21,7 +21,7 @@ class CodeServiceImpl(
     val securityContext: SecurityContext<Int>,
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository,
-    val companyCodeRepository: CompanyCodeRepository,
+    val companyCodeRepository: CompanyCodeRepository
 ) : CodeService<CompanyCode> {
 
     override fun findAll(): List<CompanyCode> {
@@ -65,7 +65,7 @@ class CodeServiceImpl(
     }
 
     override fun isAdminCode(accessCode: Int): Boolean {
-        return  codeRepository.isAdminCode(accessCode)
+        return codeRepository.isAdminCode(accessCode)
     }
 
     override fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean {

@@ -172,7 +172,7 @@ class CodeServiceImplTest {
 
         try {
             codeService.deleteById(id)
-        } catch (e: NotFoundException) {
+        } catch (_: NotFoundException) {
 
         }
 
