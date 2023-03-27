@@ -18,11 +18,11 @@ import java.util.*
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 class CompanyServiceImpl(
-    private val securityContext: SecurityContext<Int>,
-    private val companyRepository: CompanyRepository,
-    private val codeRepository: CodeRepository,
-    private val openingRepository: OpeningRepository,
-    private val companyCodeRepository: CompanyCodeRepository
+        private val securityContext: SecurityContext<Int>,
+        private val companyRepository: CompanyRepository,
+        private val codeRepository: CodeRepository,
+        private val openingRepository: OpeningRepository,
+        private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
 
     @Transactional
@@ -33,8 +33,8 @@ class CompanyServiceImpl(
         }
 
         val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
-            .flatten()
-            .toSet()
+                .flatten()
+                .toSet()
 
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
@@ -54,17 +54,43 @@ class CompanyServiceImpl(
     override fun findAll(): List<Company> {
         return companyRepository.findAll().map { companyEntity ->
             val activeOpenings = companyEntity.openings.filter { it.available }
-            val companyEntityWithActiveOpenings = companyEntity.copy().apply { openings = activeOpenings }
+            val companyEntityWithActiveOpenings = companyEntity.copy()
+                    .apply {
+                        openings = activeOpenings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    }
             Company.parse(companyEntityWithActiveOpenings)
         }
     }
 
     @Transactional
-    override fun findById(id: UUID): Company {
-        val companyEntity = companyRepository.findById(id).orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
-        val activeOpenings = companyEntity.openings.filter { it.available }
-        val companyEntityWithActiveOpenings = companyEntity.copy().apply { openings = activeOpenings }
-        return Company.parse(companyEntityWithActiveOpenings)
+    override fun findById(id: UUID, onlyAvailableOpenings: Boolean): Company {
+        val companyEntity = companyRepository.findById(id)
+                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        if (onlyAvailableOpenings) {
+            val activeOpenings = companyEntity.openings.filter { it.available }
+            val companyEntityWithActiveOpenings = companyEntity.copy()
+                    .apply {
+                        openings = activeOpenings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    }
+            return Company.parse(companyEntityWithActiveOpenings)
+        } else {
+            return Company.parse(companyEntity
+                    .apply {
+                        openings = companyEntity.openings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    })
+        }
     }
 
     @Transactional
@@ -74,15 +100,16 @@ class CompanyServiceImpl(
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
-        val company = companyRepository.findById(id)
-            .apply {
-                this.get().name = updatedObject.name
-                this.get().logo = updatedObject.logo
-                this.get().description = updatedObject.description
-                this.get().email = updatedObject.email
-            }
+        val updatedCompanyEntity = companyRepository.findById(id)
+                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        updatedCompanyEntity.apply {
+            name = updatedObject.name
+            logo = updatedObject.logo
+            description = updatedObject.description
+            email = updatedObject.email
+        }
 
-        return Company.parse(companyRepository.save(company.get()))
+        return Company.parse(companyRepository.save(updatedCompanyEntity))
     }
 
     @Transactional

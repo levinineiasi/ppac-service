@@ -14,10 +14,10 @@ import java.util.*
 
 @Service
 class OpeningServiceImpl(
-    private val securityContext: SecurityContext<Int>,
-    private val codeRepository: CodeRepository,
-    private val openingRepository: OpeningRepository,
-    private val companyRepository: CompanyRepository
+        private val securityContext: SecurityContext<Int>,
+        private val codeRepository: CodeRepository,
+        private val openingRepository: OpeningRepository,
+        private val companyRepository: CompanyRepository
 ) : OpeningService<Opening> {
 
     @Transactional
@@ -25,11 +25,11 @@ class OpeningServiceImpl(
 
         openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        val company =
+        val companyEntity =
                 companyRepository.findFirstByOpeningsId(openingId)
                         ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
@@ -37,16 +37,14 @@ class OpeningServiceImpl(
                 .flatten()
                 .toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != company.id)) {
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
 
-        return Opening.parse(
-                openingRepository.save(
-                        Opening.parse(
-                                opening.apply { id = openingId })
-                )
-        )
+        val openingEntity = Opening.parse(
+                opening.apply { id = openingId })
+        val updatedOpeningEntity = openingRepository.save(openingEntity)
+        return Opening.parse(updatedOpeningEntity)
     }
 
     @Transactional
@@ -55,11 +53,11 @@ class OpeningServiceImpl(
         val openingEntity =
                 openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        val company =
+        val companyEntity =
                 companyRepository.findFirstByOpeningsId(openingId)
                         ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
 
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), company.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 

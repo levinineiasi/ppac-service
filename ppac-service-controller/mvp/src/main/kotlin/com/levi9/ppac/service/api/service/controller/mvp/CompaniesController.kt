@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.*
 import javax.validation.Valid
+import org.springframework.web.bind.annotation.RequestParam
 
 @RestController
 @RequestMapping("/api/v1/companies")
@@ -77,12 +78,12 @@ class CompaniesController(
             ]
     )
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID): ResponseEntity<Any> {
+    fun findById(@PathVariable id: UUID, @RequestParam(required = false, defaultValue = "true") onlyAvailableOpenings: Boolean): ResponseEntity<Any> {
 
         logger.info("Returning company by id from database.")
 
         return companyService?.let {
-            ResponseEntity(it.findById(id), HttpStatus.OK)
+            ResponseEntity(it.findById(id, onlyAvailableOpenings), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
