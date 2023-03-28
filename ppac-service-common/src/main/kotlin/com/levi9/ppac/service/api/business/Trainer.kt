@@ -1,4 +1,4 @@
-package com.levi9.ppac.service.api.data_classes
+package com.levi9.ppac.service.api.business
 
 import com.levi9.ppac.service.api.domain.TrainerEntity
 import java.util.*

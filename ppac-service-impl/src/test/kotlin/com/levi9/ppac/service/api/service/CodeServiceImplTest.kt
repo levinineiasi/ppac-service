@@ -1,6 +1,6 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.CompanyCode
+import com.levi9.ppac.service.api.business.CompanyCode
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity

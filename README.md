@@ -22,7 +22,7 @@ TBD
 - Multiple gradle module **Spring Boot** project;
 - Entrypoint of Spring Boot app is located in `ppac-service-assembly` module;
 - Database domain entities are located in `domain` package under `ppac-service-common` module;
-- Business classes are located in `data_classes` package under `ppac-service-common` module;
+- Business classes are located in `business` package under `ppac-service-common` module;
 - DTO needed in various places of the codebase are placed in `ppac-service-integration` module.
 - Our service interfaces are declared in `ppac-service-common` module and these are used everywhere, while the implementation beans are located in `ppac-service-impl` module, to have the codebase in pluggable way.
 - Feature flags are used. They are all disabled in default `application.yml` and are enabled in particular `yml` file for each env per need. 

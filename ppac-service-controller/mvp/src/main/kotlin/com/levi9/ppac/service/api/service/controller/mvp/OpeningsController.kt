@@ -1,7 +1,7 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.googlecode.jmapper.JMapper
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.integration.mvp.OpeningDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.OpeningService
