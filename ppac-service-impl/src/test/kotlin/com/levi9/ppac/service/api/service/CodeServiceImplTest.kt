@@ -96,7 +96,7 @@ class CodeServiceImplTest {
 
         insertCompanyInDb()
 
-        Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value,UUID.randomUUID()))
+        Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value, UUID.randomUUID()))
     }
 
     @Test

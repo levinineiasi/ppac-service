@@ -211,4 +211,5 @@ data class Opening(
             }
         }
     }
+
 }
