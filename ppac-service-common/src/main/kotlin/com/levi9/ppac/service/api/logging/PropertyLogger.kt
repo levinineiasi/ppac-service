@@ -1,10 +1,10 @@
 package com.levi9.ppac.service.api.logging
 
+import java.util.Arrays
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.core.env.AbstractEnvironment
 import org.springframework.core.env.EnumerablePropertySource
 import org.springframework.core.env.Environment
-import java.util.*
 import java.util.stream.StreamSupport
 
 object PropertyLogger {

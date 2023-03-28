@@ -2,7 +2,7 @@ package com.levi9.ppac.service.api.domain
 
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.validator.ValidCodeType
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.EnumType

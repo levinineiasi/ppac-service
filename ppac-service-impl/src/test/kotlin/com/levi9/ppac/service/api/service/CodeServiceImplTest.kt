@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.test.context.BootstrapWith
 import org.webjars.NotFoundException
-import java.util.*
+import java.util.UUID
 
 @SpringBootTest(
     classes = [

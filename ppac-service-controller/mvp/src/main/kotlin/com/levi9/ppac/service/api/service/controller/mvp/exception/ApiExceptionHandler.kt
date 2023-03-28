@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
-import org.webjars.NotFoundException
 import java.util.concurrent.TimeoutException
 import javax.naming.AuthenticationException
 import javax.validation.ConstraintViolationException
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 
 @RestControllerAdvice(basePackages = ["com.levi9.ppac.service.api.service.controller"])
 class ApiExceptionHandler {

@@ -1,6 +1,6 @@
 package com.levi9.ppac.service.api.domain
 
-import java.util.*
+import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity

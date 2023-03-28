@@ -3,7 +3,8 @@ package com.levi9.ppac.service.api.data_classes
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.*
+import java.util.UUID
+import javax.validation.ConstraintViolationException
 import javax.validation.Validation
 
 @Schema(description = "Model for a company code.")
@@ -30,7 +31,7 @@ data class CompanyCode(
             val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(elem)
             if (violations.isNotEmpty()) {
-                println("sa")
+                throw ConstraintViolationException(violations)
             }
             return CompanyCode(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }
@@ -39,7 +40,7 @@ data class CompanyCode(
             val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(elem)
             if (violations.isNotEmpty()) {
-                println("sa")
+                throw ConstraintViolationException(violations)
             }
             return CompanyCodeEntity(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }

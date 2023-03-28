@@ -10,7 +10,7 @@ import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.stereotype.Service
 import org.webjars.NotFoundException
-import java.util.*
+import java.util.UUID
 import javax.naming.AuthenticationException
 import javax.transaction.Transactional
 import kotlin.random.Random
@@ -20,7 +20,7 @@ class CodeServiceImpl(
     val securityContext: SecurityContext<Int>,
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository,
-    val companyCodeRepository: CompanyCodeRepository,
+    val companyCodeRepository: CompanyCodeRepository
 ) : CodeService<CompanyCode> {
 
     override fun findAll(): List<CompanyCode> {
@@ -62,21 +62,21 @@ class CodeServiceImpl(
         return CompanyCode.parse(companyCodeEntity)
     }
 
-    override fun checkAdminCode(){
-        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
+    override fun checkAdminCode() {
+        require(codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
         }
     }
 
-     override fun checkCompanyCode(companyId: UUID) {
-        if (!codeRepository.isCompanyCode(securityContext.getAccessCode(), companyId)) {
+    override fun checkCompanyCode(companyId: UUID) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyId)) {
             throw AuthenticationException()
         }
     }
 
     @Transactional
     override fun deleteById(id: UUID) {
-        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
+        require(codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
         }
 
