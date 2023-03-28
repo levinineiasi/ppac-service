@@ -1,7 +1,10 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
+import com.googlecode.jmapper.JMapper
 import com.levi9.ppac.service.api.data_classes.Company
 import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.integration.mvp.CompanyDto
+import com.levi9.ppac.service.api.integration.mvp.OpeningDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CompanyService
 import io.swagger.v3.oas.annotations.Operation
@@ -35,6 +38,11 @@ import org.springframework.web.bind.annotation.RequestParam
 class CompaniesController(
     private val companyService: CompanyService<Company>?
 ) {
+    val companyBusinessToDtoMapper: JMapper<CompanyDto, Company> = JMapper(CompanyDto::class.java, Company::class.java)
+    val companyDtoToBusinessMapper: JMapper<Company, CompanyDto> = JMapper(Company::class.java, CompanyDto::class.java)
+
+    val openingBusinessToDtoMapper: JMapper<OpeningDto, Opening> = JMapper(OpeningDto::class.java, Opening::class.java)
+    val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)
 
     @Operation(
         summary = "Retrieves all companies",
@@ -46,7 +54,7 @@ class CompaniesController(
                 responseCode = "200",
                 content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = Company::class))
+                    array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
             ),
             ApiResponse(responseCode = "404", description = "Not Found")
@@ -57,8 +65,11 @@ class CompaniesController(
 
         logger.info("Returning all companies from database.")
 
+
         return companyService?.let {
-            ResponseEntity(it.findAll(), HttpStatus.OK)
+            ResponseEntity(it.findAll().map { company ->
+                companyBusinessToDtoMapper.getDestination(company)
+            }, HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
     @Operation(
@@ -71,19 +82,22 @@ class CompaniesController(
                         responseCode = "200",
                         content = [Content(
                                 mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = Company::class))
+                                array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                         )]
                 ),
                 ApiResponse(responseCode = "404", description = "Not Found")
             ]
     )
     @GetMapping("/{id}")
-    fun findById(@PathVariable id: UUID, @RequestParam(required = false, defaultValue = "true") onlyAvailableOpenings: Boolean): ResponseEntity<Any> {
+    fun findById(
+        @PathVariable id: UUID,
+        @RequestParam(required = false, defaultValue = "true") onlyAvailableOpenings: Boolean
+    ): ResponseEntity<Any> {
 
         logger.info("Returning company by id from database.")
 
         return companyService?.let {
-            ResponseEntity(it.findById(id, onlyAvailableOpenings), HttpStatus.OK)
+            ResponseEntity(companyBusinessToDtoMapper.getDestination(it.findById(id, onlyAvailableOpenings)), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -97,7 +111,7 @@ class CompaniesController(
                         responseCode = "201",
                         content = [Content(
                                 mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = Company::class))
+                                array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                         )]
                 ),
                 ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -108,14 +122,14 @@ class CompaniesController(
     fun updateById(
         @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable id: UUID,
-        @RequestBody updatedCompany: Company
+        @RequestBody updatedCompany: CompanyDto
     ): ResponseEntity<Any> {
 
         logger.info("Update company with id $id.")
 
         return companyService?.let {
-            val responseDto = it.updateById(id, updatedCompany)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            val responseDto = it.updateById(id, companyDtoToBusinessMapper.getDestination(updatedCompany))
+            ResponseEntity(companyBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         }!!
     }
 
@@ -130,7 +144,7 @@ class CompaniesController(
                 responseCode = "201",
                 content = [Content(
                     mediaType = "application/json",
-                    schema = Schema(implementation = Opening::class)
+                    schema = Schema(implementation = OpeningDto::class)
                 )]
             ),
             ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -141,14 +155,14 @@ class CompaniesController(
     fun addOpening(
         @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable companyId: UUID,
-        @RequestBody @Valid opening: Opening
+        @RequestBody @Valid opening: OpeningDto
     ): ResponseEntity<Any> {
 
         logger.info("Create an opening for company with id $companyId.")
 
         return companyService?.let {
-            val responseDto = it.addOpening(companyId, opening)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            val responseDto = it.addOpening(companyId, openingDtoToBusinessMapper.getDestination(opening))
+            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 

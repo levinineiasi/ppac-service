@@ -20,4 +20,5 @@ object CoreVersion {
     const val HIBERNATE_VALIDATOR = "7.0.4.Final"
     const val ORACLE = "21.6.0.0.1"
     const val OPENAPI = "1.6.11"
+    const val JMAPPER_CORE = "1.6.3"
 }

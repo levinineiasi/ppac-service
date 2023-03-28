@@ -1,26 +1,11 @@
 package com.levi9.ppac.service.api.data_classes
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
-import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
-@Schema(description = "Model for a company code.")
-data class CompanyCode(
-
-    @JsonIgnore
+class CompanyCode(
     val id: UUID,
-
-    @field:Schema(
-        description = "Access code of the company",
-        nullable = false
-    )
     val accessCode: AccessCode,
-
-    @field:Schema(
-        description = "The company",
-        nullable = false
-    )
     val company: Company
 ) {
 
@@ -32,5 +17,27 @@ data class CompanyCode(
         fun parse(elem: CompanyCode): CompanyCodeEntity {
             return CompanyCodeEntity(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is CompanyCode) return false
+
+        if (id != other.id) return false
+        if (accessCode != other.accessCode) return false
+        if (company != other.company) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + accessCode.hashCode()
+        result = 31 * result + company.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "CompanyCode(id=$id, accessCode=$accessCode, company=$company)"
     }
 }

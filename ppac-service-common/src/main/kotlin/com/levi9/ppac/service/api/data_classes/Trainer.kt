@@ -1,53 +1,21 @@
 package com.levi9.ppac.service.api.data_classes
 
 import com.levi9.ppac.service.api.domain.TrainerEntity
-import io.swagger.v3.oas.annotations.media.Schema
 import java.util.*
 
-@Schema(description = "Model for a trainer.")
-data class Trainer(
-
-    var id: UUID = UUID.randomUUID(),
-
-    @field:Schema(
-            description = "The trainer's name",
-            example = "Popescu Ion",
-            type = "String",
-            nullable = false
-    )
-    var name: String,
-
-    @field:Schema(
-            description = "The trainer's description",
-            example = "The description",
-            type = "String",
-            nullable = false
-    )
-    var description: String
-
-    ) {
-    @field:Schema(
-            description = "The trainer's Linkedin url",
-            example = "https://www.linkedin.com/in/popescu-ion",
-            type = "String",
-            nullable = true
-    )
+class Trainer {
+    var id: UUID = UUID.randomUUID()
+    var name: String = ""
+    var description: String = ""
     var linkedinURL: String? = null
-
-    @field:Schema(
-            description = "The trainer's avatar",
-            type = "String",
-            nullable = true
-    )
     var avatar: String? = null
 
     companion object {
         fun parse(elem: TrainerEntity): Trainer {
-            return Trainer(
-                    elem.id,
-                    elem.name,
-                    elem.description,
-            ).apply {
+            return Trainer().apply {
+                id = elem.id
+                name = elem.name
+                description = elem.description
                 linkedinURL = elem.linkedinURL
                 avatar = elem.avatar
             }
@@ -63,5 +31,31 @@ data class Trainer(
                 avatar = elem.avatar
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Trainer) return false
+
+        if (id != other.id) return false
+        if (name != other.name) return false
+        if (description != other.description) return false
+        if (linkedinURL != other.linkedinURL) return false
+        if (avatar != other.avatar) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id.hashCode()
+        result = 31 * result + name.hashCode()
+        result = 31 * result + description.hashCode()
+        result = 31 * result + (linkedinURL?.hashCode() ?: 0)
+        result = 31 * result + (avatar?.hashCode() ?: 0)
+        return result
+    }
+
+    override fun toString(): String {
+        return "Trainer(id=$id, name='$name', description='$description', linkedinURL=$linkedinURL, avatar=$avatar)"
     }
 }

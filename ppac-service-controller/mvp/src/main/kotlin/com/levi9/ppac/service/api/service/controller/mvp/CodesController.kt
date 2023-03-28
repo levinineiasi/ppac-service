@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
+import com.googlecode.jmapper.JMapper
 import com.levi9.ppac.service.api.data_classes.CompanyCode
+import com.levi9.ppac.service.api.integration.mvp.CompanyCodeDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.CodeService
@@ -34,6 +36,9 @@ class CodesController(
     private val securityContext: SecurityContext<Int>,
     private val codeService: CodeService<CompanyCode>?
 ) {
+    val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =
+        JMapper(CompanyCodeDto::class.java, CompanyCode::class.java)
+
     @Operation(
         summary = "Check if user has admin rights",
         description = "Returns UNAUTHORIZED if the code received is not for admin access"
@@ -89,7 +94,7 @@ class CodesController(
                 responseCode = "200",
                 content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = CompanyCode::class))
+                    array = ArraySchema(schema = Schema(implementation = CompanyCodeDto::class))
                 )]
             ),
             ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -105,7 +110,10 @@ class CodesController(
         if (listCompanies.isEmpty()) {
             return ResponseEntity("The requested resource has no content.", HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(listCompanies, HttpStatus.OK)
+
+        return ResponseEntity(listCompanies.map {
+            codesBusinessToDtoMapper.getDestination(it)
+        }, HttpStatus.OK)
     }
 
     @Operation(
@@ -119,7 +127,7 @@ class CodesController(
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(
-                        implementation = CompanyCode::class
+                        implementation = CompanyCodeDto::class
                     )
                 )]
             ),
@@ -136,7 +144,7 @@ class CodesController(
 
         return codeService?.let {
             val responseDto = it.createCompanyCode(displayName)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            ResponseEntity(codesBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         }!!
     }
 }
