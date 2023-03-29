@@ -1,7 +1,7 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Company
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Company
+import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity
@@ -16,6 +16,7 @@ import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.config.TestConfig
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -67,36 +68,36 @@ class CompanyServiceImplTest {
 
     companion object {
         val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
-        val trainer = TrainerEntity(UUID.randomUUID(), "Trainer1", "Some description for trainer 1")
-        val openingToCreateTrainer = OpeningEntity(
-            UUID.randomUUID(),
-            emptyList(),
-            emptyList(),
-            false,
-            false,
-            4,
-            PeriodType.MONTHS,
-            20,
-            true,
-            false,
-            listOf(trainer),
-            true
+        private val trainer = TrainerEntity(UUID.randomUUID(), "Trainer1", "Some description for trainer 1")
+        private val openingToCreateTrainer = OpeningEntity(
+            id = UUID.randomUUID(),
+            keyWords = emptyList(),
+            customKeyWords = emptyList(),
+            hasTechnicalInterview = false,
+            hasTechnicalTest = false,
+            periodCount = 4,
+            periodType = PeriodType.MONTHS,
+            openPositions = 20,
+            acceptOnClosingOpportunity = true,
+            signAgreement = false,
+            trainers = listOf(trainer),
+            available = true
         )
         val company = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(openingToCreateTrainer) }
         val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
         val opening = OpeningEntity(
-            UUID.randomUUID(),
-            emptyList(),
-            emptyList(),
-            true,
-            true,
-            4,
-            PeriodType.MONTHS,
-            20,
-            true,
-            false,
-            listOf(trainer),
-            true
+            id = UUID.randomUUID(),
+            keyWords = emptyList(),
+            customKeyWords = emptyList(),
+            hasTechnicalInterview = true,
+            hasTechnicalTest = true,
+            periodCount = 4,
+            periodType = PeriodType.MONTHS,
+            openPositions = 20,
+            acceptOnClosingOpportunity = true,
+            signAgreement = false,
+            trainers = listOf(trainer),
+            available = true
         )
     }
 
@@ -125,8 +126,7 @@ class CompanyServiceImplTest {
             Opening.parse(opening)
         )
 
-        Assertions.assertTrue(openingRepository.existsById(addOpening.id))
-
+        assertNotNull(openingRepository.findById(addOpening.id))
         val updatedCompany = companyRepository.findById(company.id)
         Assertions.assertTrue(updatedCompany.get().openings.contains(Opening.parse(addOpening)))
     }
