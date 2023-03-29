@@ -1,6 +1,7 @@
-package com.levi9.ppac.service.api.data_classes
+package com.levi9.ppac.service.api.integration.mvp
 
-import com.levi9.ppac.service.api.domain.AccessCodeEntity
+import com.fasterxml.jackson.annotation.JsonRootName
+import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.validator.ValidCodeType
 import io.swagger.v3.oas.annotations.media.Schema
@@ -10,11 +11,8 @@ import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
 @Schema(description = "Model for a access code.")
-data class AccessCode(
-
-    @NotNull
-    val id: UUID,
-
+@JsonRootName("AccessCode")
+class AccessCodeDto {
     @field:Schema(
         description = "The access code",
         example = "567324",
@@ -26,8 +24,12 @@ data class AccessCode(
     @NotNull
     @Min(value = 100000, message = "Value should have minimum 6 characters.")
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
-    var value: Int
-) {
+    @JMap
+    var value: Int = 100000
+
+    @NotNull
+    @JMap
+    lateinit var id: UUID
 
     @field:Schema(
         description = "Type of access code",
@@ -37,19 +39,6 @@ data class AccessCode(
         nullable = true
         )
     @ValidCodeType
+    @JMap
     var type: CodeType? = CodeType.COMPANY_CODE
-
-    companion object {
-        fun parse(elem: AccessCodeEntity): AccessCode {
-            return AccessCode(elem.id, elem.value).apply {
-               type = elem.type
-            }
-        }
-
-        fun parse(elem: AccessCode): AccessCodeEntity {
-            return AccessCodeEntity(elem.id, elem.value).apply {
-                type = elem.type
-            }
-        }
-    }
 }

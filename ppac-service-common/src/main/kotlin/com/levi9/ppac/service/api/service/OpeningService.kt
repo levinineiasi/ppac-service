@@ -1,6 +1,6 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Opening
 import java.util.UUID
 
 interface OpeningService<T> {

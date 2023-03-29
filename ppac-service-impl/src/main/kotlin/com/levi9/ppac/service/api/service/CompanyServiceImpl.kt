@@ -1,7 +1,7 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Company
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Company
+import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository

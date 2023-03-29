@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.googlecode.jmapper.JMapper
+import com.levi9.ppac.service.api.business.Opening
+import com.levi9.ppac.service.api.integration.mvp.OpeningDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.OpeningService
 import io.swagger.v3.oas.annotations.Operation
@@ -32,6 +34,8 @@ import org.springframework.web.bind.annotation.RestController
 class OpeningsController(
     private val openingService: OpeningService<Opening>?
 ) {
+    val openingBusinessToDtoMapper: JMapper<OpeningDto, Opening> = JMapper(OpeningDto::class.java, Opening::class.java)
+    val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)
 
     @Operation(
             summary = "Retrieves all openings",
@@ -43,7 +47,7 @@ class OpeningsController(
                         responseCode = "200",
                         content = [Content(
                                 mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = Opening::class))
+                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                         )]
                 ),
                 ApiResponse(responseCode = "404", description = "Not Found")
@@ -55,7 +59,9 @@ class OpeningsController(
         logger.info("Returning all companies from database.")
 
         return openingService?.let {
-            ResponseEntity(it.findAll(), HttpStatus.OK)
+            ResponseEntity(it.findAll().map { opening ->
+                openingBusinessToDtoMapper.getDestination(opening)
+            }, HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -69,7 +75,7 @@ class OpeningsController(
                         responseCode = "201",
                         content = [Content(
                                 mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = Opening::class))
+                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                         )]
                 ),
                 ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -80,12 +86,12 @@ class OpeningsController(
     fun updateById(
             @RequestHeader("AccessCode") accessCode: Int,
             @PathVariable openingId: UUID,
-            @RequestBody @Valid opening: Opening
+            @RequestBody @Valid opening: OpeningDto
     ): ResponseEntity<Any> {
 
         return openingService?.let {
-            val responseDto = it.updateOpening(openingId, opening)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            val responseDto = it.updateOpening(openingId, openingDtoToBusinessMapper.getDestination(opening))
+            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -99,7 +105,7 @@ class OpeningsController(
                         responseCode = "201",
                         content = [Content(
                                 mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = Opening::class))
+                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                         )]
                 ),
                 ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -115,7 +121,7 @@ class OpeningsController(
 
         return openingService?.let {
             val responseDto = it.changeAvailability(openingId, available)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 }

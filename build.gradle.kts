@@ -84,6 +84,7 @@ allprojects {
             dependency("org.springdoc:springdoc-openapi-data-rest:${CoreVersion.OPENAPI}")
             dependency("org.springdoc:springdoc-openapi-ui:${CoreVersion.OPENAPI}")
             dependency("org.springdoc:springdoc-openapi-kotlin:${CoreVersion.OPENAPI}")
+            dependency("com.windpanda.jmapper-framework:jmapper-core:${CoreVersion.JMAPPER_CORE}")
         }
     }
 

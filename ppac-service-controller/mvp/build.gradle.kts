@@ -9,6 +9,8 @@ allprojects{
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("io.konform:konform")
         implementation(project(":ppac-service-common"))
+        implementation(project(":ppac-service-integration:mvp-api"))
+        implementation("com.windpanda.jmapper-framework:jmapper-core")
         implementation("org.junit.jupiter:junit-jupiter")
         implementation("org.springdoc:springdoc-openapi-data-rest")
         implementation("org.springdoc:springdoc-openapi-ui")
