@@ -3,8 +3,6 @@ package com.levi9.ppac.service.api.integration.mvp
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.*
-
 @Schema(description = "Model for a company code.")
 @JsonRootName("CompanyCode")
 class CompanyCodeDto {

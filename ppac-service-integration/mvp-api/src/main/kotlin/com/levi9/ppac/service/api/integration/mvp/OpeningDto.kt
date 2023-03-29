@@ -6,7 +6,7 @@ import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.enums.PeriodType
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.NotNull
 

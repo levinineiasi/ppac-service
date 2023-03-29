@@ -28,12 +28,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/codes")
@@ -43,7 +37,6 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
-    private val securityContext: SecurityContext<Int>,
     private val codeService: CodeService<CompanyCode>?
 ) {
     val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =

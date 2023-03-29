@@ -6,9 +6,6 @@ import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.validator.ValidCodeType
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.UUID
-import javax.validation.ConstraintViolationException
-import javax.validation.Validation
-import javax.validation.ValidationException
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull

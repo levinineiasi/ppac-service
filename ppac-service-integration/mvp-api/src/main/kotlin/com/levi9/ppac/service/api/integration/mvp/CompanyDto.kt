@@ -3,7 +3,7 @@ package com.levi9.ppac.service.api.integration.mvp
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.*
+import java.util.UUID
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 

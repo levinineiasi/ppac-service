@@ -8,7 +8,6 @@ import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.webjars.NotFoundException
 import java.util.UUID
@@ -31,16 +30,15 @@ class CodeServiceImpl(
         return companyCodeRepository.findAll().map { CompanyCode.parse(it) }
     }
 
-    @Transactional
     override fun createCompanyCode(displayName: String): CompanyCode {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
         }
 
-        var value = Random.nextInt(100000, 999999);
-        while (codeRepository.isCodeIdPresent(value)) {
-            value = Random.nextInt(100000, 999999);
+        var valueNr = Random.nextInt(100000, 999999)
+        while (codeRepository.isCodeIdPresent(valueNr)) {
+            valueNr = Random.nextInt(100000, 999999)
         }
 
         logger.info("Generated $valueNr value for $displayName company.")

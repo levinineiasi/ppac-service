@@ -8,12 +8,13 @@ import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import java.util.UUID
+import javax.naming.AuthenticationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
@@ -29,7 +30,7 @@ class CompanyServiceImpl(
     override fun addOpening(id: UUID, opening: Opening): Opening {
 
         require(codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
@@ -37,7 +38,7 @@ class CompanyServiceImpl(
                 .toSet()
 
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            throw NotFoundException()
 
         val openingDTO = opening.apply { this.id = UUID.randomUUID() }
         val openingEntity = Opening.parse(openingDTO)
@@ -69,7 +70,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun findById(id: UUID, onlyAvailableOpenings: Boolean): Company {
         val companyEntity = companyRepository.findById(id)
-                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+                .orElseThrow { throw NotFoundException() }
         if (onlyAvailableOpenings) {
             val activeOpenings = companyEntity.openings.filter { it.available }
             val companyEntityWithActiveOpenings = companyEntity.copy()
@@ -97,11 +98,11 @@ class CompanyServiceImpl(
     override fun updateById(id: UUID, updatedObject: Company): Company {
 
         require(companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         val updatedCompanyEntity = companyRepository.findById(id)
-                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+                .orElseThrow { NotFoundException() }
         updatedCompanyEntity.apply {
             name = updatedObject.name
             logo = updatedObject.logo
@@ -116,7 +117,7 @@ class CompanyServiceImpl(
     override fun deleteById(id: UUID) {
 
         require(codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+            throw AuthenticationException()
         }
 
         companyRepository.findByIdOrNull(id)?.let {

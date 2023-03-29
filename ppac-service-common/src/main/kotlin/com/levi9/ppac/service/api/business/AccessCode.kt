@@ -2,7 +2,7 @@ package com.levi9.ppac.service.api.business
 
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.enums.CodeType
-import java.util.*
+import java.util.UUID
 
 class AccessCode {
     var id: UUID = UUID.randomUUID()
