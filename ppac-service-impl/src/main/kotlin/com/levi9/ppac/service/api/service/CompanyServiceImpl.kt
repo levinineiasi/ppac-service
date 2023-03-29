@@ -1,7 +1,7 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Company
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Company
+import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
@@ -14,29 +14,27 @@ import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.server.ResponseStatusException
-import javax.naming.AuthenticationException
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 class CompanyServiceImpl(
-    private val securityContext: SecurityContext<Int>,
-    private val companyRepository: CompanyRepository,
-    private val codeRepository: CodeRepository,
-    private val openingRepository: OpeningRepository,
-    private val companyCodeRepository: CompanyCodeRepository
+        private val securityContext: SecurityContext<Int>,
+        private val companyRepository: CompanyRepository,
+        private val codeRepository: CodeRepository,
+        private val openingRepository: OpeningRepository,
+        private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
 
     @Transactional
     override fun addOpening(id: UUID, opening: Opening): Opening {
 
         require(codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
-            throw AuthenticationException()
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
         val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
-            .flatten()
-            .toSet()
+                .flatten()
+                .toSet()
 
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
@@ -57,13 +55,13 @@ class CompanyServiceImpl(
         return companyRepository.findAll().map { companyEntity ->
             val activeOpenings = companyEntity.openings.filter { it.available }
             val companyEntityWithActiveOpenings = companyEntity.copy()
-                .apply {
-                    openings = activeOpenings
-                    name = companyEntity.name
-                    logo = companyEntity.logo
-                    description = companyEntity.description
-                    email = companyEntity.email
-                }
+                    .apply {
+                        openings = activeOpenings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    }
             Company.parse(companyEntityWithActiveOpenings)
         }
     }
@@ -71,27 +69,27 @@ class CompanyServiceImpl(
     @Transactional
     override fun findById(id: UUID, onlyAvailableOpenings: Boolean): Company {
         val companyEntity = companyRepository.findById(id)
-            .orElseThrow { NotFoundException() }
+                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         if (onlyAvailableOpenings) {
             val activeOpenings = companyEntity.openings.filter { it.available }
             val companyEntityWithActiveOpenings = companyEntity.copy()
-                .apply {
-                    openings = activeOpenings
-                    name = companyEntity.name
-                    logo = companyEntity.logo
-                    description = companyEntity.description
-                    email = companyEntity.email
-                }
+                    .apply {
+                        openings = activeOpenings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    }
             return Company.parse(companyEntityWithActiveOpenings)
         } else {
             return Company.parse(companyEntity
-                .apply {
-                    openings = companyEntity.openings
-                    name = companyEntity.name
-                    logo = companyEntity.logo
-                    description = companyEntity.description
-                    email = companyEntity.email
-                })
+                    .apply {
+                        openings = companyEntity.openings
+                        name = companyEntity.name
+                        logo = companyEntity.logo
+                        description = companyEntity.description
+                        email = companyEntity.email
+                    })
         }
     }
 
@@ -99,11 +97,11 @@ class CompanyServiceImpl(
     override fun updateById(id: UUID, updatedObject: Company): Company {
 
         require(companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
-            throw AuthenticationException()
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
         val updatedCompanyEntity = companyRepository.findById(id)
-            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+                .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
         updatedCompanyEntity.apply {
             name = updatedObject.name
             logo = updatedObject.logo
@@ -117,8 +115,8 @@ class CompanyServiceImpl(
     @Transactional
     override fun deleteById(id: UUID) {
 
-        if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
-            throw AuthenticationException()
+        require(codeRepository.isAdminCode(securityContext.getAccessCode())) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         }
 
         companyRepository.findByIdOrNull(id)?.let {

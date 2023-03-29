@@ -1,7 +1,5 @@
 feature:
   mvp: true
-  ppac-v1: true
-  ppac-service: true
 
 sql:
   instance: ppac-postgres-local:5432

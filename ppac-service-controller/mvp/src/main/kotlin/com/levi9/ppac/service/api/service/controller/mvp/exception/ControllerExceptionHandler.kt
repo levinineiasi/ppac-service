@@ -2,13 +2,12 @@ package com.levi9.ppac.service.api.service.controller.mvp.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MethodArgumentNotValidException
-import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.server.ResponseStatusException
 import org.webjars.NotFoundException
 import java.sql.SQLException
 import javax.validation.ConstraintViolationException
+
 
 
 //@ControllerAdvice(basePackages = ["com.levi9.ppac.service.api.service.controller"])

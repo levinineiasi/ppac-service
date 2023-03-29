@@ -1,17 +1,17 @@
-package com.levi9.ppac.service.api.data_classes
+package com.levi9.ppac.service.api.integration.mvp
 
-import com.levi9.ppac.service.api.domain.CompanyEntity
+import com.fasterxml.jackson.annotation.JsonRootName
+import com.googlecode.jmapper.annotations.JMap
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.UUID
-import javax.validation.ConstraintViolationException
-import javax.validation.Validation
+import java.util.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
 
 @Schema(description = "Model for a company.")
-data class Company(
-
-    val id: UUID,
+@JsonRootName("Company")
+class CompanyDto {
+    @JMap
+    lateinit var id: UUID
 
     @field:Schema(
         description = "Name of the company",
@@ -22,13 +22,15 @@ data class Company(
         nullable = false
     )
     @Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
-    var name: String
-) {
+    @JMap
+    var name: String = ""
+
     @field:Schema(
         description = "Logo of the company",
         type = "ByteArray",
         nullable = true
     )
+    @JMap
     var logo: ByteArray? = null
 
     @field:Schema(
@@ -40,6 +42,7 @@ data class Company(
         nullable = true
     )
     @Size(min = 2, max = 300, message = "The description length should have between 2 and 50 characters.")
+    @JMap
     var description: String? = null
 
     @field:Schema(
@@ -52,6 +55,7 @@ data class Company(
     )
     @Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
     @Email(message = "The company email should be a valid one.")
+    @JMap
     var email: String? = null
 
     @field:Schema(
@@ -59,31 +63,6 @@ data class Company(
             type = "List<Opening>",
             nullable = true
     )
-    var openings: List<Opening>? = emptyList()
-
-
-    companion object {
-        fun parse(elem: CompanyEntity): Company {
-            val validator = Validation.buildDefaultValidatorFactory().validator
-            val violations = validator.validate(elem)
-            if (violations.isNotEmpty()) {
-                throw ConstraintViolationException(violations)
-            }
-            return Company(elem.id, elem.name).apply {
-                logo = elem.logo
-                description = elem.description
-                email = elem.email
-                openings = elem.openings.map { Opening.parse(it) }
-            }
-        }
-
-        fun parse(elem: Company): CompanyEntity {
-            return CompanyEntity(elem.id, elem.name).apply {
-                logo = elem.logo
-                description = elem.description
-                email = elem.email
-                openings = elem.openings?.map { Opening.parse(it) }?: emptyList()
-            }
-        }
-    }
+    @JMap
+    var openings: List<OpeningDto>? = emptyList()
 }

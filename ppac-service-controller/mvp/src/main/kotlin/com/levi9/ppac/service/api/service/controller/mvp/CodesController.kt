@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
-import com.levi9.ppac.service.api.data_classes.CompanyCode
+import com.googlecode.jmapper.JMapper
+import com.levi9.ppac.service.api.business.CompanyCode
+import com.levi9.ppac.service.api.integration.mvp.CompanyCodeDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CodeService
 import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages
@@ -17,6 +19,12 @@ import java.util.UUID
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
@@ -35,8 +43,12 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
+    private val securityContext: SecurityContext<Int>,
     private val codeService: CodeService<CompanyCode>?
 ) {
+    val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =
+        JMapper(CompanyCodeDto::class.java, CompanyCode::class.java)
+
     @Operation(
         summary = "Check if user has admin rights",
         description = "Returns UNAUTHORIZED if the code received is not for admin access"
@@ -90,7 +102,7 @@ class CodesController(
                 responseCode = "200",
                 content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = CompanyCode::class))
+                    array = ArraySchema(schema = Schema(implementation = CompanyCodeDto::class))
                 )]
             ),
             ApiResponse(responseCode = "401", description = "Unauthorized"),
@@ -110,7 +122,10 @@ class CodesController(
         if (listCompanies.isEmpty()) {
             return ResponseEntity(ResponseMessages.NO_CONTENT, HttpStatus.NO_CONTENT)
         }
-        return ResponseEntity(listCompanies, HttpStatus.OK)
+
+        return ResponseEntity(listCompanies.map {
+            codesBusinessToDtoMapper.getDestination(it)
+        }, HttpStatus.OK)
     }
 
     @Operation(
@@ -124,7 +139,7 @@ class CodesController(
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(
-                        implementation = CompanyCode::class
+                        implementation = CompanyCodeDto::class
                     )
                 )]
             ),
@@ -138,7 +153,6 @@ class CodesController(
         @Max(value = 999999, message = "Header AccessCode invalid format.")
         accessCode: Int,
         @PathVariable
-//        @Size(min = 2, max = 10, message = "Company name invalid length.")
         displayName: String
     ): ResponseEntity<Any> {
 
@@ -146,7 +160,7 @@ class CodesController(
 
         return codeService?.let {
             val responseDto = it.createCompanyCode(displayName)
-            ResponseEntity(responseDto, HttpStatus.CREATED)
+            ResponseEntity(codesBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         }!!
     }
 }

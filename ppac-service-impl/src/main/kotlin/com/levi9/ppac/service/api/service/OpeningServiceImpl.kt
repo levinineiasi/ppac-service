@@ -1,16 +1,20 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.data_classes.Opening
+import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
-import java.util.UUID
-import javax.naming.AuthenticationException
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
+
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
+import java.util.UUID
+import javax.naming.AuthenticationException
+
 
 @Service
 class OpeningServiceImpl(
@@ -23,6 +27,14 @@ class OpeningServiceImpl(
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {
 
+        openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
+        val companyEntity =
+                companyRepository.findFirstByOpeningsId(openingId)
+                        ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
         openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
 
         val companyEntity =
@@ -38,6 +50,7 @@ class OpeningServiceImpl(
                 .toSet()
 
         if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
+            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
             throw NotFoundException()
         }
 
@@ -51,6 +64,14 @@ class OpeningServiceImpl(
     override fun changeAvailability(openingId: UUID, available: Boolean): Opening {
 
         val openingEntity =
+                openingRepository.findByIdOrNull(openingId) ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
+        val companyEntity =
+                companyRepository.findFirstByOpeningsId(openingId)
+                        ?: throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
+            throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
                 openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
 
         val companyEntity =
