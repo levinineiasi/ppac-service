@@ -18,7 +18,7 @@ class OpeningServiceImpl(
         private val codeRepository: CodeRepository,
         private val openingRepository: OpeningRepository,
         private val companyRepository: CompanyRepository
-) : OpeningService<Opening> {
+) : OpeningService<Opening, UUID> {
 
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {

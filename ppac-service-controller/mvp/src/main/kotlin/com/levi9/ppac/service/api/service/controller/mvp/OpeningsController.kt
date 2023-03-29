@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController
 @Suppress("MagicNumber")
 @Tag(name = "Openings Controller")
 class OpeningsController(
-    private val openingService: OpeningService<Opening>?
+    private val openingService: OpeningService<Opening, UUID>?
 ) {
     val openingBusinessToDtoMapper: JMapper<OpeningDto, Opening> = JMapper(OpeningDto::class.java, Opening::class.java)
     val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)

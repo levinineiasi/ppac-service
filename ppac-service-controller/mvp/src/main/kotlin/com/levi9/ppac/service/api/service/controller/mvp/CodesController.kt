@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Codes Controller")
 class CodesController(
     private val securityContext: SecurityContext<Int>,
-    private val codeService: CodeService<CompanyCode>?
+    private val codeService: CodeService<CompanyCode, UUID>?
 ) {
     val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =
         JMapper(CompanyCodeDto::class.java, CompanyCode::class.java)
