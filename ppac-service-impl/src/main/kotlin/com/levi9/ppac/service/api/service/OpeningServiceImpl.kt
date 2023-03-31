@@ -42,10 +42,10 @@ class OpeningServiceImpl(
             throw AuthenticationException()
         }
 
-        val openingEntity = Opening.parse(
+        val openingEntity = Opening.toEntity(
             opening.apply { id = openingId })
         val updatedOpeningEntity = openingRepository.save(openingEntity)
-        return Opening.parse(updatedOpeningEntity)
+        return Opening.toBusinessModel(updatedOpeningEntity)
     }
 
     @Transactional
@@ -64,7 +64,7 @@ class OpeningServiceImpl(
 
         openingEntity.available = available
 
-        return Opening.parse(
+        return Opening.toBusinessModel(
             openingRepository.save(openingEntity)
         )
     }
@@ -73,6 +73,6 @@ class OpeningServiceImpl(
     override fun findAll(): List<Opening> {
         return openingRepository.findAll()
             .filter { it.available }
-            .map { Opening.parse(it) }
+            .map { Opening.toBusinessModel(it) }
     }
 }

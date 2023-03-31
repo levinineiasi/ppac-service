@@ -25,5 +25,5 @@ data class TrainerEntity(
     var linkedinURL: String? = null
 
     @Column(name = "AVATAR", nullable = true)
-    var avatar: String? = null
+    var avatar: ByteArray? = null
 }

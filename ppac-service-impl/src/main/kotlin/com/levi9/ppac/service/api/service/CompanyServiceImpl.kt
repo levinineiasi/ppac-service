@@ -12,18 +12,17 @@ import javax.naming.AuthenticationException
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
 class CompanyServiceImpl(
-        private val securityContext: SecurityContext<Int>,
-        private val companyRepository: CompanyRepository,
-        private val codeRepository: CodeRepository,
-        private val openingRepository: OpeningRepository,
-        private val companyCodeRepository: CompanyCodeRepository
+    private val securityContext: SecurityContext<Int>,
+    private val companyRepository: CompanyRepository,
+    private val codeRepository: CodeRepository,
+    private val openingRepository: OpeningRepository,
+    private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company> {
 
     @Transactional
@@ -33,64 +32,60 @@ class CompanyServiceImpl(
             throw AuthenticationException()
         }
 
-        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
-                .flatten()
-                .toSet()
+        val companySet =
+            opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }.flatten().toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id))
-            throw NotFoundException()
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id)) throw NotFoundException()
 
         val openingDTO = opening.apply { this.id = UUID.randomUUID() }
-        val openingEntity = Opening.parse(openingDTO)
+        val openingEntity = Opening.toEntity(openingDTO)
         val savedOpening = openingRepository.save(openingEntity)
 
         val companyEntity = companyRepository.findByIdOrNull(id)!!
         companyEntity.openings += savedOpening
         companyRepository.save(companyEntity)
 
-        return Opening.parse(savedOpening)
+        return Opening.toBusinessModel(savedOpening)
     }
 
     @Transactional
     override fun findAll(): List<Company> {
         return companyRepository.findAll().map { companyEntity ->
             val activeOpenings = companyEntity.openings.filter { it.available }
-            val companyEntityWithActiveOpenings = companyEntity.copy()
-                    .apply {
-                        openings = activeOpenings
-                        name = companyEntity.name
-                        logo = companyEntity.logo
-                        description = companyEntity.description
-                        email = companyEntity.email
-                    }
-            Company.parse(companyEntityWithActiveOpenings)
+            val companyEntityWithActiveOpenings = companyEntity.copy().apply {
+                openings = activeOpenings
+                name = companyEntity.name
+                logo = companyEntity.logo
+                description = companyEntity.description
+                email = companyEntity.email
+            }
+            Company.toBusinessModel(companyEntityWithActiveOpenings)
         }
     }
 
     @Transactional
     override fun findById(id: UUID, onlyAvailableOpenings: Boolean): Company {
-        val companyEntity = companyRepository.findById(id)
-                .orElseThrow { throw NotFoundException() }
+        val companyEntity = companyRepository.findById(id).orElseThrow { throw NotFoundException() }
         if (onlyAvailableOpenings) {
             val activeOpenings = companyEntity.openings.filter { it.available }
-            val companyEntityWithActiveOpenings = companyEntity.copy()
-                    .apply {
-                        openings = activeOpenings
-                        name = companyEntity.name
-                        logo = companyEntity.logo
-                        description = companyEntity.description
-                        email = companyEntity.email
-                    }
-            return Company.parse(companyEntityWithActiveOpenings)
+            val companyEntityWithActiveOpenings = companyEntity.copy().apply {
+                openings = activeOpenings
+                name = companyEntity.name
+                logo = companyEntity.logo
+                description = companyEntity.description
+                email = companyEntity.email
+            }
+            return Company.toBusinessModel(companyEntityWithActiveOpenings)
         } else {
-            return Company.parse(companyEntity
-                    .apply {
-                        openings = companyEntity.openings
-                        name = companyEntity.name
-                        logo = companyEntity.logo
-                        description = companyEntity.description
-                        email = companyEntity.email
-                    })
+
+            val company = Company.toBusinessModel(companyEntity.apply {
+                openings = companyEntity.openings
+                name = companyEntity.name
+                logo = companyEntity.logo
+                description = companyEntity.description
+                email = companyEntity.email
+            })
+            return company
         }
     }
 
@@ -101,8 +96,7 @@ class CompanyServiceImpl(
             throw AuthenticationException()
         }
 
-        val updatedCompanyEntity = companyRepository.findById(id)
-                .orElseThrow { NotFoundException() }
+        val updatedCompanyEntity = companyRepository.findById(id).orElseThrow { NotFoundException() }
         updatedCompanyEntity.apply {
             name = updatedObject.name
             logo = updatedObject.logo
@@ -110,7 +104,7 @@ class CompanyServiceImpl(
             email = updatedObject.email
         }
 
-        return Company.parse(companyRepository.save(updatedCompanyEntity))
+        return Company.toBusinessModel(companyRepository.save(updatedCompanyEntity))
     }
 
     @Transactional

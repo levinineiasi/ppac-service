@@ -12,7 +12,11 @@ import javax.validation.constraints.NotNull
 
 @Schema(description = "Model for a access code.")
 @JsonRootName("AccessCode")
-class AccessCodeDto {
+class AccessCodeDto(
+    @NotNull
+    @JMap
+    var id: UUID
+) {
     @field:Schema(
         description = "The access code",
         example = "567324",
@@ -21,15 +25,13 @@ class AccessCodeDto {
         maximum = "999999",
         nullable = false
     )
+
     @NotNull
     @Min(value = 100000, message = "Value should have minimum 6 characters.")
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
     @JMap
     var value: Int = 100000
 
-    @NotNull
-    @JMap
-    lateinit var id: UUID
 
     @field:Schema(
         description = "Type of access code",
@@ -37,8 +39,11 @@ class AccessCodeDto {
         type = "String",
         defaultValue = "COMPANY_CODE",
         nullable = true
-        )
+    )
     @ValidCodeType
     @JMap
     var type: CodeType? = CodeType.COMPANY_CODE
+
+    constructor() : this(UUID.randomUUID())
+
 }

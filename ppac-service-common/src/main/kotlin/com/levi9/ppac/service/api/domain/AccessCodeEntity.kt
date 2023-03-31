@@ -26,11 +26,11 @@ data class AccessCodeEntity(
     @NotNull
     @Min(value = 100000, message = "Value should have minimum 6 characters.")
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
-    var value: Int
-) {
+    var value: Int,
 
     @Column(name = "CODE_TYPE")
     @Enumerated(EnumType.STRING)
     @ValidCodeType
-    var type: CodeType? = CodeType.COMPANY_CODE
-}
+    val type: CodeType = CodeType.COMPANY_CODE
+)
+

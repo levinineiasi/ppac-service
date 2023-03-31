@@ -38,20 +38,20 @@ class OpeningsController(
     val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)
 
     @Operation(
-            summary = "Retrieves all openings",
-            description = "Returns all openings"
+        summary = "Retrieves all openings",
+        description = "Returns all openings"
     )
     @ApiResponses(
-            value = [
-                ApiResponse(
-                        responseCode = "200",
-                        content = [Content(
-                                mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
-                        )]
-                ),
-                ApiResponse(responseCode = "404", description = "Not Found")
-            ]
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
     )
     @GetMapping("")
     fun findAll(): ResponseEntity<Any> {
@@ -66,27 +66,27 @@ class OpeningsController(
     }
 
     @Operation(
-            summary = "Update an opening",
-            description = "Update an opening"
+        summary = "Update an opening",
+        description = "Update an opening"
     )
     @ApiResponses(
-            value = [
-                ApiResponse(
-                        responseCode = "201",
-                        content = [Content(
-                                mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
-                        )]
-                ),
-                ApiResponse(responseCode = "401", description = "Unauthorized"),
-                ApiResponse(responseCode = "404", description = "Not Found")
-            ]
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
     )
     @PutMapping("/{openingId}")
     fun updateById(
-            @RequestHeader("AccessCode") accessCode: Int,
-            @PathVariable openingId: UUID,
-            @RequestBody @Valid opening: OpeningDto
+        @RequestHeader("AccessCode") accessCode: Int,
+        @PathVariable openingId: UUID,
+        @RequestBody @Valid opening: OpeningDto
     ): ResponseEntity<Any> {
 
         return openingService?.let {
@@ -96,32 +96,32 @@ class OpeningsController(
     }
 
     @Operation(
-            summary = "Update opening's availability",
-            description = "Update opening's availability"
+        summary = "Update opening's availability",
+        description = "Update opening's availability"
     )
     @ApiResponses(
-            value = [
-                ApiResponse(
-                        responseCode = "201",
-                        content = [Content(
-                                mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
-                        )]
-                ),
-                ApiResponse(responseCode = "401", description = "Unauthorized"),
-                ApiResponse(responseCode = "404", description = "Not Found")
-            ]
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
     )
     @PatchMapping("/{openingId}/{available}")
     fun updateOpeningAvailabilityById(
-            @RequestHeader("AccessCode") accessCode: Int,
-            @PathVariable openingId: UUID,
-            @PathVariable available: Boolean
+        @RequestHeader("AccessCode") accessCode: Int,
+        @PathVariable openingId: UUID,
+        @PathVariable available: Boolean
     ): ResponseEntity<Any> {
 
         return openingService?.let {
             val responseDto = it.changeAvailability(openingId, available)
-            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
+            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 }

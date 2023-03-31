@@ -52,8 +52,8 @@ class CodeServiceImplTest {
     lateinit var companyCodeRepository: CompanyCodeRepository
 
     companion object {
-        val codeEntityForAdmin = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
-        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
+        val codeEntityForAdmin = AccessCodeEntity(UUID.randomUUID(), 234567, CodeType.ADMIN_CODE)
+        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456, CodeType.COMPANY_CODE)
         val company = CompanyEntity(UUID.randomUUID(), "Levi9")
         val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
     }
@@ -96,7 +96,7 @@ class CodeServiceImplTest {
 
         insertCompanyInDb()
 
-        Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value,UUID.randomUUID()))
+        Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value, UUID.randomUUID()))
     }
 
     @Test

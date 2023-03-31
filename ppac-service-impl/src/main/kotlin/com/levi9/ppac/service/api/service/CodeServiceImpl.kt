@@ -27,7 +27,7 @@ class CodeServiceImpl(
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
         }
-        return companyCodeRepository.findAll().map { CompanyCode.parse(it) }
+        return companyCodeRepository.findAll().map { CompanyCode.toBusinessModel(it) }
     }
 
     override fun createCompanyCode(displayName: String): CompanyCode {
@@ -43,29 +43,31 @@ class CodeServiceImpl(
 
         logger.info("Generated $valueNr value for $displayName company.")
 
-        val accessCodeDTO = AccessCode().apply {
-            id = UUID.randomUUID()
+        val accessCodeDTO = AccessCode(UUID.randomUUID()).apply {
             value = valueNr
         }
-        val accessCodeEntity = codeRepository.save(AccessCode.parse(accessCodeDTO))
+        val accessCodeEntity = codeRepository.save(AccessCode.toEntity(accessCodeDTO))
 
         logger.info("Inserted accessCodeEntity with id ${accessCodeEntity.id} into database.")
 
-        val companyDTO = Company().apply {
-            id = UUID.randomUUID()
+        val companyDTO = Company(UUID.randomUUID()).apply {
             name = displayName
         }
-        val companyEntity = companyRepository.save(Company.parse(companyDTO))
+        val companyEntity = companyRepository.save(Company.toEntity(companyDTO))
 
         logger.info("Inserted companyEntity with id ${companyEntity.id} into database.")
 
         val companyCodeDTO =
-            CompanyCode(UUID.randomUUID(), AccessCode.parse(accessCodeEntity), Company.parse(companyEntity))
-        val companyCodeEntity = companyCodeRepository.save(CompanyCode.parse(companyCodeDTO))
+            CompanyCode(
+                UUID.randomUUID(),
+                AccessCode.toBusinessModel(accessCodeEntity),
+                Company.toBusinessModel(companyEntity)
+            )
+        val companyCodeEntity = companyCodeRepository.save(CompanyCode.toEntity(companyCodeDTO))
 
         logger.info("Inserted companyCodeEntity with id ${companyCodeEntity.id} into database.")
 
-        return CompanyCode.parse(companyCodeEntity)
+        return CompanyCode.toBusinessModel(companyCodeEntity)
     }
 
     override fun checkAdminCode() {

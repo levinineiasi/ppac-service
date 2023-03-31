@@ -9,9 +9,10 @@ import javax.validation.constraints.Size
 
 @Schema(description = "Model for a company.")
 @JsonRootName("Company")
-class CompanyDto {
+data class CompanyDto(
     @JMap
-    lateinit var id: UUID
+    var id: UUID
+) {
 
     @field:Schema(
         description = "Name of the company",
@@ -59,10 +60,12 @@ class CompanyDto {
     var email: String? = null
 
     @field:Schema(
-            description = "List of openings",
-            type = "List<Opening>",
-            nullable = true
+        description = "List of openings",
+        type = "List<Opening>",
+        nullable = true
     )
     @JMap
     var openings: List<OpeningDto>? = emptyList()
+
+    constructor() : this(UUID.randomUUID())
 }

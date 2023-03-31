@@ -59,7 +59,7 @@ class CodesController(
         @Max(value = 999999, message = "Header AccessCode invalid format.")
         accessCode: Int
     ): ResponseEntity<Any> {
-            codeService?.checkAdminCode()
+        codeService?.checkAdminCode()
         return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
     }
 
@@ -81,7 +81,7 @@ class CodesController(
         accessCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
-         codeService?.checkCompanyCode(companyId)
+        codeService?.checkCompanyCode(companyId)
         return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
     }
 
