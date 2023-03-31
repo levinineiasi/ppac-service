@@ -37,7 +37,7 @@ import javax.validation.constraints.Min
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
-    private val codeService: CodeService<CompanyCode>?
+    private val codeService: CodeService<CompanyCode, UUID>?
 ) {
     val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =
         JMapper(CompanyCodeDto::class.java, CompanyCode::class.java)

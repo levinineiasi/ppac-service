@@ -1,10 +1,7 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.business.Opening
-import java.util.UUID
-
-interface CompanyService<T> : CrudService<T> {
-    fun addOpening(id: UUID, opening: Opening): Opening
-    fun findById(id: UUID, onlyAvailableOpenings: Boolean): T
-    fun updateById(id: UUID, updatedObject: T): T
+interface CompanyService<T, ID, S> : CrudService<T, ID> {
+    fun addOpening(id: ID, opening: S): S
+    fun findById(id: ID, onlyAvailableOpenings: Boolean): T
+    fun updateById(id: ID, updatedObject: T): T
 }

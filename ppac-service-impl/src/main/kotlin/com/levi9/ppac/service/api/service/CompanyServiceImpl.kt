@@ -23,7 +23,7 @@ class CompanyServiceImpl(
     private val codeRepository: CodeRepository,
     private val openingRepository: OpeningRepository,
     private val companyCodeRepository: CompanyCodeRepository
-) : CompanyService<Company> {
+) : CompanyService<Company, UUID, Opening> {
 
     @Transactional
     override fun addOpening(id: UUID, opening: Opening): Opening {

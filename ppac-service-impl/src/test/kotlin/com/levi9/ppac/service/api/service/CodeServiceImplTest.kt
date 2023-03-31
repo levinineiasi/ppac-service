@@ -40,7 +40,7 @@ import java.util.UUID
 class CodeServiceImplTest {
 
     @Autowired
-    lateinit var codeService: CodeService<CompanyCode>
+    lateinit var codeService: CodeService<CompanyCode, UUID>
 
     @Autowired
     lateinit var codeRepository: CodeRepository
