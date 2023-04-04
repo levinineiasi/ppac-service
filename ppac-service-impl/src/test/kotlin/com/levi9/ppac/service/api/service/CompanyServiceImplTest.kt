@@ -50,7 +50,7 @@ import java.util.*
 class CompanyServiceImplTest {
 
     @Autowired
-    lateinit var companyService: CompanyService<Company>
+    lateinit var companyService: CompanyService<Company,UUID,Opening>
 
     @Autowired
     lateinit var trainerRepository: TrainerRepository

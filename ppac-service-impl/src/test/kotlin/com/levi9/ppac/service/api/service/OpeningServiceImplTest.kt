@@ -53,7 +53,7 @@ import java.util.*
 class OpeningServiceImplTest {
 
     @Autowired
-    lateinit var openingService: OpeningService<Opening>
+    lateinit var openingService: OpeningService<Opening,UUID>
 
     @Autowired
     lateinit var companyRepository: CompanyRepository
