@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @Suppress("MagicNumber")
 @Tag(name = "Companies Controller")
 class CompaniesController(
-    private val companyService: CompanyService<Company>?
+    private val companyService: CompanyService<Company, UUID, Opening>?
 ) {
     val companyBusinessToDtoMapper: JMapper<CompanyDto, Company> = JMapper(CompanyDto::class.java, Company::class.java)
     val companyDtoToBusinessMapper: JMapper<Company, CompanyDto> = JMapper(Company::class.java, CompanyDto::class.java)

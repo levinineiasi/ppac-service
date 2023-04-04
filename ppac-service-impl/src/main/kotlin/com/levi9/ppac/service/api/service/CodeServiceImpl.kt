@@ -22,7 +22,7 @@ class CodeServiceImpl(
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository,
     val companyCodeRepository: CompanyCodeRepository
-) : CodeService<CompanyCode> {
+) : CodeService<CompanyCode, UUID> {
 
     override fun findAll(): List<CompanyCode> {
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {

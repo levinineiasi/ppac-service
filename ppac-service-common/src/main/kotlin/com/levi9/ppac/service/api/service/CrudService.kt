@@ -1,8 +1,8 @@
 package com.levi9.ppac.service.api.service
 
-import java.util.UUID
-
-interface CrudService<T> {
+interface CrudService<T, ID> {
     fun findAll(): List<T>
-    fun deleteById(id: UUID)
+    fun deleteById(id: ID) {
+        throw NotImplementedError("Default implementation which throws NotImplementedError")
+    }
 }

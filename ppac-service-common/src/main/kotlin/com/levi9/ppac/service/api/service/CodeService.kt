@@ -1,12 +1,10 @@
 package com.levi9.ppac.service.api.service
 
-import java.util.UUID
-
-interface CodeService<T> : CrudService<T> {
+interface CodeService<T, ID> : CrudService<T, ID> {
 
     fun createCompanyCode(displayName: String): T
 
     fun isAdminCode(accessCode: Int): Boolean
 
-    fun isCompanyCode(accessCode: Int, companyId: UUID): Boolean
+    fun isCompanyCode(accessCode: Int, companyId: ID): Boolean
 }
