@@ -13,10 +13,10 @@ import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
+import com.levi9.ppac.service.api.repository.TrainerRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.config.TestConfig
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTestContextBootstrapper
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.BootstrapWith
 import org.springframework.test.context.TestPropertySource
 import org.springframework.web.server.ResponseStatusException
@@ -52,6 +53,9 @@ class CompanyServiceImplTest {
     lateinit var companyService: CompanyService<Company>
 
     @Autowired
+    lateinit var trainerRepository: TrainerRepository
+
+    @Autowired
     lateinit var companyRepository: CompanyRepository
 
     @Autowired
@@ -69,7 +73,7 @@ class CompanyServiceImplTest {
     companion object {
         val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
         private val trainer = TrainerEntity(UUID.randomUUID(), "Trainer1", "Some description for trainer 1")
-        private val openingToCreateTrainer = OpeningEntity(
+        private val opening = OpeningEntity(
             id = UUID.randomUUID(),
             keyWords = emptyList(),
             customKeyWords = emptyList(),
@@ -83,22 +87,25 @@ class CompanyServiceImplTest {
             trainers = listOf(trainer),
             available = true
         )
-        val company = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(openingToCreateTrainer) }
+        val company = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(opening) }
         val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
-        val opening = OpeningEntity(
-            id = UUID.randomUUID(),
-            keyWords = emptyList(),
-            customKeyWords = emptyList(),
-            hasTechnicalInterview = true,
-            hasTechnicalTest = true,
-            periodCount = 4,
-            periodType = PeriodType.MONTHS,
-            openPositions = 20,
-            acceptOnClosingOpportunity = true,
-            signAgreement = false,
-            trainers = listOf(trainer),
-            available = true
-        )
+    }
+
+    @Test
+    fun `when add opening, no access code for company given by id`() {
+
+        insertCompanyInDb()
+
+        val exception = assertThrows<ResponseStatusException> {
+            companyService.addOpening(
+                UUID.randomUUID(),
+                Opening.parse(opening)
+            )
+        }
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
+
+//        deleteFromDb()
     }
 
     @Test
@@ -106,16 +113,22 @@ class CompanyServiceImplTest {
 
         insertCompanyInDb()
 
-        assertThrows<ResponseStatusException> {
+        securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
+
+        val exception = assertThrows<ResponseStatusException> {
             companyService.addOpening(
                 UUID.randomUUID(),
-                Opening.Companion.parse(opening)
+                Opening.parse(opening)
             )
         }
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
+
+//        deleteFromDb()
     }
 
     @Test
-    fun `when add opening is successfully`() {
+    fun `when add opening is successful`() {
 
         insertCompanyInDb()
 
@@ -127,8 +140,45 @@ class CompanyServiceImplTest {
         )
 
         assertNotNull(openingRepository.findById(addOpening.id))
+
         val updatedCompany = companyRepository.findById(company.id)
-        Assertions.assertTrue(updatedCompany.get().openings.contains(Opening.parse(addOpening)))
+        assertTrue(updatedCompany.get().openings.map { it.id }.contains(addOpening.id))
+        assertNotNull(trainerRepository.findById(trainer.id))
+
+//TODO : When delete => error
+//        deleteFromDb()
+    }
+
+    @Test
+    fun `when add opening but trainer is from another company`() {
+
+        insertCompanyInDb()
+
+        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+
+        val companySameTrainer = company.copy().apply {
+            id = UUID.randomUUID()
+            openings = listOf(opening.copy().apply { id = UUID.randomUUID() })
+        }
+        companyRepository.save(companySameTrainer)
+
+//        val exception = assertThrows<ResponseStatusException> {
+//            companyService.addOpening(
+//                company.id,
+//                Opening.parse(opening)
+//            )
+//        }
+
+        val addOpening = companyService.addOpening(
+                company.id,
+                Opening.parse(opening)
+            )
+
+
+//            assertEquals(HttpStatus.BAD_REQUEST, exception.status)
+
+//        deleteFromDb()
+
     }
 
     fun insertCompanyInDb() {
@@ -136,5 +186,13 @@ class CompanyServiceImplTest {
         companyRepository.save(company)
         companyCodeRepository.save(companyCodeEntity)
     }
+
+//    fun deleteFromDb() {
+//        openingRepository.deleteAll()
+//        trainerRepository.deleteAll()
+//        companyCodeRepository.deleteAll()
+//        companyRepository.deleteAll()
+//        codeRepository.deleteAll()
+//    }
 
 }
