@@ -122,7 +122,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when there are not company codes in db findAll returns no company codes`() {
+    fun `when there are no company codes in db findAll returns no company codes`() {
 
         codeRepository.save(codeEntityForAdmin)
 
