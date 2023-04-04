@@ -1,6 +1,7 @@
 package com.levi9.ppac.service.api.validator
 
 import com.levi9.ppac.service.api.enums.CodeType
+import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
 import javax.validation.ConstraintValidator
 import javax.validation.ConstraintValidatorContext
 

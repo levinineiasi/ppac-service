@@ -1,5 +1,6 @@
-package com.levi9.ppac.service.api.validator
+package com.levi9.ppac.service.api.validator.annotations
 
+import com.levi9.ppac.service.api.validator.CodeTypeValidator
 import javax.validation.Constraint
 import javax.validation.Payload
 import kotlin.reflect.KClass

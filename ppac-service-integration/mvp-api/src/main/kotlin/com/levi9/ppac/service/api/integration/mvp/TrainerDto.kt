@@ -46,5 +46,6 @@ class TrainerDto(
     @JMap
     var avatar: ByteArray? = null
 
+    @Suppress("unused")
     constructor() : this(UUID.randomUUID())
 }

@@ -36,13 +36,14 @@ data class CompanyDto(
 
     @field:Schema(
         description = "Description of the company",
-        example = "Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers. We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.",
+        example = """Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers.
+             We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.""",
         type = "String",
         minLength = 2,
         maxLength = 300,
         nullable = true
     )
-    @Size(min = 2, max = 300, message = "The description length should have between 2 and 50 characters.")
+    @Size(min = 40, max = 1000, message = "The description length should have between 2 and 50 characters.")
     @JMap
     var description: String? = null
 
@@ -67,5 +68,6 @@ data class CompanyDto(
     @JMap
     var openings: List<OpeningDto>? = emptyList()
 
+    @Suppress("unused")
     constructor() : this(UUID.randomUUID())
 }

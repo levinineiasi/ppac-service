@@ -16,11 +16,12 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.handler.MappedInterceptor
 
-
 @Configuration
 internal class ControllerConfig {
     companion object {
         private const val responseTime = 1000
+        private const val apiVersion1: String = "/api/v1/**"
+
     }
 
     @Bean
@@ -47,7 +48,7 @@ internal class ControllerConfig {
 
     @Bean
     fun openApiGroupV1(): GroupedOpenApi? {
-        val paths = arrayOf("/api/v1/**")
+        val paths = arrayOf(apiVersion1)
         val packages = arrayOf("com.levi9.ppac.service.api.service.controller.mvp")
         return GroupedOpenApi.builder().group("v1").pathsToMatch(*paths).packagesToScan(*packages).build()
     }
@@ -56,12 +57,12 @@ internal class ControllerConfig {
     internal class ControllerInterceptorConfig(
         @Value("\${server.allowed-origins}")
         private val allowedOrigins: String? = null
-    ): WebMvcConfigurer {
+    ) : WebMvcConfigurer {
 
         override fun addInterceptors(registry: InterceptorRegistry) {
             registry.addInterceptor(
                 MappedInterceptor(
-                    arrayOf("/api/v1/**"),
+                    arrayOf(apiVersion1),
                     arrayOf(),
                     HttpControllerInterceptor()
                 )
@@ -70,10 +71,10 @@ internal class ControllerConfig {
 
         override fun addCorsMappings(registry: CorsRegistry) {
             logger.debug("allowedOrigins: $allowedOrigins")
-            registry.addMapping("/api/v1/**")
-                    .allowedOrigins(allowedOrigins)
-                    .allowedHeaders("*")
-                    .allowedMethods("*")
+            registry.addMapping(apiVersion1)
+                .allowedOrigins(allowedOrigins)
+                .allowedHeaders("*")
+                .allowedMethods("*")
         }
     }
 }

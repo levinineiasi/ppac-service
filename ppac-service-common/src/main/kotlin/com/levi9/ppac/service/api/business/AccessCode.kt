@@ -1,39 +1,55 @@
 package com.levi9.ppac.service.api.business
 
+import com.googlecode.jmapper.JMapper
+import com.googlecode.jmapper.annotations.JGlobalMap
 import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.enums.CodeType
-import com.levi9.ppac.service.api.validator.ValidCodeType
+import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
 import java.util.UUID
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
+@JGlobalMap
 data class AccessCode(
-    var id: UUID
 
-) {
-    @NotNull
-    @Min(value = 100000, message = "Value should have minimum 6 characters.")
-    @Max(value = 999999, message = "Value should have maximum 6 characters.")
-    var value: Int = 0
+    var id: UUID,
 
-    @Enumerated(EnumType.STRING)
-    @ValidCodeType
+    @field:NotNull
+    @field:Min(value = 100000, message = "Value should have minimum 6 characters.")
+    @field:Max(value = 999999, message = "Value should have maximum 6 characters.")
+    var value: Int,
+
+    @field:Enumerated(EnumType.STRING)
+    @field:ValidCodeType
     var type: CodeType = CodeType.COMPANY_CODE
-
+) {
     companion object ConverterImpl : Converter<AccessCode, AccessCodeEntity> {
         override fun toEntity(businessObject: AccessCode): AccessCodeEntity {
-            return AccessCodeEntity(businessObject.id, businessObject.value, businessObject.type)
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
+            }
+            val codesBusinessModelToEntityMapper: JMapper<AccessCodeEntity, AccessCode> =
+                JMapper(AccessCodeEntity::class.java, AccessCode::class.java)
+            return codesBusinessModelToEntityMapper.getDestination(businessObject)
         }
 
         override fun toBusinessModel(entityObject: AccessCodeEntity): AccessCode {
-            return AccessCode(entityObject.id).apply {
-                value = entityObject.value
-                type = entityObject.type
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(entityObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val codesEntityToBusinessModelMapper: JMapper<AccessCode, AccessCodeEntity> =
+                JMapper(AccessCode::class.java, AccessCodeEntity::class.java)
+            return codesEntityToBusinessModelMapper.getDestination(entityObject)
         }
     }
 
@@ -41,6 +57,7 @@ data class AccessCode(
         return "AccessCode(id=$id, value=$value, type=$type)"
     }
 
-    constructor() : this(UUID.randomUUID())
+    @Suppress("unused")
+    constructor() : this(UUID.randomUUID(), Int.MIN_VALUE)
 
 }

@@ -178,5 +178,6 @@ class OpeningDto(
     @JMap
     var startDate: LocalDate? = null
 
+    @Suppress("unused")
     constructor() : this(UUID.randomUUID())
 }

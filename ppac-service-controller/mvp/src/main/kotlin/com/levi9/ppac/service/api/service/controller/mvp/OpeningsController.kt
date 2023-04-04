@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -36,6 +37,38 @@ class OpeningsController(
 ) {
     val openingBusinessToDtoMapper: JMapper<OpeningDto, Opening> = JMapper(OpeningDto::class.java, Opening::class.java)
     val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)
+
+    @Operation(
+        summary = "Retrieves opening by id",
+        description = "Returns a opening by id"
+    )
+    @ApiResponses(
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
+    )
+    @GetMapping("/{id}")
+    fun findById(
+        @PathVariable id: UUID,
+        @RequestParam(required = false, defaultValue = "true") onlyAvailableOpenings: Boolean
+    ): ResponseEntity<Any> {
+
+        logger.info("Returning opening by id from database.")
+
+        return openingService?.let {
+            ResponseEntity(
+                openingBusinessToDtoMapper.getDestination(it.findById(id)),
+                HttpStatus.OK
+            )
+        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+    }
 
     @Operation(
         summary = "Retrieves all openings",

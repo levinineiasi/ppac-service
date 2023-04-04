@@ -3,13 +3,14 @@ package com.levi9.ppac.service.api.integration.mvp
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.enums.CodeType
-import com.levi9.ppac.service.api.validator.ValidCodeType
+import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
 import io.swagger.v3.oas.annotations.media.Schema
 import java.util.UUID
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 
+const val DEFAULT_VALUE: Int = 100000
 @Schema(description = "Model for a access code.")
 @JsonRootName("AccessCode")
 class AccessCodeDto(
@@ -17,6 +18,7 @@ class AccessCodeDto(
     @JMap
     var id: UUID
 ) {
+
     @field:Schema(
         description = "The access code",
         example = "567324",
@@ -30,7 +32,7 @@ class AccessCodeDto(
     @Min(value = 100000, message = "Value should have minimum 6 characters.")
     @Max(value = 999999, message = "Value should have maximum 6 characters.")
     @JMap
-    var value: Int = 100000
+    var value: Int = DEFAULT_VALUE
 
 
     @field:Schema(
@@ -44,6 +46,7 @@ class AccessCodeDto(
     @JMap
     var type: CodeType? = CodeType.COMPANY_CODE
 
+    @Suppress("unused")
     constructor() : this(UUID.randomUUID())
 
 }

@@ -69,6 +69,11 @@ class OpeningServiceImpl(
         )
     }
 
+    override fun findById(openingId: UUID): Opening {
+        val openingEntity = openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
+            return Opening.toBusinessModel(openingEntity)
+    }
+
     @Transactional
     override fun findAll(): List<Opening> {
         return openingRepository.findAll()

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
-import javax.validation.Valid
 import org.springframework.web.bind.annotation.RequestParam
 
 @RestController
@@ -71,21 +70,22 @@ class CompaniesController(
             }, HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
+
     @Operation(
-            summary = "Retrieves company by id",
-            description = "Returns a company by id"
+        summary = "Retrieves company by id",
+        description = "Returns a company by id"
     )
     @ApiResponses(
-            value = [
-                ApiResponse(
-                        responseCode = "200",
-                        content = [Content(
-                                mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
-                        )]
-                ),
-                ApiResponse(responseCode = "404", description = "Not Found")
-            ]
+        value = [
+            ApiResponse(
+                responseCode = "200",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
     )
     @GetMapping("/{id}")
     fun findById(
@@ -96,26 +96,29 @@ class CompaniesController(
         logger.info("Returning company by id from database.")
 
         return companyService?.let {
-            ResponseEntity(companyBusinessToDtoMapper.getDestination(it.findById(id, onlyAvailableOpenings)), HttpStatus.OK)
+            ResponseEntity(
+                companyBusinessToDtoMapper.getDestination(it.findById(id, onlyAvailableOpenings)),
+                HttpStatus.OK
+            )
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
     @Operation(
-            summary = "Update a company",
-            description = "Update a company"
+        summary = "Update a company",
+        description = "Update a company"
     )
     @ApiResponses(
-            value = [
-                ApiResponse(
-                        responseCode = "201",
-                        content = [Content(
-                                mediaType = "application/json",
-                                array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
-                        )]
-                ),
-                ApiResponse(responseCode = "401", description = "Unauthorized"),
-                ApiResponse(responseCode = "404", description = "Not Found")
-            ]
+        value = [
+            ApiResponse(
+                responseCode = "201",
+                content = [Content(
+                    mediaType = "application/json",
+                    array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
+                )]
+            ),
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Not Found")
+        ]
     )
     @PutMapping("/{id}")
     fun updateById(
@@ -131,7 +134,6 @@ class CompaniesController(
             ResponseEntity(companyBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         }!!
     }
-
 
     @Operation(
         summary = "Add an opening to a company",
@@ -154,7 +156,7 @@ class CompaniesController(
     fun addOpening(
         @RequestHeader("AccessCode") accessCode: Int,
         @PathVariable companyId: UUID,
-        @RequestBody @Valid opening: OpeningDto
+        @RequestBody opening: OpeningDto
     ): ResponseEntity<Any> {
 
         logger.info("Create an opening for company with id $companyId.")
@@ -164,7 +166,6 @@ class CompaniesController(
             ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
-
 
     @Operation(
         summary = "Deletes a company",

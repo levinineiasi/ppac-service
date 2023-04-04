@@ -27,8 +27,8 @@ object PropertyLogger {
     fun printPropertiesOnReady(event: ApplicationReadyEvent) {
         if (logger.isDebugEnabled) {
             val buffer = StringBuffer("============ configuration ============\n")
-            val contextEnv: Environment = event.getApplicationContext().getEnvironment()
-            buffer.append("Active profiles: {}", Arrays.toString(contextEnv.getActiveProfiles()))
+            val contextEnv: Environment = event.applicationContext.environment
+            buffer.append("Active profiles: {}", Arrays.toString(contextEnv.activeProfiles))
             val sources = (contextEnv as AbstractEnvironment).propertySources
             StreamSupport.stream(sources.spliterator(), false)
                 .filter { ps -> ps is EnumerablePropertySource<*> }

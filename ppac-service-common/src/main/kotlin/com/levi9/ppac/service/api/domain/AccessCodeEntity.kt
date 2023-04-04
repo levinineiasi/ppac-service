@@ -1,7 +1,7 @@
 package com.levi9.ppac.service.api.domain
 
 import com.levi9.ppac.service.api.enums.CodeType
-import com.levi9.ppac.service.api.validator.ValidCodeType
+import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -18,19 +18,19 @@ import javax.validation.constraints.NotNull
 @Table(name = "CODES")
 data class AccessCodeEntity(
 
-    @Id
+    @field:Id
     @Column(name = "ID")
     var id: UUID,
 
     @Column(name = "VALUE", unique = true, nullable = false)
-    @NotNull
-    @Min(value = 100000, message = "Value should have minimum 6 characters.")
-    @Max(value = 999999, message = "Value should have maximum 6 characters.")
+    @field:NotNull
+    @field:Min(value = 100000, message = "Value should have minimum 6 characters.")
+    @field:Max(value = 999999, message = "Value should have maximum 6 characters.")
     var value: Int,
 
     @Column(name = "CODE_TYPE")
-    @Enumerated(EnumType.STRING)
-    @ValidCodeType
-    val type: CodeType = CodeType.COMPANY_CODE
+    @field:Enumerated(EnumType.STRING)
+    @field:ValidCodeType
+    var type: CodeType = CodeType.COMPANY_CODE
 )
 

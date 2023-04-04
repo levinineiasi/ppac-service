@@ -20,6 +20,7 @@ import javax.validation.ConstraintViolationException
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 
 @RestControllerAdvice(basePackages = ["com.levi9.ppac.service.api.service.controller"])
+@Suppress("TooManyFunctions")
 class ApiExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
@@ -33,7 +34,6 @@ class ApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleMethodArgumentTypeMismatchException(ex: MethodArgumentTypeMismatchException): ResponseEntity<String> {
         logger.error(ex.message, ex)
-
         return ResponseEntity.badRequest().body(ResponseMessages.INVALID_PARAMETER + ex.name)
     }
 
@@ -76,6 +76,12 @@ class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage)
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleIllegalArgumentException(ex: IllegalArgumentException): ResponseEntity<Any> {
+        logger.error(ex.message, ex)
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseMessages.BAD_REQUEST_MESSAGE)
+    }
 
     @ExceptionHandler(DataIntegrityViolationException::class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -85,9 +91,17 @@ class ApiExceptionHandler {
             .body(ResponseMessages.CONFLICT_MESSAGE)
     }
 
+    @ExceptionHandler(IllegalStateException::class)
+    fun handleIllegalStateException(ex: IllegalStateException): ResponseEntity<Any> {
+        logger.error(ex.message, ex)
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ResponseMessages.CONFLICT_MESSAGE)
+    }
+
     @ExceptionHandler(HttpRequestMethodNotSupportedException::class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
-    fun handlerHttpRequestMethodNotSupportedException(ex: HttpRequestMethodNotSupportedException): ResponseEntity<String> {
+    fun handlerHttpRequestMethodNotSupportedException(
+        ex: HttpRequestMethodNotSupportedException
+    ): ResponseEntity<String> {
         logger.error(ex.message, ex)
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(ResponseMessages.METHOD_NOT_ALLOWED_MESSAGE)
     }

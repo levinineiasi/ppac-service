@@ -32,7 +32,7 @@ class ControllerExceptionHandler {
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(
         ex: ConstraintViolationException
-    ): ResponseEntity<Any?>? {
+    ): ResponseEntity<Any?> {
         val error = ex.constraintViolations.stream()
             .map { violation -> violation.message }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
@@ -41,7 +41,7 @@ class ControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleValidationExceptions(
         ex: MethodArgumentNotValidException
-    ): ResponseEntity<Any?>? {
+    ): ResponseEntity<Any?> {
         val error = ex.fieldError?.defaultMessage
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error)
     }

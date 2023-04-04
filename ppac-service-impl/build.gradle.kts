@@ -18,4 +18,5 @@ dependencies {
     testImplementation("com.fasterxml.jackson.core:jackson-databind")
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
+    implementation("com.windpanda.jmapper-framework:jmapper-core")
 }
