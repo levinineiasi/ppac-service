@@ -27,13 +27,16 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.util.UUID
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.RequestParam
 
 @RestController
 @RequestMapping("/api/v1/companies")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
-@Suppress("MagicNumber")
 @Tag(name = "Companies Controller")
+@Validated
 class CompaniesController(
     private val companyService: CompanyService<Company, UUID, Opening>?
 ) {
@@ -122,7 +125,10 @@ class CompaniesController(
     )
     @PutMapping("/{id}")
     fun updateById(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int,
         @PathVariable id: UUID,
         @RequestBody updatedCompany: CompanyDto
     ): ResponseEntity<Any> {
@@ -154,7 +160,10 @@ class CompaniesController(
     )
     @PostMapping("{companyId}/openings")
     fun addOpening(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int,
         @PathVariable companyId: UUID,
         @RequestBody opening: OpeningDto
     ): ResponseEntity<Any> {
@@ -182,7 +191,10 @@ class CompaniesController(
     )
     @DeleteMapping("/{companyId}")
     fun deleteById(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
 

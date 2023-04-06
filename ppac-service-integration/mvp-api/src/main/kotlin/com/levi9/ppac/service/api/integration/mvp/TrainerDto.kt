@@ -7,10 +7,10 @@ import java.util.UUID
 
 @Schema(description = "Model for a trainer.")
 @JsonRootName("Trainer")
-class TrainerDto(
+class TrainerDto {
     @JMap
-    var id: UUID
-) {
+    var id: UUID = UUID.randomUUID()
+
     @field:Schema(
         description = "The trainer's name",
         example = "Popescu Ion",
@@ -45,7 +45,4 @@ class TrainerDto(
     )
     @JMap
     var avatar: ByteArray? = null
-
-    @Suppress("unused")
-    constructor() : this(UUID.randomUUID())
 }

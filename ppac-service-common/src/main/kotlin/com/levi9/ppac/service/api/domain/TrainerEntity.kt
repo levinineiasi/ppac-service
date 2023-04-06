@@ -16,7 +16,7 @@ data class TrainerEntity(
     var id: UUID,
 
     @Column(name = "NAME", nullable = false)
-    @field:Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
     var name: String,
 
     @Column(name = "DESCRIPTION", nullable = false)

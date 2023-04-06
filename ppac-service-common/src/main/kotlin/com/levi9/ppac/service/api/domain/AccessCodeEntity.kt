@@ -18,17 +18,19 @@ import javax.validation.constraints.NotNull
 @Table(name = "CODES")
 data class AccessCodeEntity(
 
+    @field:NotNull
     @field:Id
     @Column(name = "ID")
     var id: UUID,
 
     @Column(name = "VALUE", unique = true, nullable = false)
     @field:NotNull
-    @field:Min(value = 100000, message = "Value should have minimum 6 characters.")
-    @field:Max(value = 999999, message = "Value should have maximum 6 characters.")
+    @field:Min(value = 100000, message = "Value should have 6 characters length.")
+    @field:Max(value = 999999, message = "Value should have 6 characters length.")
     var value: Int,
 
     @Column(name = "CODE_TYPE")
+    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     @field:ValidCodeType
     var type: CodeType = CodeType.COMPANY_CODE

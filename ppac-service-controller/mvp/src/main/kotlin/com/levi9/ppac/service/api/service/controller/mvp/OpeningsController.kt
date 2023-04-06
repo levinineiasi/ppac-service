@@ -17,6 +17,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import javax.validation.Valid
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/openings")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
-@Suppress("MagicNumber")
 @Tag(name = "Openings Controller")
+@Validated
 class OpeningsController(
     private val openingService: OpeningService<Opening, UUID>?
 ) {
@@ -117,7 +120,10 @@ class OpeningsController(
     )
     @PutMapping("/{openingId}")
     fun updateById(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int,
         @PathVariable openingId: UUID,
         @RequestBody @Valid opening: OpeningDto
     ): ResponseEntity<Any> {
@@ -147,7 +153,10 @@ class OpeningsController(
     )
     @PatchMapping("/{openingId}/{available}")
     fun updateOpeningAvailabilityById(
-        @RequestHeader("AccessCode") accessCode: Int,
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int,
         @PathVariable openingId: UUID,
         @PathVariable available: Boolean
     ): ResponseEntity<Any> {

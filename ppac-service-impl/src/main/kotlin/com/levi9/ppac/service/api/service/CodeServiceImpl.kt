@@ -33,7 +33,7 @@ class CodeServiceImpl(
         return companyCodeRepository.findAll().map { CompanyCode.toBusinessModel(it) }
     }
 
-    override fun createCompanyCode(displayName: String): CompanyCode {
+    override fun createCompanyCode(name: String): CompanyCode {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
@@ -44,7 +44,7 @@ class CodeServiceImpl(
             valueNr = Random.nextInt(MINIM_VALUE, MAXIM_VALUE)
         }
 
-        logger.info("Generated $valueNr value for $displayName company.")
+        logger.info("Generated $valueNr value for $name company.")
 
         val accessCodeDTO = AccessCode(UUID.randomUUID(),valueNr,CodeType.COMPANY_CODE)
         val accessCodeEntity = codeRepository.save(AccessCode.toEntity(accessCodeDTO))
@@ -52,7 +52,7 @@ class CodeServiceImpl(
 
         logger.info("Inserted accessCodeEntity with id ${accessCodeEntity.id} into database.")
 
-        val companyDTO = Company(UUID.randomUUID(), displayName)
+        val companyDTO = Company(UUID.randomUUID(), name)
         val companyEntity = companyRepository.save(Company.toEntity(companyDTO))
 
         logger.info("Inserted companyEntity with id ${companyEntity.id} into database.")

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
 
@@ -23,47 +24,58 @@ import javax.validation.constraints.Size
 @Table(name = "OPENINGS")
 data class OpeningEntity(
 
+    @field:NotNull
     @field:Id
     @Column(name = "ID")
     var id: UUID,
 
+    @field:NotNull
     @field:ElementCollection
     var keyWords: List<String>,
 
+    @field:NotNull
     @field:ElementCollection
     var customKeyWords: List<String>,
 
     @Column(name = "HAS_TECHNICAL_INTERVIEW", nullable = false)
+    @field:NotNull
     var hasTechnicalInterview: Boolean,
 
     @Column(name = "HAS_TECHNICAL_TEST", nullable = false)
+    @field:NotNull
     var hasTechnicalTest: Boolean,
 
     @Column(name = "PERIOD_COUNT", nullable = false)
+    @field:NotNull
     @field:Positive
     @field:Max(value = 24, message = "Invalid value for periodCount field.")
     var periodCount: Int,
 
     @Column(name = "PERIOD_TYPE", nullable = false)
+    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     @ValidPeriodType
     var periodType: PeriodType = PeriodType.WEEKS,
 
     @Column(name = "OPEN_POSITIONS", nullable = false)
+    @field:NotNull
     @field:Positive(message = "The number of open positions should be positive.")
     @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
     var openPositions: Int,
 
     @Column(name = "ACCEPT_ON_CLOSING_OPPORTUNITY", nullable = false)
+    @field:NotNull
     var acceptOnClosingOpportunity: Boolean,
 
     @Column(name = "SIGN_AGREEMENT", nullable = false)
+    @field:NotNull
     var signAgreement: Boolean,
 
     @OneToMany(cascade = [CascadeType.ALL])
     var trainers: List<TrainerEntity>,
 
     @Column(name = "AVAILABLE", nullable = false)
+    @field:NotNull
     var available: Boolean = true,
 
     ) {

@@ -5,7 +5,8 @@ import com.levi9.ppac.service.api.business.CompanyCode
 import com.levi9.ppac.service.api.integration.mvp.CompanyCodeDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CodeService
-import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages
+import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.NO_CONTENT
+import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.OK
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.info.Info
@@ -28,12 +29,12 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.validation.annotation.Validated
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
+import javax.validation.constraints.Size
 
 @RestController
 @RequestMapping("/api/v1/codes")
 @ConditionalOnProperty(prefix = "feature", name = ["mvp"], havingValue = "true")
-@Suppress("MagicNumber")
-@OpenAPIDefinition(info = Info(title = "PPAC API - codes endpoint"))
+@OpenAPIDefinition(info = Info(title = "PPAC API - Codes Endpoints"))
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
@@ -49,18 +50,19 @@ class CodesController(
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "OK"),
-            ApiResponse(responseCode = "401", description = "Unauthorized")
+            ApiResponse(responseCode = "401", description = "Unauthorized"),
+            ApiResponse(responseCode = "404", description = "Nu-l gaseste")
         ]
     )
     @GetMapping("/checkAdminCode")
     fun checkAdminCode(
         @RequestHeader("AccessCode")
-        @Min(value = 100000, message = "Header AccessCode invalid format.")
-        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        @Min(value = 100000, message = "Invalid length for header AccessCode")
+        @Max(value = 999999, message = "Invalid length for header AccessCode")
         accessCode: Int
     ): ResponseEntity<Any> {
         codeService?.checkAdminCode()
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
+        return ResponseEntity.status(HttpStatus.OK).body(OK)
     }
 
     @Operation(
@@ -76,13 +78,13 @@ class CodesController(
     @GetMapping("/checkCompanyCode/{companyId}")
     fun checkCompanyCode(
         @RequestHeader("AccessCode")
-        @Min(value = 100000, message = "Header AccessCode invalid format.")
-        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
         accessCode: Int,
         @PathVariable companyId: UUID
     ): ResponseEntity<Any> {
         codeService?.checkCompanyCode(companyId)
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseMessages.OK)
+        return ResponseEntity.status(HttpStatus.OK).body(OK)
     }
 
     @Operation(
@@ -104,16 +106,17 @@ class CodesController(
     )
     @GetMapping("")
     fun findAll(
-        @Min(value = 100000, message = "Header AccessCode invalid.")
-        @Max(value = 999999, message = "Header AccessCode invalid.")
-        @RequestHeader("AccessCode") accessCode: Int
+        @RequestHeader("AccessCode")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
+        accessCode: Int
     ): ResponseEntity<Any> {
 
         logger.info("Returning all company codes from database.")
 
         val listCompanies = codeService!!.findAll()
         if (listCompanies.isEmpty()) {
-            return ResponseEntity(ResponseMessages.NO_CONTENT, HttpStatus.NO_CONTENT)
+            return ResponseEntity(NO_CONTENT, HttpStatus.NO_CONTENT)
         }
 
         return ResponseEntity(listCompanies.map {
@@ -139,20 +142,21 @@ class CodesController(
             ApiResponse(responseCode = "401", description = "Unauthorized")
         ]
     )
-    @PostMapping("/{displayName}")
+    @PostMapping("/{name}")
     fun createCode(
         @RequestHeader("AccessCode")
-        @Min(value = 100000, message = "Header AccessCode invalid format.")
-        @Max(value = 999999, message = "Header AccessCode invalid format.")
+        @Min(value = 100000, message = "Invalid length for header AccessCode.")
+        @Max(value = 999999, message = "Invalid length for header AccessCode.")
         accessCode: Int,
         @PathVariable
-        displayName: String
+        @Size(min = 2, max =30 , message =  "The name length should have between 2 and 30 characters.")
+        name: String
     ): ResponseEntity<Any> {
 
-        logger.info("Create company code for $displayName company.")
+        logger.info("Create company code for $name company.")
 
         return codeService?.let {
-            val responseDto = it.createCompanyCode(displayName)
+            val responseDto = it.createCompanyCode(name)
             ResponseEntity(codesBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
         }!!
     }

@@ -14,8 +14,8 @@ const val DEFAULT_VALUE: Int = 100000
 @Schema(description = "Model for a access code.")
 @JsonRootName("AccessCode")
 class AccessCodeDto(
-    @NotNull
-    @JMap
+
+    @field:JMap
     var id: UUID
 ) {
 
@@ -38,9 +38,9 @@ class AccessCodeDto(
     @field:Schema(
         description = "Type of access code",
         example = "COMPANY_CODE",
-        type = "String",
+        type = "CodeType",
         defaultValue = "COMPANY_CODE",
-        nullable = true
+        nullable = false
     )
     @ValidCodeType
     @JMap

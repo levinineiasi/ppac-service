@@ -9,23 +9,26 @@ import javax.persistence.Id
 import javax.validation.ConstraintViolationException
 import javax.validation.Validation
 import javax.validation.constraints.Email
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
 @JGlobalMap
 data class Company(
 
+    @field:NotNull
     @field:Id
     var id: UUID,
 
-    @field:Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+    @field:NotNull
+    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
     var name: String
 ) {
     var logo: ByteArray? = null
 
-    @field:Size(min = 40, max = 1000, message = "The description length should have between 2 and 300 characters.")
+    @field:Size(min = 40, max = 1000, message = "The description should have between 2 and 300 characters length.")
     var description: String? = null
 
-    @field:Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
+    @field:Size(min = 5, max = 50, message = "The email should have between 5 and 50 characters length.")
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
     var openings: List<Opening>? = emptyList()

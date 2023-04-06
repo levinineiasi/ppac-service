@@ -6,33 +6,80 @@ import com.googlecode.jmapper.annotations.JGlobalMap
 import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
+import com.levi9.ppac.service.api.validator.annotations.ValidPeriodType
 import java.time.LocalDate
 import java.util.UUID
+import javax.persistence.ElementCollection
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.Id
 import javax.validation.ConstraintViolationException
 import javax.validation.Validation
+import javax.validation.constraints.FutureOrPresent
+import javax.validation.constraints.Max
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Positive
+import javax.validation.constraints.Size
 
 @JGlobalMap
 data class Opening(
+
+    @field:Id
     var id: UUID,
+
+    @field:ElementCollection
     var keyWords: List<String> = mutableListOf(),
+
+    @field:ElementCollection
     var customKeyWords: List<String> = mutableListOf(),
+
+    @field:NotNull
     var hasTechnicalInterview: Boolean = false,
+
+    @field:NotNull
     var hasTechnicalTest: Boolean = false,
+
+    @field:Positive
+    @field:Max(value = 24, message = "Invalid value for periodCount field.")
     var periodCount: Int = 0,
+
+    @field:Enumerated(EnumType.STRING)
+    @ValidPeriodType
     var periodType: PeriodType = PeriodType.WEEKS,
-    var openPositions: Int = 0,
+
+    @field:Positive(message = "The number of open positions should be positive.")
+    @field:NotNull
+    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    var openPositions: Int = 1,
+
+    @field:NotNull
     var acceptOnClosingOpportunity: Boolean = false,
+
+    @field:NotNull
     var signAgreement: Boolean = false,
+
     var trainers: List<Trainer> = mutableListOf(),
+
+    @field:NotNull
     var available: Boolean = true
 ) {
+    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
     var title: String? = null
+
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
+
+    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
     var requirements: String? = null
+
+    @field:Size(min =2, max = 1000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
+
+    @field:Size(min =10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "dd-MM-yyyy")
+    @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
 
     companion object ConverterImpl : Converter<Opening, OpeningEntity> {

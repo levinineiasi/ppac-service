@@ -9,10 +9,9 @@ import javax.validation.constraints.Size
 
 @Schema(description = "Model for a company.")
 @JsonRootName("Company")
-data class CompanyDto(
+class CompanyDto {
     @JMap
-    var id: UUID
-) {
+    lateinit var id: UUID
 
     @field:Schema(
         description = "Name of the company",
@@ -22,7 +21,7 @@ data class CompanyDto(
         maxLength = 30,
         nullable = false
     )
-    @Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
     @JMap
     var name: String = ""
 
@@ -39,11 +38,11 @@ data class CompanyDto(
         example = """Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers.
              We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.""",
         type = "String",
-        minLength = 2,
-        maxLength = 300,
+        minLength = 40,
+        maxLength = 1000,
         nullable = true
     )
-    @Size(min = 40, max = 1000, message = "The description length should have between 2 and 50 characters.")
+    @field:Size(min = 40, max = 1000, message = "The description length should have between 40 and 1000 characters.")
     @JMap
     var description: String? = null
 
@@ -51,12 +50,12 @@ data class CompanyDto(
         description = "Email of the company",
         example = "info@levi9.com",
         type = "String",
-        minLength = 2,
+        minLength = 5,
         maxLength = 50,
         nullable = true
     )
-    @Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
-    @Email(message = "The company email should be a valid one.")
+    @field:Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
+    @field:Email(message = "The company email should be a valid one.")
     @JMap
     var email: String? = null
 
@@ -67,7 +66,4 @@ data class CompanyDto(
     )
     @JMap
     var openings: List<OpeningDto>? = emptyList()
-
-    @Suppress("unused")
-    constructor() : this(UUID.randomUUID())
 }

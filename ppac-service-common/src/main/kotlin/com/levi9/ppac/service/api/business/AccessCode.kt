@@ -9,6 +9,7 @@ import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
 import java.util.UUID
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.Id
 import javax.validation.ConstraintViolationException
 import javax.validation.Validation
 import javax.validation.constraints.Max
@@ -18,13 +19,16 @@ import javax.validation.constraints.NotNull
 @JGlobalMap
 data class AccessCode(
 
+    @field:NotNull
+    @field:Id
     var id: UUID,
 
     @field:NotNull
-    @field:Min(value = 100000, message = "Value should have minimum 6 characters.")
-    @field:Max(value = 999999, message = "Value should have maximum 6 characters.")
+    @field:Min(value = 100000, message = "Value should have 6 characters length.")
+    @field:Max(value = 999999, message = "Value should have 6 characters length.")
     var value: Int,
 
+    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     @field:ValidCodeType
     var type: CodeType = CodeType.COMPANY_CODE
