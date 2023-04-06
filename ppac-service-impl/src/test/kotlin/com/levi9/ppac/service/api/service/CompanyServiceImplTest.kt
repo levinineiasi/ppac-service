@@ -71,7 +71,7 @@ class CompanyServiceImplTest {
     lateinit var securityContext: SecurityContext<Int>
 
     companion object {
-        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
+        private val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
         private val trainer = TrainerEntity(UUID.randomUUID(), "Trainer1", "Some description for trainer 1")
         private val opening = OpeningEntity(
             id = UUID.randomUUID(),
@@ -87,14 +87,51 @@ class CompanyServiceImplTest {
             trainers = listOf(trainer),
             available = true
         )
-        val company = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(opening) }
-        val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
+        private val company = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(opening) }
+        private val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
+        private val openingAvailable = OpeningEntity(
+            id = UUID.randomUUID(),
+            keyWords = emptyList(),
+            customKeyWords = emptyList(),
+            hasTechnicalInterview = true,
+            hasTechnicalTest = true,
+            periodCount = 4,
+            periodType = PeriodType.MONTHS,
+            openPositions = 20,
+            acceptOnClosingOpportunity = true,
+            signAgreement = false,
+            trainers = listOf(trainer),
+            available = true
+        )
+
+        private val openingUnavailable = OpeningEntity(
+            id = UUID.randomUUID(),
+            keyWords = emptyList(),
+            customKeyWords = emptyList(),
+            hasTechnicalInterview = true,
+            hasTechnicalTest = true,
+            periodCount = 4,
+            periodType = PeriodType.MONTHS,
+            openPositions = 20,
+            acceptOnClosingOpportunity = true,
+            signAgreement = false,
+            trainers = listOf(trainer),
+            available = false
+        )
+
+        private val codeEntityForCompany2 = AccessCodeEntity(UUID.randomUUID(), 112233).apply { type = CodeType.COMPANY_CODE }
+        private val company2 = CompanyEntity(UUID.randomUUID(), "Amazon")
+        private val companyCodeEntity2 = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany2, company2)
+
+        private val codeEntityForCompany3 = AccessCodeEntity(UUID.randomUUID(), 223344).apply { type = CodeType.COMPANY_CODE }
+        private val company3 = CompanyEntity(UUID.randomUUID(), "Endava")
+        private val companyCodeEntity3 = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany3, company3)
     }
 
     @Test
     fun `when add opening, no access code for company given by id`() {
 
-        insertCompanyInDb()
+        insertCompanyInDbForOpening()
 
         val exception = assertThrows<ResponseStatusException> {
             companyService.addOpening(
@@ -109,7 +146,7 @@ class CompanyServiceImplTest {
     @Test
     fun `when add opening, wrong access code for company given by id`() {
 
-        insertCompanyInDb()
+        insertCompanyInDbForOpening()
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
 
@@ -126,7 +163,7 @@ class CompanyServiceImplTest {
     @Test
     fun `when add opening is successful`() {
 
-        insertCompanyInDb()
+        insertCompanyInDbForOpening()
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value)
 
@@ -145,7 +182,7 @@ class CompanyServiceImplTest {
     @Test
     fun `when add opening but trainer is from another company`() {
 
-        insertCompanyInDb()
+        insertCompanyInDbForOpening()
 
         val secondAccessCode = AccessCodeEntity(UUID.randomUUID(), 255255)
         val secondCompany = CompanyEntity(UUID.randomUUID(), "Google")
@@ -170,9 +207,125 @@ class CompanyServiceImplTest {
         assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
-    fun insertCompanyInDb() {
+    @Test
+    fun `when there are companies in db findAll returns all companies`() {
+
+        insert2CompaniesInDb()
+
+        val result = companyService.findAll()
+
+        assertEquals(2, result.size)
+
+        assertEquals(Company.parse(company2) , result[0])
+        assertEquals(Company.parse(company3) , result[1])
+    }
+
+    @Test
+    fun `when there are no companies in db findAll returns no companies`() {
+
+        val result = companyService.findAll()
+
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `when there is a company with a given id and no openings in db findById with that id and onlyAvailableOpenings true returns that company`() {
+
+        insertCompanyInDb()
+
+        val result = companyService.findById(company2.id, true)
+
+        assertEquals(Company.parse(company2), result)
+    }
+
+    @Test
+    fun `when there isn't a company with a given id in db findById with that id and onlyAvailableOpenings true returns NOT_FOUND`() {
+
+        assertThrows(ResponseStatusException(HttpStatus.NOT_FOUND)::class.java)
+        { companyService.findById(company2.id, true) }
+
+    }
+
+    @Test
+    fun `when there is a company with a given id and openings in db findById with that id and onlyAvailableOpenings true returns that company only with the available openings`() {
+
+        insertCompanyInDb()
+
+        openingRepository.save(openingAvailable)
+        openingRepository.save(openingUnavailable)
+
+        val companyToSave = company2.copy().apply { openings = listOf(openingAvailable, openingUnavailable) }
+
+        companyRepository.save(companyToSave)
+
+        val result = companyService.findById(company2.id, true)
+
+        val expected = Company.parse(company2.copy().apply { openings = listOf(openingAvailable) })
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `when there is a company with a given id and openings in db findById with that id and onlyAvailableOpenings false returns that company with all openings`() {
+
+        insertCompanyInDb()
+
+        openingRepository.save(openingAvailable)
+        openingRepository.save(openingUnavailable)
+
+        val companyToSave = company2.copy().apply { openings = listOf(openingAvailable, openingUnavailable) }
+
+        companyRepository.save(companyToSave)
+
+        val result = companyService.findById(company2.id, false)
+
+        val expected = Company.parse(company2.copy().apply { openings = listOf(openingAvailable, openingUnavailable) })
+
+        assertEquals(expected, result)
+    }
+
+    @Test
+    fun `when there is not a company with a given id in db updateById with that id returns 404 NotFound`() {
+
+        insertCompanyInDb()
+
+        assertThrows(ResponseStatusException(HttpStatus.NOT_FOUND)::class.java)
+        { companyService.updateById(company3.id, Company.parse(company3)) }
+    }
+
+    @Test
+    fun `when there is a company with a given id in db updateById with that id updates the company from db`() {
+
+        insertCompanyInDb()
+
+        securityContext.setAccessCode(112233)
+
+        val result = companyService.updateById(company2.id, Company.parse(company3))
+
+        val expected = company3.copy().apply { id = company2.id }
+
+        assertEquals(Company.parse(expected ), result)
+    }
+
+    fun insertCompanyInDbForOpening() {
         codeRepository.save(codeEntityForCompany)
         companyRepository.save(company)
         companyCodeRepository.save(companyCodeEntity)
+    }
+
+    fun insertCompanyInDb() {
+        codeRepository.save(codeEntityForCompany2)
+        companyRepository.save(company2)
+        companyCodeRepository.save(companyCodeEntity2)
+    }
+
+    fun insert2CompaniesInDb() {
+        codeRepository.save(codeEntityForCompany2)
+        companyRepository.save(company2)
+        companyCodeRepository.save(companyCodeEntity2)
+
+        codeRepository.save(codeEntityForCompany3)
+        companyRepository.save(company3)
+        companyCodeRepository.save(companyCodeEntity3)
     }
 }
