@@ -53,7 +53,7 @@ class CodeServiceImplTest {
 
     companion object {
         val codeEntityForAdmin = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
-        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
+        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456)
         val company = CompanyEntity(UUID.randomUUID(), "Levi9")
         val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
     }

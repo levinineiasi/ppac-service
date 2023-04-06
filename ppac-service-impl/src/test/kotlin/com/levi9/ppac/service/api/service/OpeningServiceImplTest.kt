@@ -68,13 +68,10 @@ class OpeningServiceImplTest {
     lateinit var companyCodeRepository: CompanyCodeRepository
 
     @Autowired
-    lateinit var trainerRepository: TrainerRepository
-
-    @Autowired
     lateinit var securityContext: SecurityContext<Int>
 
     companion object {
-        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456).apply { type = CodeType.COMPANY_CODE }
+        val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456)
         val codeEntityForCompanyWithTrainer =
             AccessCodeEntity(UUID.randomUUID(), 123457).apply { type = CodeType.COMPANY_CODE }
         val trainer = TrainerEntity(UUID.randomUUID(), "Trainer1", "Some description for trainer 1")
