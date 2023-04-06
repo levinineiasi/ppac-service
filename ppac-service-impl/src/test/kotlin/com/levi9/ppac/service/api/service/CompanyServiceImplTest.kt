@@ -147,25 +147,27 @@ class CompanyServiceImplTest {
 
         insertCompanyInDb()
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
-
         val secondAccessCode = AccessCodeEntity(UUID.randomUUID(), 255255)
         val secondCompany = CompanyEntity(UUID.randomUUID(), "Google")
             .apply { openings = emptyList() }
         val openingWithSameTrainer = opening.copy().apply { id = UUID.randomUUID() }
 
-        val secondCompanyCOdeEntity = CompanyCodeEntity(UUID.randomUUID(), secondAccessCode, secondCompany)
+        val secondCompanyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), secondAccessCode, secondCompany)
+
+        securityContext.setAccessCode(secondCompanyCodeEntity.accessCode.value)
 
         codeRepository.save(secondAccessCode)
         companyRepository.save(secondCompany)
-        companyCodeRepository.save(secondCompanyCOdeEntity)
+        companyCodeRepository.save(secondCompanyCodeEntity)
 
-        assertThrows<ResponseStatusException> {
+        val exception = assertThrows<ResponseStatusException> {
             companyService.addOpening(
                 secondCompany.id,
                 Opening.parse(openingWithSameTrainer)
             )
         }
+
+        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     fun insertCompanyInDb() {

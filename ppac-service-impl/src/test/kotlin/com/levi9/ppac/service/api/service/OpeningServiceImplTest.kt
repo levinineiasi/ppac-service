@@ -137,7 +137,6 @@ class OpeningServiceImplTest {
         assertEquals(2, result.size)
         assertEquals(Opening.parse(openingAvailable), result[1])
 
-        openingRepository.deleteAll()
     }
 
 
@@ -154,7 +153,6 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
-        deleteFromDb()
     }
 
     @Test
@@ -172,7 +170,6 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
-        deleteFromDb()
     }
 
     @Test
@@ -188,7 +185,6 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.status)
-        deleteFromDb()
     }
 
     @Test
@@ -206,7 +202,6 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.status)
-        deleteFromDb()
     }
 
     @Test
@@ -226,8 +221,6 @@ class OpeningServiceImplTest {
 
         assertEquals(Opening.parse(expectedOpeningEntity), updatedOpening)
         assertTrue(updatedOpening.trainers.contains(expectedTrainer))
-
-        deleteFromDb()
     }
 
     @Test
@@ -249,7 +242,6 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.BAD_REQUEST, exception.status)
-        deleteFromDb()
     }
 
     @Test
@@ -296,8 +288,6 @@ class OpeningServiceImplTest {
 
         val expectedResponse = Opening.parse(companyOpening.copy().apply { available = false })
         assertEquals(expectedResponse, response)
-
-        deleteFromDb()
     }
 
 
@@ -316,21 +306,12 @@ class OpeningServiceImplTest {
         }
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
-        deleteFromDb()
     }
 
     fun insertCompanyInDb() {
         codeRepository.save(codeEntityForCompany)
         companyRepository.save(company)
         companyCodeRepository.save(companyCodeEntity)
-    }
-
-    fun deleteFromDb() {
-        trainerRepository.deleteAll()
-        codeRepository.deleteAll()
-        openingRepository.deleteAll()
-        companyRepository.deleteAll()
-        companyCodeRepository.deleteAll()
     }
 
 }
