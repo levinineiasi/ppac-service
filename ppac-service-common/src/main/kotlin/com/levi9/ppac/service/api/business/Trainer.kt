@@ -11,7 +11,7 @@ import javax.validation.Validation
 import javax.validation.constraints.Size
 
 @JGlobalMap
-class Trainer(
+data class Trainer(
 
     @field:Id
     var id: UUID
