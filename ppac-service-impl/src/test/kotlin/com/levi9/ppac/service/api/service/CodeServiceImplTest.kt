@@ -59,7 +59,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when admin code is correct isAdminCode returns true`() {
+    fun `isAdminCode SHOULD RETURN true WHEN admin code is correct`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -67,7 +67,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when admin code is incorrect isAdminCode returns false`() {
+    fun `isAdminCode SHOULD RETURN false WHEN admin code is incorrect`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -75,7 +75,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when company code is correct and companyId match isCompanyCode returns true`() {
+    fun `isCompanyCode SHOULD RETURN true WHEN company code is correct and companyId match`() {
 
         insertCompanyInDb()
 
@@ -83,7 +83,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when company code is incorrect and companyId doesn't isCompanyCode returns false`() {
+    fun `isCompanyCode SHOULD RETURN false WHEN company code is incorrect and companyId doesn't`() {
 
         insertCompanyInDb()
 
@@ -92,7 +92,7 @@ class CodeServiceImplTest {
 
 
     @Test
-    fun `when company code is correct and companyId doesn't match isCompanyCode returns false`() {
+    fun `isCompanyCode SHOULD RETURN false WHEN company code is correct and companyId doesn't match`() {
 
         insertCompanyInDb()
 
@@ -100,7 +100,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when there are company codes in db findAll returns all company codes`() {
+    fun `findAll SHOULD RETURN all company codes WHEN there are company codes in DB`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -122,7 +122,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when there are no company codes in db findAll returns no company codes`() {
+    fun `findAll SHOULD RETURN no company codes WHEN there are no company codes in DB`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -132,7 +132,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when create company code it is inserted in db`() {
+    fun `createCompanyCode SHOULD BE successful`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -148,7 +148,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when delete company code it is deleted from db`() {
+    fun `deleteById SHOULD BE successful`() {
 
         codeRepository.save(codeEntityForAdmin)
 
@@ -163,7 +163,7 @@ class CodeServiceImplTest {
     }
 
     @Test
-    fun `when delete company code which doesn't exist in db it doesn't delete anything from db`() {
+    fun `deleteById SHOULD NOT delete anything from db WHEN company code doesn't exist in db`() {
 
         codeRepository.save(codeEntityForAdmin)
 

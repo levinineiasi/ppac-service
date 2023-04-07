@@ -111,7 +111,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when there are openings in db findAll returns all openings`() {
+    fun `findAll SHOULD RETURN all openings WHEN there are openings in DB`() {
 
 
         val openingUnavailable = opening.copy().apply {
@@ -136,9 +136,27 @@ class OpeningServiceImplTest {
 
     }
 
+    @Test
+    fun `updateOpening SHOULD BE successful`() {
+
+        insertCompanyInDb()
+
+        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+
+        val updatedOpening = openingService.updateOpening(
+                companyOpening.id,
+                Opening.parse(opening)
+        )
+
+        val expectedOpeningEntity = opening.copy().apply { this.id = companyOpening.id }
+        val expectedTrainer = Trainer.parse(trainer)
+
+        assertEquals(Opening.parse(expectedOpeningEntity), updatedOpening)
+        assertTrue(updatedOpening.trainers.contains(expectedTrainer))
+    }
 
     @Test
-    fun `when update opening, no code for company opening given by id`() {
+    fun `updateOpening SHOULD RETURN UNAUTHORIZED WHEN AccessCode is not set`() {
 
         insertCompanyInDb()
 
@@ -153,7 +171,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when update opening, wrong code for company opening given by id`() {
+    fun `updateOpening SHOULD RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
 
         insertCompanyInDb()
 
@@ -170,7 +188,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when update opening, company opening given by id is wrong`() {
+    fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening has invalid company id`() {
 
         insertCompanyInDb()
 
@@ -185,7 +203,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when update opening, opening given by id does not have a company `() {
+    fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening does not have a company `() {
 
         insertCompanyInDb()
 
@@ -202,26 +220,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `update opening successfully`() {
-
-        insertCompanyInDb()
-
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
-
-        val updatedOpening = openingService.updateOpening(
-            companyOpening.id,
-            Opening.parse(opening)
-        )
-
-        val expectedOpeningEntity = opening.copy().apply { this.id = companyOpening.id }
-        val expectedTrainer = Trainer.parse(trainer)
-
-        assertEquals(Opening.parse(expectedOpeningEntity), updatedOpening)
-        assertTrue(updatedOpening.trainers.contains(expectedTrainer))
-    }
-
-    @Test
-    fun `when update opening, opening given have a trainer from another company `() {
+    fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening has a trainer from another company `() {
 
         codeRepository.save(codeEntityForCompanyWithTrainer)
         companyRepository.save(companyWithTrainer)
@@ -242,7 +241,23 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when change availability, opening not found`() {
+    fun `changeAvailability SHOULD BE successful`() {
+
+        insertCompanyInDb()
+
+        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+
+        val response = openingService.changeAvailability(
+                companyOpening.id,
+                false
+        )
+
+        val expectedResponse = Opening.parse(companyOpening.copy().apply { available = false })
+        assertEquals(expectedResponse, response)
+    }
+
+    @Test
+    fun `changeAvailability SHOULD RETURN BAD_REQUEST WHEN opening is not in DB`() {
 
         val exception = assertThrows<ResponseStatusException> {
             openingService.changeAvailability(
@@ -255,7 +270,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `when change availability, company not found`() {
+    fun `changeAvailability SHOULD RETURN BAD_REQUEST WHEN opening's company is not in DB`() {
 
         openingRepository.save(companyOpening)
 
@@ -272,24 +287,7 @@ class OpeningServiceImplTest {
     }
 
     @Test
-    fun `change availability of opening successfully`() {
-
-        insertCompanyInDb()
-
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
-
-        val response = openingService.changeAvailability(
-            companyOpening.id,
-            false
-        )
-
-        val expectedResponse = Opening.parse(companyOpening.copy().apply { available = false })
-        assertEquals(expectedResponse, response)
-    }
-
-
-    @Test
-    fun `when change availability, wrong access code for company`() {
+    fun `changeAvailability SHOULD RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
 
         insertCompanyInDb()
 

@@ -106,7 +106,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `addOpening is successful`() {
+    fun `addOpening SHOULD BE successful`() {
 
         insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
 
@@ -127,7 +127,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `addOpening RETURN UNAUTHORIZED WHEN AccessCode is not set`() {
+    fun `addOpening SHOULD RETURN UNAUTHORIZED WHEN AccessCode is not set`() {
 
         insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
 
@@ -142,7 +142,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `addOpening RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
+    fun `addOpening SHOULD RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
 
         insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
 
@@ -160,7 +160,7 @@ class CompanyServiceImplTest {
 
 
     @Test
-    fun `addOpening RETURN BAD_REQUEST WHEN trainer belong to another company`() {
+    fun `addOpening SHOULD RETURN BAD_REQUEST WHEN trainer belong to another company`() {
 
         val openingWithSameTrainer = openingAvailable.copy().apply { id = UUID.randomUUID() }
 
@@ -180,7 +180,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `findAll RETURN all companies WHEN multiples companies exit in DB`() {
+    fun `findAll SHOULD RETURN all companies WHEN multiple companies exit in DB`() {
 
         insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
         insertCompanyInDb(accessCodeEntityForCompany3, companyEntity3, companyCodeEntity3)
@@ -194,7 +194,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `findAll RETURN emptyList WHEN there are no companies in DB`() {
+    fun `findAll SHOULD RETURN emptyList WHEN there are no companies in DB`() {
 
         val result = companyService.findAll()
 
@@ -202,7 +202,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `findById RETURN company with only available openings WHEN onlyAvailable = true`() {
+    fun `findById SHOULD RETURN company with only available openings WHEN onlyAvailable = true`() {
 
         insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
 
@@ -221,7 +221,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `findById RETURN company with all openings WHEN onlyAvailable = false`() {
+    fun `findById SHOULD RETURN company with all openings WHEN onlyAvailable = false`() {
 
         insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
 
@@ -241,7 +241,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `findById RETURN NOT FOUND WHEN companyID is not present in DB`() {
+    fun `findById SHOULD RETURN NOT FOUND WHEN companyID is not present in DB`() {
 
         insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
 
@@ -251,7 +251,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `updateById is successful`() {
+    fun `updateById SHOULD BE successful`() {
 
         insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
 
@@ -265,7 +265,7 @@ class CompanyServiceImplTest {
     }
 
     @Test
-    fun `updatedById RETURN NOT_FOUND WHEN companyID is not present in DB`() {
+    fun `updatedById SHOULD RETURN NOT_FOUND WHEN companyID is not present in DB`() {
 
         insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
 
