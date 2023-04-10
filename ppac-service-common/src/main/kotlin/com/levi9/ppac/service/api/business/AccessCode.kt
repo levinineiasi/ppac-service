@@ -1,49 +1,70 @@
 package com.levi9.ppac.service.api.business
 
+import com.googlecode.jmapper.JMapper
+import com.googlecode.jmapper.annotations.JGlobalMap
+import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.enums.CodeType
-import java.util.*
+import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
+import java.util.UUID
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.Id
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
+import javax.validation.constraints.NotNull
 
-class AccessCode {
-    var id: UUID = UUID.randomUUID()
-    var value: Int = 0
-    var type: CodeType? = CodeType.COMPANY_CODE
+@JGlobalMap
+data class AccessCode(
 
-    companion object {
-        fun parse(elem: AccessCodeEntity): AccessCode {
-            return AccessCode().apply {
-                id = elem.id
-                value = elem.value
-                type = elem.type
+    @field:NotNull
+    @field:Id
+    var id: UUID,
+
+    @field:NotNull
+    @field:Min(value = 100000, message = "Invalid length for value field.")
+    @field:Max(value = 999999, message = "Invalid length for value field.")
+    var value: Int,
+
+    @field:NotNull
+    @field:Enumerated(EnumType.STRING)
+    @field:ValidCodeType
+    var type: CodeType = CodeType.COMPANY_CODE
+) {
+    companion object ConverterImpl : Converter<AccessCode, AccessCodeEntity> {
+        override fun toEntity(businessObject: AccessCode): AccessCodeEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val codesBusinessModelToEntityMapper: JMapper<AccessCodeEntity, AccessCode> =
+                JMapper(AccessCodeEntity::class.java, AccessCode::class.java)
+            return codesBusinessModelToEntityMapper.getDestination(businessObject)
         }
 
-        fun parse(elem: AccessCode): AccessCodeEntity {
-            return AccessCodeEntity(elem.id, elem.value).apply {
-                type = elem.type
+        override fun toBusinessModel(entityObject: AccessCodeEntity): AccessCode {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(entityObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val codesEntityToBusinessModelMapper: JMapper<AccessCode, AccessCodeEntity> =
+                JMapper(AccessCode::class.java, AccessCodeEntity::class.java)
+            return codesEntityToBusinessModelMapper.getDestination(entityObject)
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is AccessCode) return false
-
-        if (id != other.id) return false
-        if (value != other.value) return false
-        if (type != other.type) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + value
-        result = 31 * result + (type?.hashCode() ?: 0)
-        return result
     }
 
     override fun toString(): String {
-        return "AccessCode(id=$id, value=$value, type=$type)"
+        return "AccessCode(" +
+                "id=$id," +
+                "value=$value," +
+                "type = $type)"
     }
+
+    @Suppress("unused")
+    constructor() : this(UUID.randomUUID(), Int.MIN_VALUE)
+
 }

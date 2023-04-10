@@ -3,13 +3,17 @@ package com.levi9.ppac.service.api.integration.mvp
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.*
+import java.util.UUID
 import javax.validation.constraints.Email
+import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
+import nonapi.io.github.classgraph.json.Id
 
 @Schema(description = "Model for a company.")
 @JsonRootName("Company")
 class CompanyDto {
+
+    @field:Id
     @JMap
     lateinit var id: UUID
 
@@ -21,7 +25,9 @@ class CompanyDto {
         maxLength = 30,
         nullable = false
     )
-    @Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+
+    @field:NotNull
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
     @JMap
     var name: String = ""
 
@@ -35,13 +41,16 @@ class CompanyDto {
 
     @field:Schema(
         description = "Description of the company",
-        example = "Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers. We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.",
+        example = """Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers.
+             We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.""",
         type = "String",
-        minLength = 2,
-        maxLength = 300,
+        minLength = 40,
+        maxLength = 1000,
         nullable = true
     )
-    @Size(min = 2, max = 300, message = "The description length should have between 2 and 50 characters.")
+
+    @field:NotNull
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     @JMap
     var description: String? = null
 
@@ -49,19 +58,21 @@ class CompanyDto {
         description = "Email of the company",
         example = "info@levi9.com",
         type = "String",
-        minLength = 2,
+        minLength = 5,
         maxLength = 50,
         nullable = true
     )
-    @Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
-    @Email(message = "The company email should be a valid one.")
+
+    @field:NotNull
+    @field:Size(min = 5, max = 50, message = "Invalid length for email field.")
+    @field:Email(message = "The company email should be a valid one.")
     @JMap
     var email: String? = null
 
     @field:Schema(
-            description = "List of openings",
-            type = "List<Opening>",
-            nullable = true
+        description = "List of openings",
+        type = "List<Opening>",
+        nullable = true
     )
     @JMap
     var openings: List<OpeningDto>? = emptyList()

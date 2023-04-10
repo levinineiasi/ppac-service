@@ -1,66 +1,74 @@
 package com.levi9.ppac.service.api.business
 
+import com.googlecode.jmapper.JMapper
+import com.googlecode.jmapper.annotations.JGlobalMap
+import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.CompanyEntity
-import java.util.*
+import java.util.UUID
+import javax.persistence.Id
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Size
 
-class Company {
-    var id: UUID = UUID.randomUUID()
-    var name: String = ""
+@JGlobalMap
+data class Company(
+
+    @field:NotNull
+    @field:Id
+    var id: UUID,
+
+    @field:NotNull
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    var name: String
+) {
     var logo: ByteArray? = null
+
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
+
+    @field:Size(min = 5, max = 50, message = "Invalid length for email field.")
+    @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
     var openings: List<Opening>? = emptyList()
 
-    companion object {
-        fun parse(elem: CompanyEntity): Company {
-            return Company().apply {
-                id = elem.id
-                name = elem.name
-                logo = elem.logo
-                description = elem.description
-                email = elem.email
-                openings = elem.openings.map { Opening.parse(it) }
+    companion object ConverterImpl : Converter<Company, CompanyEntity> {
+
+        override fun toBusinessModel(entityObject: CompanyEntity): Company {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(entityObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val codesEntityToBusinessModelMapper: JMapper<Company, CompanyEntity> =
+                JMapper(Company::class.java, CompanyEntity::class.java)
+            return codesEntityToBusinessModelMapper.getDestination(entityObject)
         }
 
-        fun parse(elem: Company): CompanyEntity {
-            return CompanyEntity(elem.id, elem.name).apply {
-                logo = elem.logo
-                description = elem.description
-                email = elem.email
-                openings = elem.openings?.map { Opening.parse(it) }?: emptyList()
+        override fun toEntity(businessObject: Company): CompanyEntity {
+
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val codesBusinessModelToEntityMapper: JMapper<CompanyEntity, Company> =
+                JMapper(CompanyEntity::class.java, Company::class.java)
+            return codesBusinessModelToEntityMapper.getDestination(businessObject)
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Company) return false
-
-        if (id != other.id) return false
-        if (name != other.name) return false
-        if (logo != null) {
-            if (other.logo == null) return false
-            if (!logo.contentEquals(other.logo)) return false
-        } else if (other.logo != null) return false
-        if (description != other.description) return false
-        if (email != other.email) return false
-        if (openings != other.openings) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + (logo?.contentHashCode() ?: 0)
-        result = 31 * result + (description?.hashCode() ?: 0)
-        result = 31 * result + (email?.hashCode() ?: 0)
-        result = 31 * result + (openings?.hashCode() ?: 0)
-        return result
     }
 
     override fun toString(): String {
-        return "Company(id=$id, name='$name', logo=${logo?.contentToString()}, description=$description, email=$email, openings=$openings)"
+        return "Company(" +
+            "id=$id, " +
+            "name='$name'," +
+            "logo=${logo?.contentToString()}," +
+            "description=$description," +
+            "email=$email," +
+            "openings=$openings)"
     }
+
+    @Suppress("unused")
+    constructor() : this(UUID.randomUUID(), "")
 }

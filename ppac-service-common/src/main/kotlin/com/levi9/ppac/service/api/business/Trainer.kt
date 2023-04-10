@@ -1,61 +1,66 @@
 package com.levi9.ppac.service.api.business
 
+import com.googlecode.jmapper.JMapper
+import com.googlecode.jmapper.annotations.JGlobalMap
+import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.TrainerEntity
-import java.util.*
+import java.util.UUID
+import javax.persistence.Id
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
+import javax.validation.constraints.Size
 
-class Trainer {
-    var id: UUID = UUID.randomUUID()
-    var name: String = ""
+@JGlobalMap
+data class Trainer(
+
+    @field:Id
+    var id: UUID,
+
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    var name: String = "",
+
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String = ""
+) {
+
+    @field:Size(min = 20, max = 100, message = "Invalid size Linkedin URL")
     var linkedinURL: String? = null
-    var avatar: String? = null
 
-    companion object {
-        fun parse(elem: TrainerEntity): Trainer {
-            return Trainer().apply {
-                id = elem.id
-                name = elem.name
-                description = elem.description
-                linkedinURL = elem.linkedinURL
-                avatar = elem.avatar
+    var avatar: ByteArray? = null
+
+    companion object ConverterImpl : Converter<Trainer, TrainerEntity> {
+        override fun toBusinessModel(entityObject: TrainerEntity): Trainer {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(entityObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val trainerEntityToBusinessModelMapper: JMapper<Trainer, TrainerEntity> =
+                JMapper(Trainer::class.java, TrainerEntity::class.java)
+            return trainerEntityToBusinessModelMapper.getDestination(entityObject)
         }
 
-        fun parse(elem: Trainer): TrainerEntity {
-            return TrainerEntity(
-                    elem.id,
-                    elem.name,
-                    elem.description,
-            ).apply {
-                linkedinURL = elem.linkedinURL
-                avatar = elem.avatar
+        override fun toEntity(businessObject: Trainer): TrainerEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val trainerBusinessModelToEntityMapper: JMapper<TrainerEntity, Trainer> =
+                JMapper(TrainerEntity::class.java, Trainer::class.java)
+            return trainerBusinessModelToEntityMapper.getDestination(businessObject)
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Trainer) return false
-
-        if (id != other.id) return false
-        if (name != other.name) return false
-        if (description != other.description) return false
-        if (linkedinURL != other.linkedinURL) return false
-        if (avatar != other.avatar) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + name.hashCode()
-        result = 31 * result + description.hashCode()
-        result = 31 * result + (linkedinURL?.hashCode() ?: 0)
-        result = 31 * result + (avatar?.hashCode() ?: 0)
-        return result
     }
 
     override fun toString(): String {
-        return "Trainer(id=$id, name='$name', description='$description', linkedinURL=$linkedinURL, avatar=$avatar)"
+        return "Trainer(" +
+                "id=$id," +
+                " name='$name'," +
+                " description='$description'," +
+                " linkedinURL=$linkedinURL," +
+                " avatar=$avatar)"
     }
+
+    @Suppress("unused")
+    constructor() : this(UUID.randomUUID())
 }

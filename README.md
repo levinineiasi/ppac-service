@@ -3,7 +3,7 @@ http://localhost:8080/swagger-ui/index.html
 ## System overview
 [![Main CI/CD](https://github.com/levinineiasi/ppac-service/actions/workflows/cicd-full.yaml/badge.svg)](https://github.com/levinineiasi/ppac-service/actions/workflows/cicd-full.yaml)
 ### 1) Pipeline
-Each **push/merged PR** in `main` branch will trigger github action that does the following things:
+Each **push/merged PR** in `main` branch will trigger GitHub action that does the following things:
 - execute build;
 - run unit tests;
 - run **Detekt** for static code analysis, which can fail the build if code issues are above threshold. See `detekt.yaml` file in root of repository;

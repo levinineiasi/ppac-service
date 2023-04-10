@@ -1,43 +1,39 @@
 package com.levi9.ppac.service.api.business
 
+import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.CompanyCodeEntity
-import java.util.*
+import java.util.UUID
+import javax.persistence.Id
 
-class CompanyCode(
+data class CompanyCode(
+    @field:Id
     val id: UUID,
     val accessCode: AccessCode,
     val company: Company
 ) {
 
-    companion object {
-        fun parse(elem: CompanyCodeEntity): CompanyCode {
-            return CompanyCode(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
+    companion object ConverterImpl : Converter<CompanyCode, CompanyCodeEntity> {
+        override fun toBusinessModel(entityObject: CompanyCodeEntity): CompanyCode {
+            return CompanyCode(
+                entityObject.id,
+                AccessCode.toBusinessModel(entityObject.accessCode),
+                Company.toBusinessModel(entityObject.company)
+            )
         }
 
-        fun parse(elem: CompanyCode): CompanyCodeEntity {
-            return CompanyCodeEntity(elem.id, AccessCode.parse(elem.accessCode), Company.parse(elem.company))
+        override fun toEntity(businessObject: CompanyCode): CompanyCodeEntity {
+            return CompanyCodeEntity(
+                businessObject.id,
+                AccessCode.toEntity(businessObject.accessCode),
+                Company.toEntity(businessObject.company)
+            )
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is CompanyCode) return false
-
-        if (id != other.id) return false
-        if (accessCode != other.accessCode) return false
-        if (company != other.company) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + accessCode.hashCode()
-        result = 31 * result + company.hashCode()
-        return result
     }
 
     override fun toString(): String {
-        return "CompanyCode(id=$id, accessCode=$accessCode, company=$company)"
+        return "CompanyCode(" +
+                "id=$id," +
+                "accessCode = $accessCode," +
+                "company = $company)"
     }
 }

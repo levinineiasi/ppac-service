@@ -2,9 +2,9 @@ package com.levi9.ppac.service.api.service
 
 interface CodeService<T, ID> : CrudService<T, ID> {
 
-    fun createCompanyCode(displayName: String): T
+    fun createCompanyCode(name: String): T
 
-    fun isAdminCode(accessCode: Int): Boolean
+    fun checkAdminCode()
 
-    fun isCompanyCode(accessCode: Int, companyId: ID): Boolean
+    fun checkCompanyCode(companyId: ID)
 }

@@ -1,129 +1,138 @@
 package com.levi9.ppac.service.api.business
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.googlecode.jmapper.JMapper
+import com.googlecode.jmapper.annotations.JGlobalMap
+import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
+import com.levi9.ppac.service.api.validator.annotations.ValidPeriodType
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
+import javax.persistence.ElementCollection
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
+import javax.persistence.Id
+import javax.validation.ConstraintViolationException
+import javax.validation.Validation
+import javax.validation.constraints.FutureOrPresent
+import javax.validation.constraints.Max
+import javax.validation.constraints.NotNull
+import javax.validation.constraints.Positive
+import javax.validation.constraints.Size
 
-class Opening {
-    var id: UUID = UUID.randomUUID()
-    var keyWords: List<String> = mutableListOf()
-    var customKeyWords: List<String> = mutableListOf()
-    var hasTechnicalInterview: Boolean = false
-    var hasTechnicalTest: Boolean = false
-    var periodCount: Int = 0
-    var periodType: PeriodType = PeriodType.WEEKS
-    var openPositions: Int = 0
-    var acceptOnClosingOpportunity: Boolean = false
-    var signAgreement: Boolean = false
-    var trainers: List<Trainer> = mutableListOf()
+@JGlobalMap
+data class Opening(
+
+    @field:NotNull
+    @field:Id
+    var id: UUID,
+
+    @field:NotNull
+    @field:ElementCollection
+    var keyWords: List<String> = mutableListOf(),
+
+    @field:NotNull
+    @field:ElementCollection
+    var customKeyWords: List<String> = mutableListOf(),
+
+    @field:NotNull
+    var hasTechnicalInterview: Boolean = false,
+
+    @field:NotNull
+    var hasTechnicalTest: Boolean = false,
+
+    @field:NotNull
+    @field:Positive(message = "The number of open positions should be positive.")
+    @field:Max(value = 24, message = "Invalid value for periodCount field.")
+    var periodCount: Int = 1,
+
+    @field:Enumerated(EnumType.STRING)
+    @field:ValidPeriodType
+    var periodType: PeriodType = PeriodType.WEEKS,
+
+    @field:NotNull
+    @field:Positive(message = "The number of open positions should be positive.")
+    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    var openPositions: Int = 1,
+
+    @field:NotNull
+    var acceptOnClosingOpportunity: Boolean = false,
+
+    @field:NotNull
+    var signAgreement: Boolean = false,
+
+    var trainers: List<Trainer> = mutableListOf(),
+
+    @field:NotNull
     var available: Boolean = true
+) {
+    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
     var title: String? = null
+
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
+
+    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
     var requirements: String? = null
+
+    @field:Size(min = 2, max = 1000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
+
+    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
+
+    @JsonFormat(pattern = "dd-MM-yyyy")
+    @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
 
-    companion object {
+    companion object ConverterImpl : Converter<Opening, OpeningEntity> {
 
-        fun parse(elem: OpeningEntity): Opening {
-            return Opening().apply {
-                id = elem.id
-                keyWords = elem.keyWords
-                customKeyWords = elem.customKeyWords
-                hasTechnicalInterview = elem.hasTechnicalInterview
-                hasTechnicalTest = elem.hasTechnicalTest
-                periodCount = elem.periodCount
-                periodType = elem.periodType
-                openPositions = elem.openPositions
-                acceptOnClosingOpportunity = elem.acceptOnClosingOpportunity
-                trainers = elem.trainers.map { Trainer.parse(it) }
-                available = elem.available
-                signAgreement = elem.signAgreement
-                title = elem.title
-                description = elem.description
-                requirements = elem.requirements
-                restrictions = elem.restrictions
-                recruitmentProcess = elem.recruitmentProcess
-                startDate = elem.startDate
+        override fun toBusinessModel(entityObject: OpeningEntity): Opening {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(entityObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
+                JMapper(Opening::class.java, OpeningEntity::class.java)
+            return openingEntityToBusinessModelMapper.getDestination(entityObject)
         }
 
-        fun parse(elem: Opening): OpeningEntity {
-            return OpeningEntity(
-                    elem.id,
-                    elem.keyWords,
-                    elem.customKeyWords,
-                    elem.hasTechnicalInterview,
-                    elem.hasTechnicalTest,
-                    elem.periodCount,
-                    elem.periodType,
-                    elem.openPositions,
-                    elem.acceptOnClosingOpportunity,
-                    elem.signAgreement,
-                    elem.trainers.map { Trainer.parse(it) },
-                    elem.available,
-            ).apply {
-                title = elem.title
-                description = elem.description
-                requirements = elem.requirements
-                restrictions = elem.restrictions
-                recruitmentProcess = elem.recruitmentProcess
-                startDate = elem.startDate
+        override fun toEntity(businessObject: Opening): OpeningEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
             }
+            val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
+                JMapper(OpeningEntity::class.java, Opening::class.java)
+            return openingBusinessModelToEntityMapper.getDestination(businessObject)
         }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Opening) return false
-
-        if (id != other.id) return false
-        if (keyWords != other.keyWords) return false
-        if (customKeyWords != other.customKeyWords) return false
-        if (hasTechnicalInterview != other.hasTechnicalInterview) return false
-        if (hasTechnicalTest != other.hasTechnicalTest) return false
-        if (periodCount != other.periodCount) return false
-        if (periodType != other.periodType) return false
-        if (openPositions != other.openPositions) return false
-        if (acceptOnClosingOpportunity != other.acceptOnClosingOpportunity) return false
-        if (signAgreement != other.signAgreement) return false
-        if (trainers != other.trainers) return false
-        if (available != other.available) return false
-        if (title != other.title) return false
-        if (description != other.description) return false
-        if (requirements != other.requirements) return false
-        if (restrictions != other.restrictions) return false
-        if (recruitmentProcess != other.recruitmentProcess) return false
-        if (startDate != other.startDate) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = id.hashCode()
-        result = 31 * result + keyWords.hashCode()
-        result = 31 * result + customKeyWords.hashCode()
-        result = 31 * result + hasTechnicalInterview.hashCode()
-        result = 31 * result + hasTechnicalTest.hashCode()
-        result = 31 * result + periodCount
-        result = 31 * result + periodType.hashCode()
-        result = 31 * result + openPositions
-        result = 31 * result + acceptOnClosingOpportunity.hashCode()
-        result = 31 * result + signAgreement.hashCode()
-        result = 31 * result + trainers.hashCode()
-        result = 31 * result + available.hashCode()
-        result = 31 * result + (title?.hashCode() ?: 0)
-        result = 31 * result + (description?.hashCode() ?: 0)
-        result = 31 * result + (requirements?.hashCode() ?: 0)
-        result = 31 * result + (restrictions?.hashCode() ?: 0)
-        result = 31 * result + (recruitmentProcess?.hashCode() ?: 0)
-        result = 31 * result + (startDate?.hashCode() ?: 0)
-        return result
     }
 
     override fun toString(): String {
-        return "Opening(id=$id, keyWords=$keyWords, customKeyWords=$customKeyWords, hasTechnicalInterview=$hasTechnicalInterview, hasTechnicalTest=$hasTechnicalTest, periodCount=$periodCount, periodType=$periodType, openPositions=$openPositions, acceptOnClosingOpportunity=$acceptOnClosingOpportunity, signAgreement=$signAgreement, trainers=$trainers, available=$available, title=$title, description=$description, requirements=$requirements, restrictions=$restrictions, recruitmentProcess=$recruitmentProcess, startDate=$startDate)"
+        return "Opening(" +
+                "id=$id," +
+                "keyWords=$keyWords," +
+                "customKeyWords=$customKeyWords," +
+                "hasTechnicalInterview=$hasTechnicalInterview," +
+                "hasTechnicalTest=$hasTechnicalTest," +
+                "periodCount=$periodCount," +
+                "periodType=$periodType," +
+                "openPositions=$openPositions," +
+                "acceptOnClosingOpportunity=$acceptOnClosingOpportunity," +
+                "signAgreement=$signAgreement," +
+                "trainers=$trainers," +
+                "available=$available," +
+                "title=$title," +
+                "description=$description," +
+                "requirements=$requirements," +
+                "restrictions=$restrictions," +
+                "recruitmentProcess=$recruitmentProcess," +
+                "startDate=$startDate)"
     }
+
+    @Suppress("unused")
+    constructor() : this(UUID.randomUUID())
 }

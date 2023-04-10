@@ -27,11 +27,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTestContextBootstrapper
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.BootstrapWith
 import org.springframework.test.context.TestPropertySource
-import org.springframework.web.server.ResponseStatusException
 import java.util.UUID
+import javax.naming.AuthenticationException
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 
 @SpringBootTest(
     classes = [
@@ -70,7 +70,8 @@ class OpeningServiceImplTest {
 
     companion object {
 
-        val trainerEntity = TrainerEntity(UUID.randomUUID(), "Bob Smith", "Bob has 5 years experience in Java")
+        val trainerEntity =
+            TrainerEntity(UUID.randomUUID(), "Bob Smith", "Bob Smith has 5 years experience as Java Developer")
         val openingEntity = OpeningEntity(
             id = UUID.randomUUID(),
             keyWords = emptyList(),
@@ -111,43 +112,41 @@ class OpeningServiceImplTest {
         val result = openingService.findAll()
 
         assertEquals(2, result.size)
-        assertEquals(Opening.parse(openingEntity), result[1])
+        assertEquals(Opening.toBusinessModel(openingEntity), result[1])
     }
 
     @Test
     fun `updateOpening SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity , companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value)
 
         val updatedOpening = openingService.updateOpening(
             openingEntity.id,
-            Opening.parse(openingEntityWithTrainer)
+            Opening.toBusinessModel(openingEntityWithTrainer)
         )
 
         val expectedOpeningEntity = openingEntityWithTrainer.copy().apply { this.id = openingEntity.id }
-        val expectedTrainer = Trainer.parse(trainerEntity)
+        val expectedTrainer = Trainer.toBusinessModel(trainerEntity)
 
-        assertEquals(Opening.parse(expectedOpeningEntity), updatedOpening)
+        assertEquals(Opening.toBusinessModel(expectedOpeningEntity), updatedOpening)
         assertTrue(updatedOpening.trainers.contains(expectedTrainer))
     }
 
     @Test
-    fun `updateOpening SHOULD RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
+    fun `updateOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
         insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<AuthenticationException> {
             openingService.updateOpening(
                 openingEntity.id,
-                Opening.parse(openingEntityWithTrainer)
+                Opening.toBusinessModel(openingEntityWithTrainer)
             )
         }
-
-        assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
     }
 
     @Test
@@ -155,49 +154,43 @@ class OpeningServiceImplTest {
 
         insertCompanyInDb(accessCodeEntity2, companyEntity2, companyCodeEntity2)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<NotFoundException> {
             openingService.updateOpening(
                 UUID.randomUUID(),
-                Opening.parse(openingEntity)
+                Opening.toBusinessModel(openingEntity)
             )
         }
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     @Test
-    fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening is not from company`() {
+    fun `updateOpening SHOULD THROW NotFoundException WHEN opening is not from company`() {
 
         insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
 
         openingRepository.save(openingEntityWithTrainer)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<NotFoundException> {
             openingService.updateOpening(
                 companyEntity.id,
-                Opening.parse(openingEntityWithTrainer)
+                Opening.toBusinessModel(openingEntityWithTrainer)
             )
         }
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     @Test
-    fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening has a trainer from another company `() {
+    fun `updateOpening SHOULD throw AuthenticationException WHEN opening has a trainer from another company `() {
 
         insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
         insertCompanyInDb(accessCodeEntity2, companyEntity2, companyCodeEntity2)
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<AuthenticationException> {
             openingService.updateOpening(
                 openingEntity.id,
-                Opening.parse(openingEntityWithTrainer)
+                Opening.toBusinessModel(openingEntityWithTrainer)
             )
         }
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     @Test
@@ -213,56 +206,50 @@ class OpeningServiceImplTest {
         )
 
         val openingEntityUnavailable = openingEntity.copy().apply { available = false }
-        val expectedResponse = Opening.parse(openingEntityUnavailable)
+        val expectedResponse = Opening.toBusinessModel(openingEntityUnavailable)
 
         assertEquals(expectedResponse, response)
     }
 
     @Test
-    fun `changeAvailability SHOULD RETURN BAD_REQUEST WHEN opening is not in DB`() {
+    fun `changeAvailability SHOULD THROW NotFoundException WHEN opening is not in DB`() {
 
         insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<NotFoundException> {
             openingService.changeAvailability(
                 openingEntityWithTrainer.id,
                 false
             )
         }
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     @Test
-    fun `changeAvailability SHOULD RETURN BAD_REQUEST WHEN opening's company is not in DB`() {
+    fun `changeAvailability SHOULD THROW NotFoundException WHEN opening's company is not in DB`() {
 
         openingRepository.save(openingEntity)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<NotFoundException> {
             openingService.changeAvailability(
                 openingEntity.id,
                 false
             )
         }
-
-        assertEquals(HttpStatus.BAD_REQUEST, exception.status)
     }
 
     @Test
-    fun `changeAvailability SHOULD RETURN UNAUTHORIZED WHEN AccessCode is invalid`() {
+    fun `changeAvailability SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
         insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
 
         securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
 
-        val exception = assertThrows<ResponseStatusException> {
+        assertThrows<AuthenticationException> {
             openingService.changeAvailability(
                 openingEntity.id,
                 false
             )
         }
-
-        assertEquals(HttpStatus.UNAUTHORIZED, exception.status)
     }
 
     fun insertCompanyInDb(
@@ -274,6 +261,4 @@ class OpeningServiceImplTest {
         companyRepository.save(companyEntity)
         companyCodeRepository.save(companyCodeEntity)
     }
-
-
 }
