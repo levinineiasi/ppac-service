@@ -2,11 +2,9 @@ package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.business.AccessCode
 import com.levi9.ppac.service.api.business.Company
-import com.levi9.ppac.service.api.business.CompanyCode
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import org.springframework.stereotype.Service
@@ -23,17 +21,16 @@ class CodeServiceImpl(
     val securityContext: SecurityContext<Int>,
     val codeRepository: CodeRepository,
     val companyRepository: CompanyRepository,
-    val companyCodeRepository: CompanyCodeRepository
-) : CodeService<CompanyCode, UUID> {
+) : CodeService<Company, UUID> {
 
-    override fun findAll(): List<CompanyCode> {
+    override fun findAll(): List<Company> {
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
         }
-        return companyCodeRepository.findAll().map { CompanyCode.toBusinessModel(it) }
+        return companyRepository.findAll().map { Company.toBusinessModel(it) }
     }
 
-    override fun createCompanyCode(name: String): CompanyCode {
+    override fun createCompanyCode(name: String): Company {
 
         if (!codeRepository.isAdminCode(securityContext.getAccessCode())) {
             throw AuthenticationException()
@@ -52,22 +49,12 @@ class CodeServiceImpl(
 
         logger.info("Inserted accessCodeEntity with id ${accessCodeEntity.id} into database.")
 
-        val companyDTO = Company(UUID.randomUUID(), name)
+        val companyDTO = Company(UUID.randomUUID(), name, accessCodeDTO)
         val companyEntity = companyRepository.save(Company.toEntity(companyDTO))
 
         logger.info("Inserted companyEntity with id ${companyEntity.id} into database.")
 
-        val companyCodeDTO =
-            CompanyCode(
-                UUID.randomUUID(),
-                AccessCode.toBusinessModel(accessCodeEntity),
-                Company.toBusinessModel(companyEntity)
-            )
-        val companyCodeEntity = companyCodeRepository.save(CompanyCode.toEntity(companyCodeDTO))
-
-        logger.info("Inserted companyCodeEntity with id ${companyCodeEntity.id} into database.")
-
-        return CompanyCode.toBusinessModel(companyCodeEntity)
+        return companyDTO
     }
 
     override fun checkAdminCode() {
@@ -88,7 +75,7 @@ class CodeServiceImpl(
             throw AuthenticationException()
         }
 
-        companyCodeRepository.findById(id).orElseThrow { NotFoundException("The resource was not found") }
-        companyCodeRepository.deleteById(id)
+        companyRepository.findById(id).orElseThrow { NotFoundException("The resource was not found") }
+        companyRepository.deleteById(id)
     }
 }

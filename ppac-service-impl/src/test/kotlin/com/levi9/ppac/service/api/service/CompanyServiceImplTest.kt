@@ -3,13 +3,11 @@ import com.levi9.ppac.service.api.service.CompanyServiceImpl
 import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
-import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.domain.TrainerEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.repository.TrainerRepository
@@ -64,9 +62,6 @@ class CompanyServiceImplTest {
     lateinit var openingRepository: OpeningRepository
 
     @Autowired
-    lateinit var companyCodeRepository: CompanyCodeRepository
-
-    @Autowired
     lateinit var securityContext: SecurityContext<Int>
 
     companion object {
@@ -91,26 +86,22 @@ class CompanyServiceImplTest {
         }
         private val accessCodeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456)
         private val companyEntity =
-            CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(openingAvailable) }
-        private val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), accessCodeEntityForCompany, companyEntity)
-
+            CompanyEntity(UUID.randomUUID(), "Levi9", accessCodeEntityForCompany).apply {
+                openings = listOf(openingAvailable)
+            }
         private val accessCodeEntityForCompany2 = AccessCodeEntity(UUID.randomUUID(), 112233)
-        private val companyEntity2 = CompanyEntity(UUID.randomUUID(), "Amazon")
-        private val companyCodeEntity2 =
-            CompanyCodeEntity(UUID.randomUUID(), accessCodeEntityForCompany2, companyEntity2)
+        private val companyEntity2 = CompanyEntity(UUID.randomUUID(), "Amazon", accessCodeEntityForCompany2)
 
         private val accessCodeEntityForCompany3 = AccessCodeEntity(UUID.randomUUID(), 223344)
-        private val companyEntity3 = CompanyEntity(UUID.randomUUID(), "Facebook")
-        private val companyCodeEntity3 =
-            CompanyCodeEntity(UUID.randomUUID(), accessCodeEntityForCompany3, companyEntity3)
+        private val companyEntity3 = CompanyEntity(UUID.randomUUID(), "Facebook", accessCodeEntityForCompany2)
     }
 
     @Test
     fun `addOpening SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+        securityContext.setAccessCode(accessCodeEntityForCompany.value)
 
         val newOpening = companyService.addOpening(
             companyEntity.id,
@@ -129,7 +120,7 @@ class CompanyServiceImplTest {
     @Test
     fun `addOpening SHOULD THROW AuthenticationException WHEN AccessCode is not set`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
 
         assertThrows<AuthenticationException> {
             companyService.addOpening(
@@ -142,9 +133,9 @@ class CompanyServiceImplTest {
     @Test
     fun `addOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
+        securityContext.setAccessCode(accessCodeEntityForCompany.value + 1)
 
         assertThrows<AuthenticationException> {
             companyService.addOpening(
@@ -159,10 +150,10 @@ class CompanyServiceImplTest {
 
         val openingWithSameTrainer = openingAvailable.copy().apply { id = UUID.randomUUID() }
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
 
-        securityContext.setAccessCode(companyCodeEntity2.accessCode.value)
+        securityContext.setAccessCode(accessCodeEntityForCompany2.value)
 
         assertThrows<NotFoundException> {
             companyService.addOpening(
@@ -175,8 +166,8 @@ class CompanyServiceImplTest {
     @Test
     fun `findAll SHOULD RETURN all companies WHEN multiple companies exit in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
-        insertCompanyInDb(accessCodeEntityForCompany3, companyEntity3, companyCodeEntity3)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany3, companyEntity3)
 
         val result = companyService.findAll()
 
@@ -197,7 +188,7 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD RETURN company with only available openings WHEN onlyAvailable = true`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
 
         securityContext.setAccessCode(accessCodeEntityForCompany2.value)
 
@@ -213,7 +204,7 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD RETURN company with all openings WHEN onlyAvailable = false`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
 
         securityContext.setAccessCode(accessCodeEntityForCompany2.value)
 
@@ -232,7 +223,7 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD THROW NotFoundException WHEN companyID is not present in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
 
         assertThrows(NotFoundException::class.java)
         { companyService.findById(companyEntity2.id, true) }
@@ -241,7 +232,7 @@ class CompanyServiceImplTest {
     @Test
     fun `updateById SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
 
         securityContext.setAccessCode(accessCodeEntityForCompany2.value)
 
@@ -249,13 +240,15 @@ class CompanyServiceImplTest {
 
         val expected = companyEntity3.copy().apply { id = companyEntity2.id }
 
-        assertEquals(Company.toBusinessModel(expected), result)
+        val expectedDTO = Company.toBusinessModel(expected)
+
+        assertEquals(expectedDTO, result)
     }
 
     @Test
     fun `updatedById SHOULD THROW AuthenticationException WHEN companyID is not present in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
 
         assertThrows(AuthenticationException::class.java)
         { companyService.updateById(companyEntity3.id, Company.toBusinessModel(companyEntity3)) }
@@ -264,10 +257,8 @@ class CompanyServiceImplTest {
     fun insertCompanyInDb(
         accessCodeEntity: AccessCodeEntity,
         companyEntity: CompanyEntity,
-        companyCodeEntity: CompanyCodeEntity
     ) {
         codeRepository.save(accessCodeEntity)
         companyRepository.save(companyEntity)
-        companyCodeRepository.save(companyCodeEntity)
     }
 }

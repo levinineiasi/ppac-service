@@ -3,13 +3,11 @@ package com.levi9.ppac.service.api.service
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.business.Trainer
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
-import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.domain.TrainerEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
@@ -63,9 +61,6 @@ class OpeningServiceImplTest {
     lateinit var openingRepository: OpeningRepository
 
     @Autowired
-    lateinit var companyCodeRepository: CompanyCodeRepository
-
-    @Autowired
     lateinit var securityContext: SecurityContext<Int>
 
     companion object {
@@ -91,16 +86,13 @@ class OpeningServiceImplTest {
             trainers = listOf(trainerEntity)
         }
         val accessCodeEntity = AccessCodeEntity(UUID.randomUUID(), 123456)
-        val companyEntity = CompanyEntity(UUID.randomUUID(), "Levi9").apply { openings = listOf(openingEntity) }
-        val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), accessCodeEntity, companyEntity)
+        val companyEntity = CompanyEntity(UUID.randomUUID(), "Levi9", accessCodeEntity).apply { openings = listOf(openingEntity) }
         val accessCodeEntity2 = AccessCodeEntity(UUID.randomUUID(), 123457)
-        val companyEntity2 = CompanyEntity(UUID.randomUUID(), "Amazon").apply {
+        val companyEntity2 = CompanyEntity(UUID.randomUUID(), "Amazon", accessCodeEntity).apply {
             openings = listOf(
                 openingEntityWithTrainer
             )
         }
-        val companyCodeEntity2 =
-            CompanyCodeEntity(UUID.randomUUID(), accessCodeEntity2, companyEntity2)
     }
 
     @Test
@@ -118,9 +110,9 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+        securityContext.setAccessCode(companyEntity.accessCode.value)
 
         val updatedOpening = openingService.updateOpening(
             openingEntity.id,
@@ -137,9 +129,9 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
+        securityContext.setAccessCode(accessCodeEntity.value + 1)
 
         assertThrows<AuthenticationException> {
             openingService.updateOpening(
@@ -152,7 +144,7 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening has an invalid openingId`() {
 
-        insertCompanyInDb(accessCodeEntity2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntity2, companyEntity2)
 
         assertThrows<NotFoundException> {
             openingService.updateOpening(
@@ -165,7 +157,7 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD THROW NotFoundException WHEN opening is not from company`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
         openingRepository.save(openingEntityWithTrainer)
 
@@ -180,10 +172,10 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD throw AuthenticationException WHEN opening has a trainer from another company `() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
-        insertCompanyInDb(accessCodeEntity2, companyEntity2, companyCodeEntity2)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
+        insertCompanyInDb(accessCodeEntity2, companyEntity2)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+        securityContext.setAccessCode(accessCodeEntity.value)
 
         assertThrows<AuthenticationException> {
             openingService.updateOpening(
@@ -196,9 +188,9 @@ class OpeningServiceImplTest {
     @Test
     fun `changeAvailability SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value)
+        securityContext.setAccessCode(accessCodeEntity.value)
 
         val response = openingService.changeAvailability(
             openingEntity.id,
@@ -214,7 +206,7 @@ class OpeningServiceImplTest {
     @Test
     fun `changeAvailability SHOULD THROW NotFoundException WHEN opening is not in DB`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
         assertThrows<NotFoundException> {
             openingService.changeAvailability(
@@ -240,9 +232,9 @@ class OpeningServiceImplTest {
     @Test
     fun `changeAvailability SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity, companyCodeEntity)
+        insertCompanyInDb(accessCodeEntity, companyEntity)
 
-        securityContext.setAccessCode(companyCodeEntity.accessCode.value + 1)
+        securityContext.setAccessCode(accessCodeEntity.value + 1)
 
         assertThrows<AuthenticationException> {
             openingService.changeAvailability(
@@ -255,10 +247,8 @@ class OpeningServiceImplTest {
     fun insertCompanyInDb(
         accessCodeEntity: AccessCodeEntity,
         companyEntity: CompanyEntity,
-        companyCodeEntity: CompanyCodeEntity
     ) {
         codeRepository.save(accessCodeEntity)
         companyRepository.save(companyEntity)
-        companyCodeRepository.save(companyCodeEntity)
     }
 }

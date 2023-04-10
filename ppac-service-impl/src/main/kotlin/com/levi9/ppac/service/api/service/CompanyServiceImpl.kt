@@ -3,7 +3,6 @@ package com.levi9.ppac.service.api.service
 import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
@@ -22,7 +21,6 @@ class CompanyServiceImpl(
     private val companyRepository: CompanyRepository,
     private val codeRepository: CodeRepository,
     private val openingRepository: OpeningRepository,
-    private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company, UUID, Opening> {
 
     @Transactional
@@ -92,7 +90,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun updateById(id: UUID, updatedObject: Company): Company {
 
-        require(companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(),id)) {
             throw AuthenticationException()
         }
 

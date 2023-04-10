@@ -31,6 +31,10 @@ class CompanyDto {
     @JMap
     var name: String = ""
 
+    @JMap
+    lateinit var accessCode: AccessCodeDto
+
+
     @field:Schema(
         description = "Logo of the company",
         type = "ByteArray",
