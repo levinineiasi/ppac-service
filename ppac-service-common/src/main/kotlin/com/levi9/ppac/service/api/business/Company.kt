@@ -20,15 +20,15 @@ data class Company(
     var id: UUID,
 
     @field:NotNull
-    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
     var name: String
 ) {
     var logo: ByteArray? = null
 
-    @field:Size(min = 40, max = 1000, message = "The description should have between 2 and 300 characters length.")
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
 
-    @field:Size(min = 5, max = 50, message = "The email should have between 5 and 50 characters length.")
+    @field:Size(min = 5, max = 50, message = "Invalid length for email field.")
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
     var openings: List<Opening>? = emptyList()

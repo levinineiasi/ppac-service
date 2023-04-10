@@ -12,11 +12,11 @@ import javax.validation.constraints.Size
 data class TrainerEntity(
 
     @field:Id
-    @Column(name = "ID")
+    @Column(name = "ID", nullable = false)
     var id: UUID,
 
     @Column(name = "NAME", nullable = false)
-    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
     var name: String,
 
     @Column(name = "DESCRIPTION", nullable = false)

@@ -14,13 +14,14 @@ import javax.validation.constraints.Size
 data class Trainer(
 
     @field:Id
-    var id: UUID
-) {
-    @field:Size(min = 2, max = 30, message = "The name should have between 2 and 30 characters length.")
-    var name: String = ""
+    var id: UUID,
+
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    var name: String = "",
 
     @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String = ""
+) {
 
     @field:Size(min = 20, max = 100, message = "Invalid size Linkedin URL")
     var linkedinURL: String? = null

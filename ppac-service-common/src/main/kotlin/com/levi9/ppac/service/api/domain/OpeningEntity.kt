@@ -38,29 +38,24 @@ data class OpeningEntity(
     var customKeyWords: List<String>,
 
     @Column(name = "HAS_TECHNICAL_INTERVIEW", nullable = false)
-    @field:NotNull
     var hasTechnicalInterview: Boolean,
 
     @Column(name = "HAS_TECHNICAL_TEST", nullable = false)
-    @field:NotNull
     var hasTechnicalTest: Boolean,
 
     @Column(name = "PERIOD_COUNT", nullable = false)
-    @field:NotNull
     @field:Positive
     @field:Max(value = 24, message = "Invalid value for periodCount field.")
     var periodCount: Int,
 
     @Column(name = "PERIOD_TYPE", nullable = false)
-    @field:NotNull
     @field:Enumerated(EnumType.STRING)
     @ValidPeriodType
     var periodType: PeriodType = PeriodType.WEEKS,
 
     @Column(name = "OPEN_POSITIONS", nullable = false)
-    @field:NotNull
-    @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    @field:Positive(message = "Invalid value for openPositions field.")
+    @field:Max(value = 30, message = "Invalid value for openPositions field.")
     var openPositions: Int,
 
     @Column(name = "ACCEPT_ON_CLOSING_OPPORTUNITY", nullable = false)

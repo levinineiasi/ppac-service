@@ -27,10 +27,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.SpringBootTestContextBootstrapper
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
-import org.springframework.http.HttpStatus
 import org.springframework.test.context.BootstrapWith
 import org.springframework.test.context.TestPropertySource
-import org.springframework.web.server.ResponseStatusException
 import java.util.UUID
 import javax.naming.AuthenticationException
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException

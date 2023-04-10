@@ -5,7 +5,6 @@ import com.levi9.ppac.service.api.business.CompanyCode
 import com.levi9.ppac.service.api.integration.mvp.CompanyCodeDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CodeService
-import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.NO_CONTENT
 import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.OK
 import io.swagger.v3.oas.annotations.OpenAPIDefinition
 import io.swagger.v3.oas.annotations.Operation
@@ -116,7 +115,7 @@ class CodesController(
 
         val listCompanies = codeService!!.findAll()
         if (listCompanies.isEmpty()) {
-            return ResponseEntity(NO_CONTENT, HttpStatus.NO_CONTENT)
+            return ResponseEntity.noContent().build()
         }
 
         return ResponseEntity(listCompanies.map {
@@ -149,7 +148,7 @@ class CodesController(
         @Max(value = 999999, message = "Invalid length for header AccessCode.")
         accessCode: Int,
         @PathVariable
-        @Size(min = 2, max =30 , message =  "The name length should have between 2 and 30 characters.")
+        @Size(min = 2, max =30 , message =  "Invalid length for name field")
         name: String
     ): ResponseEntity<Any> {
 

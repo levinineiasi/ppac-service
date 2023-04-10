@@ -24,8 +24,8 @@ data class AccessCode(
     var id: UUID,
 
     @field:NotNull
-    @field:Min(value = 100000, message = "Value should have 6 characters length.")
-    @field:Max(value = 999999, message = "Value should have 6 characters length.")
+    @field:Min(value = 100000, message = "Invalid length for value field.")
+    @field:Max(value = 999999, message = "Invalid length for value field.")
     var value: Int,
 
     @field:NotNull

@@ -15,11 +15,11 @@ import javax.validation.constraints.Size
 data class CompanyEntity(
 
     @field:Id
-    @Column(name = "ID")
+    @Column(name = "ID", unique = true, nullable = false)
     var id: UUID,
 
-    @Column(name = "NAME", nullable = false)
-    @field:Size(min = 2, max = 30, message = "The name length should have between 2 and 30 characters.")
+    @Column(name = "NAME", unique = true,  nullable = false)
+    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
     var name: String
 ) {
 
@@ -27,11 +27,11 @@ data class CompanyEntity(
     var logo: ByteArray? = null
 
     @Column(name = "DESCRIPTION", nullable = true)
-    @field:Size(min = 40, max = 1000, message = "The description length should have between 100 and 1000 characters.")
+    @field:Size(min = 40, max = 1000, message = "Invalid description for name field.")
     var description: String? = null
 
     @Column(name = "EMAIL", nullable = true)
-    @field:Size(min = 5, max = 50, message = "The email length should have between 5 and 50 characters.")
+    @field:Size(min = 5, max = 50, message = "Invalid length for email field.")
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
 

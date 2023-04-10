@@ -24,12 +24,15 @@ import javax.validation.constraints.Size
 @JGlobalMap
 data class Opening(
 
+    @field:NotNull
     @field:Id
     var id: UUID,
 
+    @field:NotNull
     @field:ElementCollection
     var keyWords: List<String> = mutableListOf(),
 
+    @field:NotNull
     @field:ElementCollection
     var customKeyWords: List<String> = mutableListOf(),
 
@@ -39,16 +42,17 @@ data class Opening(
     @field:NotNull
     var hasTechnicalTest: Boolean = false,
 
-    @field:Positive
+    @field:NotNull
+    @field:Positive(message = "The number of open positions should be positive.")
     @field:Max(value = 24, message = "Invalid value for periodCount field.")
-    var periodCount: Int = 0,
+    var periodCount: Int = 1,
 
     @field:Enumerated(EnumType.STRING)
-    @ValidPeriodType
+    @field:ValidPeriodType
     var periodType: PeriodType = PeriodType.WEEKS,
 
-    @field:Positive(message = "The number of open positions should be positive.")
     @field:NotNull
+    @field:Positive(message = "The number of open positions should be positive.")
     @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
     var openPositions: Int = 1,
 
