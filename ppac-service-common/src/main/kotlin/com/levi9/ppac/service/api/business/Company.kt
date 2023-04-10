@@ -60,13 +60,13 @@ data class Company(
     }
 
     override fun toString(): String {
-        return """Company(
-            id=$id,
-            name='$name',
-            logo=${logo?.contentToString()},
-            description=$description,
-            email=$email,
-            openings=$openings)""".trimMargin()
+        return "Company(" +
+            "id=$id, " +
+            "name='$name'," +
+            "logo=${logo?.contentToString()}," +
+            "description=$description," +
+            "email=$email," +
+            "openings=$openings)"
     }
 
     @Suppress("unused")

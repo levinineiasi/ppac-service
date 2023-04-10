@@ -58,7 +58,10 @@ data class AccessCode(
     }
 
     override fun toString(): String {
-        return "AccessCode(id=$id, value=$value, type=$type)"
+        return "AccessCode(" +
+                "id=$id," +
+                "value=$value," +
+                "type = $type)"
     }
 
     @Suppress("unused")

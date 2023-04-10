@@ -31,6 +31,9 @@ data class CompanyCode(
     }
 
     override fun toString(): String {
-        return "CompanyCode(id=$id, accessCode=$accessCode, company=$company)"
+        return "CompanyCode(" +
+                "id=$id," +
+                "accessCode = $accessCode," +
+                "company = $company)"
     }
 }

@@ -72,10 +72,10 @@ data class Opening(
     @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
     var requirements: String? = null
 
-    @field:Size(min =2, max = 1000, message = "Invalid length for restrictions field.")
+    @field:Size(min = 2, max = 1000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
 
-    @field:Size(min =10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "dd-MM-yyyy")
@@ -108,26 +108,25 @@ data class Opening(
     }
 
     override fun toString(): String {
-        return """
-            Opening(
-                id=$id,
-                keyWords=$keyWords,
-                customKeyWords=$customKeyWords,
-                hasTechnicalInterview=$hasTechnicalInterview,
-                hasTechnicalTest=$hasTechnicalTest,
-                periodCount=$periodCount,
-                periodType=$periodType,
-                openPositions=$openPositions,
-                acceptOnClosingOpportunity=$acceptOnClosingOpportunity,
-                signAgreement=$signAgreement,
-                trainers=$trainers,
-                available=$available,
-                title=$title,
-                description=$description,
-                requirements=$requirements,
-                restrictions=$restrictions,
-                recruitmentProcess=$recruitmentProcess,
-                startDate=$startDate)""".trimIndent()
+        return "Opening(" +
+                "id=$id," +
+                "keyWords=$keyWords," +
+                "customKeyWords=$customKeyWords," +
+                "hasTechnicalInterview=$hasTechnicalInterview," +
+                "hasTechnicalTest=$hasTechnicalTest," +
+                "periodCount=$periodCount," +
+                "periodType=$periodType," +
+                "openPositions=$openPositions," +
+                "acceptOnClosingOpportunity=$acceptOnClosingOpportunity," +
+                "signAgreement=$signAgreement," +
+                "trainers=$trainers," +
+                "available=$available," +
+                "title=$title," +
+                "description=$description," +
+                "requirements=$requirements," +
+                "restrictions=$restrictions," +
+                "recruitmentProcess=$recruitmentProcess," +
+                "startDate=$startDate)"
     }
 
     @Suppress("unused")

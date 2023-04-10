@@ -52,7 +52,12 @@ data class Trainer(
     }
 
     override fun toString(): String {
-        return "Trainer(id=$id, name='$name', description='$description', linkedinURL=$linkedinURL, avatar=$avatar)"
+        return "Trainer(" +
+                "id=$id," +
+                " name='$name'," +
+                " description='$description'," +
+                " linkedinURL=$linkedinURL," +
+                " avatar=$avatar)"
     }
 
     @Suppress("unused")
