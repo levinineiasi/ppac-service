@@ -58,8 +58,7 @@ class CompaniesController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @GetMapping("")
@@ -86,8 +85,7 @@ class CompaniesController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @GetMapping("/{id}")
@@ -118,9 +116,7 @@ class CompaniesController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @PutMapping("/{id}")
@@ -153,9 +149,7 @@ class CompaniesController(
                     mediaType = "application/json",
                     schema = Schema(implementation = OpeningDto::class)
                 )]
-            ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @PostMapping("{companyId}/openings")
@@ -184,9 +178,7 @@ class CompaniesController(
         value = [
             ApiResponse(
                 responseCode = "204"
-            ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @DeleteMapping("/{companyId}")
