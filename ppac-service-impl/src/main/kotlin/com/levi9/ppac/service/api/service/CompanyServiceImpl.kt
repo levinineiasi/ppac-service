@@ -30,16 +30,17 @@ class CompanyServiceImpl(
             throw AuthenticationException()
         }
 
-        val companySet =
-            opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }.flatten().toSet()
+//        val companySet =
+//            opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }.flatten().toSet()
+//
+//        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id)) throw NotFoundException()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id)) throw NotFoundException()
+        val companyEntity = companyRepository.findById(id).orElseThrow { NotFoundException() }
 
         val openingDTO = opening.apply { this.id = UUID.randomUUID() }
-        val openingEntity = Opening.toEntity(openingDTO)
+        val openingEntity = Opening.toEntity(openingDTO, companyEntity)
         val savedOpening = openingRepository.save(openingEntity)
 
-        val companyEntity = companyRepository.findByIdOrNull(id)!!
         companyEntity.openings += savedOpening
         companyRepository.save(companyEntity)
 

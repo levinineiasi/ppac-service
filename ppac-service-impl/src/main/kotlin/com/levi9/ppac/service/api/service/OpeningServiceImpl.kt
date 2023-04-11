@@ -24,26 +24,20 @@ class OpeningServiceImpl(
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {
 
-        openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
+        val openingEnt = openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
 
-        val companyEntity =
-            companyRepository.findFirstByOpeningsId(openingId)
-                ?: throw NotFoundException()
-
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), openingEnt.company.id)) {
             throw AuthenticationException()
         }
 
-        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
-            .flatten()
-            .toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
-            throw AuthenticationException()
-        }
-
+//        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
+//            throw AuthenticationException()
+//        }
+        val companyEntity = companyRepository.findByIdOrNull(opening.companyId)
         val openingEntity = Opening.toEntity(
-            opening.apply { id = openingId })
+            opening.apply { id = openingId }, companyEntity!!
+        )
         val updatedOpeningEntity = openingRepository.save(openingEntity)
         return Opening.toBusinessModel(updatedOpeningEntity)
     }

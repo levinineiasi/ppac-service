@@ -3,7 +3,9 @@ package com.levi9.ppac.service.api.business
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.googlecode.jmapper.JMapper
 import com.googlecode.jmapper.annotations.JGlobalMap
+import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.business.converter.Converter
+import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import com.levi9.ppac.service.api.validator.annotations.ValidPeriodType
@@ -65,7 +67,9 @@ data class Opening(
     var trainers: List<Trainer> = mutableListOf(),
 
     @field:NotNull
-    var available: Boolean = true
+    var available: Boolean = true,
+
+    var companyId: UUID? = UUID.randomUUID()
 ) {
     @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
     var title: String? = null
@@ -96,7 +100,8 @@ data class Opening(
             }
             val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
                 JMapper(Opening::class.java, OpeningEntity::class.java)
-            return openingEntityToBusinessModelMapper.getDestination(entityObject)
+            val op =  openingEntityToBusinessModelMapper.getDestination(entityObject)
+            return  op.copy().apply { companyId = entityObject.company.id }
         }
 
         override fun toEntity(businessObject: Opening): OpeningEntity {
@@ -108,6 +113,18 @@ data class Opening(
             val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
                 JMapper(OpeningEntity::class.java, Opening::class.java)
             return openingBusinessModelToEntityMapper.getDestination(businessObject)
+        }
+
+         fun toEntity(businessObject: Opening, company: CompanyEntity): OpeningEntity {
+            val validator = Validation.buildDefaultValidatorFactory().validator
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
+            }
+            val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
+                JMapper(OpeningEntity::class.java, Opening::class.java)
+            val s =  openingBusinessModelToEntityMapper.getDestination(businessObject)
+             return s.copy(company = company)
         }
     }
 

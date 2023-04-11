@@ -12,6 +12,8 @@ import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.FutureOrPresent
@@ -73,6 +75,9 @@ data class OpeningEntity(
     @field:NotNull
     var available: Boolean = true,
 
+    @ManyToOne(cascade = [CascadeType.ALL])
+    @JoinColumn(name="COMPANY_ID", referencedColumnName = "ID")
+    var company: CompanyEntity
     ) {
 
     @Column(name = "TITLE", nullable = true)
