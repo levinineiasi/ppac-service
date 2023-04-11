@@ -52,6 +52,7 @@ class TrainerDto {
 
     @field:Schema(
         description = "The trainer's avatar",
+        example = "[10,20,30,40]",
         type = "ByteArray",
         nullable = true
     )
