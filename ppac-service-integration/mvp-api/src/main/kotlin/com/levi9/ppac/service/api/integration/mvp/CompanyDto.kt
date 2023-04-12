@@ -33,6 +33,7 @@ class CompanyDto {
 
     @field:Schema(
         description = "Logo of the company",
+        example = "[10,20,30,40]",
         type = "ByteArray",
         nullable = true
     )

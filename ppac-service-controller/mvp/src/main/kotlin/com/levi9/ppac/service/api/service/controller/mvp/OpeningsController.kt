@@ -12,13 +12,9 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
-import java.util.UUID
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import javax.validation.Valid
-import javax.validation.constraints.Max
-import javax.validation.constraints.Min
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -29,6 +25,10 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.*
+import javax.validation.Valid
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping("/api/v1/openings")
@@ -53,8 +53,7 @@ class OpeningsController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @GetMapping("/{id}")
@@ -85,8 +84,7 @@ class OpeningsController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @GetMapping("")
@@ -113,9 +111,7 @@ class OpeningsController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @PutMapping("/{openingId}")
@@ -146,9 +142,7 @@ class OpeningsController(
                     mediaType = "application/json",
                     array = ArraySchema(schema = Schema(implementation = OpeningDto::class))
                 )]
-            ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Not Found")
+            )
         ]
     )
     @PatchMapping("/{openingId}/{available}")

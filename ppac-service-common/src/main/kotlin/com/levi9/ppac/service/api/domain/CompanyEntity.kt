@@ -27,7 +27,7 @@ data class CompanyEntity(
     var logo: ByteArray? = null
 
     @Column(name = "DESCRIPTION", nullable = true)
-    @field:Size(min = 40, max = 1000, message = "Invalid description for name field.")
+    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
 
     @Column(name = "EMAIL", nullable = true)

@@ -29,7 +29,7 @@ class TrainerDto {
 
     @field:Schema(
         description = "The trainer's description",
-        example = "The description",
+        example = "Is a tech expert who specializes in areas such as software development, network administration and cybersecurity.",
         type = "String",
         nullable = false
     )
@@ -52,6 +52,7 @@ class TrainerDto {
 
     @field:Schema(
         description = "The trainer's avatar",
+        example = "[10,20,30,40]",
         type = "ByteArray",
         nullable = true
     )
