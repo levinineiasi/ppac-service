@@ -15,7 +15,7 @@ class CompanyDto {
 
     @field:Id
     @JMap
-    lateinit var id: UUID
+    var id: UUID = UUID.randomUUID()
 
     @field:Schema(
         description = "Name of the company",
