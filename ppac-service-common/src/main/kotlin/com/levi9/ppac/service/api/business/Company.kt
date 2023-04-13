@@ -20,12 +20,12 @@ data class Company(
     var id: UUID,
 
     @field:NotNull
-    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 150, message = "Invalid length for name field.")
     var name: String
 ) {
     var logo: ByteArray? = null
 
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 1000, message = "Invalid length for description field.")
     var description: String? = null
 
     @field:Size(min = 5, max = 50, message = "Invalid length for email field.")

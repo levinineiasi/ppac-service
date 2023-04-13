@@ -23,7 +23,7 @@ class TrainerDto {
         nullable = false
     )
     @field:NotNull
-    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    @field:Size(min = 3, max = 50, message = "Invalid length for name field.")
     @JMap
     var name: String = ""
 
@@ -35,9 +35,9 @@ class TrainerDto {
     )
 
     @field:NotNull
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(max = 150, message = "Invalid length for description field.")
     @JMap
-    var description: String = ""
+    var role: String = ""
 
     @field:Schema(
         description = "The trainer's Linkedin url",
@@ -46,7 +46,7 @@ class TrainerDto {
         nullable = true
     )
 
-    @field:Size(min = 20, max = 100, message = "Invalid size Linkedin URL")
+    @field:Size(min = 15, max = 100, message = "Invalid size Linkedin URL")
     @JMap
     var linkedinURL: String? = null
 

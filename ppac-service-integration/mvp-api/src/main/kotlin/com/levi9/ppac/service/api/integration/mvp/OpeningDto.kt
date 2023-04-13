@@ -143,7 +143,7 @@ class OpeningDto(
         nullable = true
     )
 
-    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
+    @field:Size(min = 5, max = 150, message = "Invalid length for title field.")
     @JMap
     var title: String? = null
 
@@ -154,7 +154,7 @@ class OpeningDto(
         nullable = true
     )
 
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     @JMap
     var description: String? = null
 
@@ -165,7 +165,7 @@ class OpeningDto(
         nullable = true
     )
 
-    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
+    @field:Size(max = 3000, message = "Invalid length for requirements field.")
     @JMap
     var requirements: String? = null
 
@@ -176,7 +176,7 @@ class OpeningDto(
         nullable = true
     )
 
-    @field:Size(min = 2, max = 1000, message = "Invalid length for restrictions field.")
+    @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     @JMap
     var restrictions: String? = null
 
