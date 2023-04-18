@@ -39,6 +39,11 @@ class CompanyServiceImpl(
 
         val openingDTO = opening.apply { this.id = UUID.randomUUID() }
         val openingEntity = Opening.toEntity(openingDTO)
+
+        if (openingEntity.views != 0) {
+            openingEntity.views = 0
+        }
+
         val savedOpening = openingRepository.save(openingEntity)
 
         val companyEntity = companyRepository.findByIdOrNull(id)!!
