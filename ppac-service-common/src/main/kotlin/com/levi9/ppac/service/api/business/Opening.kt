@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolationException
 import javax.validation.Validation
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
@@ -86,6 +87,10 @@ data class Opening(
     @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
 
+    @field:NotNull
+    @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
+    var views: Int = 0
+
     companion object ConverterImpl : Converter<Opening, OpeningEntity> {
 
         override fun toBusinessModel(entityObject: OpeningEntity): Opening {
@@ -130,7 +135,8 @@ data class Opening(
                 "requirements=$requirements," +
                 "restrictions=$restrictions," +
                 "recruitmentProcess=$recruitmentProcess," +
-                "startDate=$startDate)"
+                "startDate=$startDate," +
+                "views=$views)"
     }
 
     @Suppress("unused")
