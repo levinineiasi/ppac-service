@@ -1,6 +1,8 @@
 package com.levi9.ppac.service.api.integration.mvp
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.enums.PeriodType
@@ -9,6 +11,7 @@ import java.time.LocalDate
 import java.util.UUID
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
@@ -205,4 +208,16 @@ class OpeningDto {
     @field:FutureOrPresent(message = "Date should be from future or present")
     @JMap
     var startDate: LocalDate? = null
+
+    @field:Schema(
+            description = "The number of views of this opening",
+            example = "10",
+            type = "Int",
+            nullable = false
+    )
+    @field:NotNull
+    @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
+    @JMap
+    var views: Int = 0
+
 }

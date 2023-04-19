@@ -39,7 +39,8 @@ CREATE TABLE IF NOT EXISTS OPENINGS
     REQUIREMENTS                  VARCHAR(3000),
     RESTRICTIONS                  VARCHAR(3000),
     RECRUITMENT_PROCESS           VARCHAR(3000),
-    START_DATE                    DATE
+    START_DATE                    DATE,
+    VIEWS                         INTEGER NOT NULL CHECK (VIEWS >= 0)
     );
 
 CREATE TABLE IF NOT EXISTS TRAINERS

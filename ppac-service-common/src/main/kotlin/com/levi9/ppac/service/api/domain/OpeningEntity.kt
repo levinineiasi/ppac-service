@@ -16,6 +16,7 @@ import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
@@ -92,6 +93,7 @@ data class OpeningEntity(
     var restrictions: String? = null
 
     @Column(name = "RECRUITMENT_PROCESS", nullable = true)
+    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
@@ -99,4 +101,8 @@ data class OpeningEntity(
     @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
+
+    @Column(name = "VIEWS", nullable = false)
+    @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
+    var views: Int = 0
 }
