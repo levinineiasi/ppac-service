@@ -25,7 +25,7 @@ data class Company(
 ) {
     var logo: ByteArray? = null
 
-    @field:Size(min = 20, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     var description: String? = null
 
     @field:Size(min = 5, max = 50, message = "Invalid length for email field.")

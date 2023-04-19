@@ -44,8 +44,8 @@ data class OpeningEntity(
     var hasTechnicalTest: Boolean,
 
     @Column(name = "PERIOD_COUNT", nullable = false)
-    @field:Positive(message = "Invalid value for periodCount field.")
-    @field:Max(value = 50, message = "Invalid value for periodCount field.")
+    @field:Positive(message = "PeriodCount field should be positive.")
+    @field:Max(value = 50, message = "Invalid length for periodCount field.")
     var periodCount: Int,
 
     @Column(name = "PERIOD_TYPE", nullable = false)
@@ -55,7 +55,7 @@ data class OpeningEntity(
 
     @Column(name = "OPEN_POSITIONS", nullable = false)
     @field:Positive(message = "Invalid value for openPositions field.")
-    @field:Max(value = 60, message = "Invalid value for openPositions field.")
+    @field:Max(value = 50, message = "Invalid length for openPositions field.")
     var openPositions: Int,
 
     @Column(name = "ACCEPT_ON_CLOSING_OPPORTUNITY", nullable = false)
@@ -92,7 +92,7 @@ data class OpeningEntity(
     var restrictions: String? = null
 
     @Column(name = "RECRUITMENT_PROCESS", nullable = true)
-    @field:Size(min =10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)

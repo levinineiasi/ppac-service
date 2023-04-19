@@ -68,8 +68,8 @@ class OpeningDto {
         nullable = false
     )
     @field:NotNull
-    @field:Positive
-    @field:Max(value = 24, message = "Invalid value for periodCount field.")
+    @field:Positive(message = "PeriodCount should be positive.")
+    @field:Max(value = 50, message = "Invalid value for periodCount field.")
     @JMap
     var periodCount: Int = 1
 
@@ -91,7 +91,7 @@ class OpeningDto {
     )
     @field:NotNull
     @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    @field:Max(value = 50, message = "The number of open positions should be maximum 30.")
     @JMap
     var openPositions: Int = 1
 
@@ -150,6 +150,8 @@ class OpeningDto {
         description = "The description of the opened position",
         example = "This is the description of our new opened position.",
         type = "String",
+        minLength = 20,
+        maxLength = 3000,
         nullable = true
     )
 
@@ -161,6 +163,7 @@ class OpeningDto {
         description = "The requirements for the opened position",
         example = "For this position a student should have good knowledge of Java language.",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
@@ -172,6 +175,7 @@ class OpeningDto {
         description = "The restrictions for the opened position",
         example = "For this position the restrictions are...",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
@@ -183,17 +187,18 @@ class OpeningDto {
         description = "The recruitment process for the opened position",
         example = "For this position the recruitment process consists of...",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     @JMap
     var recruitmentProcess: String? = null
 
     @field:Schema(
         description = "The start date of the opened position",
         example = "2023-07-21",
-        type = "String",
+        type = "LocalDate",
         nullable = true
     )
     @JsonFormat(pattern = "yyyy-MM-dd")

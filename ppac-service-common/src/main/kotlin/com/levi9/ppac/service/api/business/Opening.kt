@@ -43,7 +43,7 @@ data class Opening(
     var hasTechnicalTest: Boolean = false,
 
     @field:NotNull
-    @field:Positive(message = "The number of open positions should be positive.")
+    @field:Positive(message = "The periodCount should be positive.")
     @field:Max(value = 50, message = "Invalid value for periodCount field.")
     var periodCount: Int = 1,
 
@@ -53,7 +53,7 @@ data class Opening(
 
     @field:NotNull
     @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 60, message = "The number of open positions should be maximum 30.")
+    @field:Max(value = 50, message = "Invalid length for openPositions.")
     var openPositions: Int = 1,
 
     @field:NotNull

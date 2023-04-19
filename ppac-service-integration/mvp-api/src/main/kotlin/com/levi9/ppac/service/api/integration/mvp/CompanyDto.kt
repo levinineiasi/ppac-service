@@ -22,7 +22,7 @@ class CompanyDto {
         example = "Levi9",
         type = "String",
         minLength = 2,
-        maxLength = 30,
+        maxLength = 150,
         nullable = false
     )
 

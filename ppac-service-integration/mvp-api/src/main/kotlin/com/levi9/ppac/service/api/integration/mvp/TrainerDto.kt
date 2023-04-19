@@ -20,17 +20,20 @@ class TrainerDto {
         description = "The trainer's name",
         example = "Popescu Ion",
         type = "String",
+        minLength = 2,
+        maxLength = 50,
         nullable = false
     )
     @field:NotNull
-    @field:Size(min = 3, max = 50, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 50, message = "Invalid length for name field.")
     @JMap
     var name: String = ""
 
     @field:Schema(
-        description = "The trainer's description",
-        example = "Is a tech expert who specializes in areas such as software development, network administration and cybersecurity.",
+        description = "The trainer's role",
+        example = "QA Senior",
         type = "String",
+        maxLength = 150,
         nullable = false
     )
 
@@ -43,6 +46,8 @@ class TrainerDto {
         description = "The trainer's Linkedin url",
         example = "https://www.linkedin.com/in/popescu-ion",
         type = "String",
+        minLength = 15,
+        maxLength = 100,
         nullable = true
     )
 

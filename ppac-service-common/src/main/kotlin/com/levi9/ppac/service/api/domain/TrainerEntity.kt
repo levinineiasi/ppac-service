@@ -16,7 +16,7 @@ data class TrainerEntity(
     var id: UUID,
 
     @Column(name = "NAME", nullable = false)
-    @field:Size(min = 3, max = 50, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 50, message = "Invalid length for name field.")
     var name: String,
 
     @Column(name = "ROLE", nullable = false)
