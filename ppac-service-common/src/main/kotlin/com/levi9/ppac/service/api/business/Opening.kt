@@ -86,7 +86,7 @@ data class Opening(
     @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
 

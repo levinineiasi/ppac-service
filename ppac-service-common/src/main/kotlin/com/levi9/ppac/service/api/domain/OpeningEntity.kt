@@ -101,7 +101,7 @@ data class OpeningEntity(
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
 }

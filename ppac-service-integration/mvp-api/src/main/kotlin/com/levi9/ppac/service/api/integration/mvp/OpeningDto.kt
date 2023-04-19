@@ -16,13 +16,12 @@ import nonapi.io.github.classgraph.json.Id
 
 @Schema(description = "Model for an opening.")
 @JsonRootName("Opening")
-class OpeningDto(
+class OpeningDto {
 
-    @field:NotNull
     @field:Id
     @JMap
-    var id: UUID
-) {
+    var id: UUID = UUID.randomUUID()
+
     @field:Schema(
         description = "The keywords",
         example = "[\"java\", \"c++\"]",
@@ -35,7 +34,7 @@ class OpeningDto(
 
     @field:Schema(
         description = "The custom keywords",
-        example = "[\"java\", \"c++\"]",
+        example = "[\"java-react\", \"unity-c#\"]",
         type = "List<String>",
         nullable = false
     )
@@ -86,7 +85,7 @@ class OpeningDto(
 
     @field:Schema(
         description = "The number of opened positions",
-        example = "10",
+        example = "14",
         type = "Int",
         nullable = false
     )
@@ -122,7 +121,7 @@ class OpeningDto(
         nullable = false
     )
     @JMap
-    lateinit var trainers: List<TrainerDto>
+    var trainers: List<TrainerDto> = emptyList()
 
     @field:Schema(
         description = "The availability of the opening",
@@ -193,15 +192,12 @@ class OpeningDto(
 
     @field:Schema(
         description = "The start date of the opened position",
-        example = "21-07-2023",
+        example = "2023-07-21",
         type = "String",
         nullable = true
     )
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present")
     @JMap
     var startDate: LocalDate? = null
-
-    @Suppress("unused")
-    constructor() : this(UUID.randomUUID())
 }

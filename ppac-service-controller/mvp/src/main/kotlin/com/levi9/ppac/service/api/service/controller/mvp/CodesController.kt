@@ -48,9 +48,7 @@ class CodesController(
     )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "OK"),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
-            ApiResponse(responseCode = "404", description = "Nu-l gaseste")
+            ApiResponse(responseCode = "200", description = "OK")
         ]
     )
     @GetMapping("/checkAdminCode")
@@ -69,10 +67,7 @@ class CodesController(
         description = "Returns UNAUTHORIZED if the code received and companyId doesn't match"
     )
     @ApiResponses(
-        value = [ApiResponse(responseCode = "200", description = "OK"), ApiResponse(
-            responseCode = "401",
-            description = "Unauthorized"
-        )]
+        value = [ApiResponse(responseCode = "200", description = "OK")]
     )
     @GetMapping("/checkCompanyCode/{companyId}")
     fun checkCompanyCode(
@@ -99,7 +94,6 @@ class CodesController(
                     array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
             ),
-            ApiResponse(responseCode = "401", description = "Unauthorized"),
             ApiResponse(responseCode = "204", description = "No Content")
         ]
     )
@@ -138,7 +132,6 @@ class CodesController(
                     )
                 )]
             ),
-            ApiResponse(responseCode = "401", description = "Unauthorized")
         ]
     )
     @PostMapping("/{name}")

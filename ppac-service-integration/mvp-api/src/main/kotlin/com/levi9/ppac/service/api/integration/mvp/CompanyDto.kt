@@ -15,7 +15,7 @@ class CompanyDto {
 
     @field:Id
     @JMap
-    lateinit var id: UUID
+    var id: UUID = UUID.randomUUID()
 
     @field:Schema(
         description = "Name of the company",
@@ -37,6 +37,7 @@ class CompanyDto {
 
     @field:Schema(
         description = "Logo of the company",
+        example = "[10,20,30,40]",
         type = "ByteArray",
         nullable = true
     )
