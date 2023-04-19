@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.info.Info
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
@@ -48,7 +49,18 @@ class CodesController(
     )
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "OK")
+            ApiResponse(
+                responseCode = "200", description = "OK",
+                content = [Content(
+                    mediaType = "text/plain",
+                    schema = Schema(type = "string"),
+                    examples = [
+                        ExampleObject(
+                            value = OK
+                        )
+                    ]
+                )]
+            )
         ]
     )
     @GetMapping("/checkAdminCode")
@@ -67,7 +79,20 @@ class CodesController(
         description = "Returns UNAUTHORIZED if the code received and companyId doesn't match"
     )
     @ApiResponses(
-        value = [ApiResponse(responseCode = "200", description = "OK")]
+        value = [
+            ApiResponse(
+                responseCode = "200", description = "OK",
+                content = [Content(
+                    mediaType = "text/plain",
+                    schema = Schema(type = "string"),
+                    examples = [
+                        ExampleObject(
+                            value = OK
+                        )
+                    ]
+                )]
+            )
+        ]
     )
     @GetMapping("/checkCompanyCode/{companyId}")
     fun checkCompanyCode(

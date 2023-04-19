@@ -45,8 +45,8 @@ data class OpeningEntity(
     var hasTechnicalTest: Boolean,
 
     @Column(name = "PERIOD_COUNT", nullable = false)
-    @field:Positive
-    @field:Max(value = 24, message = "Invalid value for periodCount field.")
+    @field:Positive(message = "PeriodCount field should be positive.")
+    @field:Max(value = 50, message = "Invalid length for periodCount field.")
     var periodCount: Int,
 
     @Column(name = "PERIOD_TYPE", nullable = false)
@@ -56,7 +56,7 @@ data class OpeningEntity(
 
     @Column(name = "OPEN_POSITIONS", nullable = false)
     @field:Positive(message = "Invalid value for openPositions field.")
-    @field:Max(value = 30, message = "Invalid value for openPositions field.")
+    @field:Max(value = 50, message = "Invalid length for openPositions field.")
     var openPositions: Int,
 
     @Column(name = "ACCEPT_ON_CLOSING_OPPORTUNITY", nullable = false)
@@ -77,23 +77,24 @@ data class OpeningEntity(
     ) {
 
     @Column(name = "TITLE", nullable = true)
-    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
+    @field:Size(min = 5, max = 150, message = "Invalid length for title field.")
     var title: String? = null
 
     @Column(name = "DESCRIPTION", nullable = true)
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     var description: String? = null
 
     @Column(name = "REQUIREMENTS", nullable = true)
-    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
+    @field:Size(max = 3000, message = "Invalid length for requirements field.")
     var requirements: String? = null
 
     @Column(name = "RESTRICTIONS", nullable = true)
-    @field:Size(min =2, max = 1000, message = "Invalid length for restrictions field.")
+    @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
 
     @Column(name = "RECRUITMENT_PROCESS", nullable = true)
     @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)
