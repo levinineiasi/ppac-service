@@ -217,9 +217,7 @@ class CompanyServiceImplTest {
 
         openingRepository.save(openingUnavailable)
 
-        val openingAvailableDTO = Opening.toBusinessModel(openingAvailable)
 
-        val openingUnavailableDTO = Opening.toBusinessModel(openingUnavailable)
 
 //        companyService.addOpening(companyEntity.id, openingAvailableDTO)
 //        companyService.addOpening(companyEntity.id, openingUnavailableDTO)

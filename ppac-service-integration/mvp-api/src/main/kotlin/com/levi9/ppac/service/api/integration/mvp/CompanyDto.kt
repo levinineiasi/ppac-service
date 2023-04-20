@@ -32,7 +32,7 @@ class CompanyDto {
     var name: String = ""
 
     @JMap
-    lateinit var accessCode: AccessCodeDto
+    var accessCode: AccessCodeDto = AccessCodeDto()
 
 
     @field:Schema(

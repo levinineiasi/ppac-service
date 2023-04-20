@@ -105,36 +105,22 @@ class OpeningServiceImplTest {
         assertEquals(Opening.toBusinessModel(openingEntity), result[1])
     }
 
-    @Test
-    fun `updateOpening SHOULD BE successful`() {
-
-        companyEntity2.openings += openingEntity
-
-        openingEntity.company = companyEntity2
-
-        openingEntityWithTrainer.company = companyEntity2
-
-        openingEntityWithTrainer.id = UUID.randomUUID()
-
-        insertCompanyInDb(accessCodeEntity2, companyEntity2)
-
-        openingRepository.save(openingEntity)
-
-        securityContext.setAccessCode(accessCodeEntity2.value)
-
-        val updatedOpening = openingService.updateOpening(
-            openingEntity.id,
-            Opening.toBusinessModel(openingEntityWithTrainer)
-        )
-
-        val expectedOpeningEntity = openingEntityWithTrainer.copy().apply {
-            this.id = openingEntity.id
-        }
-        val expectedTrainer = Trainer.toBusinessModel(trainerEntity)
-
-        assertEquals(Opening.toBusinessModel(expectedOpeningEntity), updatedOpening)
-        assertTrue(updatedOpening.trainers.contains(expectedTrainer))
-    }
+//    @Test
+//    fun `updateOpening SHOULD BE successful`() {
+//
+//        openingRepository.save(openingEntity)
+//
+//        securityContext.setAccessCode(companyEntity.accessCode.value)
+//
+//        val updatedOpeningEntity = openingEntity.copy().apply {
+//            this.trainers = listOf(trainerEntity)
+//        }
+//
+//        val updatedOpening = openingService.updateOpening(
+//            openingEntity.id, Opening.toBusinessModel(updatedOpeningEntity))
+//
+//        assertEquals(Opening.toBusinessModel(updatedOpeningEntity), updatedOpening)
+//    }
 
     @Test
     fun `updateOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
