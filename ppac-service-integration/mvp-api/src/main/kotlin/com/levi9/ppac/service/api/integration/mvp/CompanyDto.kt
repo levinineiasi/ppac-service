@@ -22,12 +22,12 @@ class CompanyDto {
         example = "Levi9",
         type = "String",
         minLength = 2,
-        maxLength = 30,
+        maxLength = 150,
         nullable = false
     )
 
     @field:NotNull
-    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 150, message = "Invalid length for name field.")
     @JMap
     var name: String = ""
 
@@ -49,13 +49,13 @@ class CompanyDto {
         example = """Levi9 is a nearshore technology service provider with around 1000 employees and 50+ customers.
              We specialize in custom made business IT – 95% of our work is on the revenue side of our customers.""",
         type = "String",
-        minLength = 40,
-        maxLength = 1000,
+        minLength = 20,
+        maxLength = 3000,
         nullable = true
     )
 
     @field:NotNull
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     @JMap
     var description: String? = null
 

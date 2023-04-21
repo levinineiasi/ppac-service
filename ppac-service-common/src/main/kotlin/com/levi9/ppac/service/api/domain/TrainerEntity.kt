@@ -16,16 +16,16 @@ data class TrainerEntity(
     var id: UUID,
 
     @Column(name = "NAME", nullable = false)
-    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 50, message = "Invalid length for name field.")
     var name: String,
 
-    @Column(name = "DESCRIPTION", nullable = false)
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
-    var description: String,
+    @Column(name = "ROLE", nullable = false)
+    @field:Size(max = 150, message = "Invalid length for role field.")
+    var role: String,
 
     ) {
     @Column(name = "LINKEDIN_URL", nullable = true)
-    @field:Size(min = 20, max = 100, message = "Invalid size Linkedin URL")
+    @field:Size(min = 15, max = 100, message = "Invalid size Linkedin URL")
     var linkedinURL: String? = null
 
     @Column(name = "AVATAR", nullable = true)

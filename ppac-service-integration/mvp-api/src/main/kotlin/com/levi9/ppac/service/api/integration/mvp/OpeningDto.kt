@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.util.UUID
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
@@ -68,8 +69,8 @@ class OpeningDto {
         nullable = false
     )
     @field:NotNull
-    @field:Positive
-    @field:Max(value = 24, message = "Invalid value for periodCount field.")
+    @field:Positive(message = "PeriodCount should be positive.")
+    @field:Max(value = 50, message = "Invalid value for periodCount field.")
     @JMap
     var periodCount: Int = 1
 
@@ -91,7 +92,7 @@ class OpeningDto {
     )
     @field:NotNull
     @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    @field:Max(value = 50, message = "The number of open positions should be maximum 30.")
     @JMap
     var openPositions: Int = 1
 
@@ -142,7 +143,7 @@ class OpeningDto {
         nullable = true
     )
 
-    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
+    @field:Size(min = 5, max = 150, message = "Invalid length for title field.")
     @JMap
     var title: String? = null
 
@@ -150,10 +151,12 @@ class OpeningDto {
         description = "The description of the opened position",
         example = "This is the description of our new opened position.",
         type = "String",
+        minLength = 20,
+        maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     @JMap
     var description: String? = null
 
@@ -161,10 +164,11 @@ class OpeningDto {
         description = "The requirements for the opened position",
         example = "For this position a student should have good knowledge of Java language.",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
+    @field:Size(max = 3000, message = "Invalid length for requirements field.")
     @JMap
     var requirements: String? = null
 
@@ -172,10 +176,11 @@ class OpeningDto {
         description = "The restrictions for the opened position",
         example = "For this position the restrictions are...",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 2, max = 1000, message = "Invalid length for restrictions field.")
+    @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     @JMap
     var restrictions: String? = null
 
@@ -183,21 +188,34 @@ class OpeningDto {
         description = "The recruitment process for the opened position",
         example = "For this position the recruitment process consists of...",
         type = "String",
+        maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     @JMap
     var recruitmentProcess: String? = null
 
     @field:Schema(
         description = "The start date of the opened position",
         example = "2023-07-21",
-        type = "String",
+        type = "LocalDate",
         nullable = true
     )
     @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present")
     @JMap
     var startDate: LocalDate? = null
+
+    @field:Schema(
+            description = "The number of views of this opening",
+            example = "10",
+            type = "Int",
+            nullable = false
+    )
+    @field:NotNull
+    @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
+    @JMap
+    var views: Int = 0
+
 }

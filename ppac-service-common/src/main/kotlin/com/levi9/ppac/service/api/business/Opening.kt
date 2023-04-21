@@ -3,7 +3,6 @@ package com.levi9.ppac.service.api.business
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.googlecode.jmapper.JMapper
 import com.googlecode.jmapper.annotations.JGlobalMap
-import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.business.converter.Converter
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
@@ -19,6 +18,7 @@ import javax.validation.ConstraintViolationException
 import javax.validation.Validation
 import javax.validation.constraints.FutureOrPresent
 import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 import javax.validation.constraints.Size
@@ -45,8 +45,8 @@ data class Opening(
     var hasTechnicalTest: Boolean = false,
 
     @field:NotNull
-    @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 24, message = "Invalid value for periodCount field.")
+    @field:Positive(message = "The periodCount should be positive.")
+    @field:Max(value = 50, message = "Invalid value for periodCount field.")
     var periodCount: Int = 1,
 
     @field:Enumerated(EnumType.STRING)
@@ -55,7 +55,7 @@ data class Opening(
 
     @field:NotNull
     @field:Positive(message = "The number of open positions should be positive.")
-    @field:Max(value = 30, message = "The number of open positions should be maximum 30.")
+    @field:Max(value = 50, message = "Invalid length for openPositions.")
     var openPositions: Int = 1,
 
     @field:NotNull
@@ -71,24 +71,28 @@ data class Opening(
 
     var companyId: UUID? = UUID.randomUUID()
 ) {
-    @field:Size(min = 5, max = 30, message = "Invalid length for title field.")
+    @field:Size(min = 5, max = 150, message = "Invalid length for title field.")
     var title: String? = null
 
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     var description: String? = null
 
-    @field:Size(min = 10, max = 1000, message = "Invalid length for requirements field.")
+    @field:Size(max = 3000, message = "Invalid length for requirements field.")
     var requirements: String? = null
 
-    @field:Size(min = 2, max = 1000, message = "Invalid length for restrictions field.")
+    @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
 
-    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @field:FutureOrPresent(message = "Date should be from future or present.")
     var startDate: LocalDate? = null
+
+    @field:NotNull
+    @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
+    var views: Int = 0
 
     companion object ConverterImpl : Converter<Opening, OpeningEntity> {
 
@@ -147,7 +151,8 @@ data class Opening(
                 "requirements=$requirements," +
                 "restrictions=$restrictions," +
                 "recruitmentProcess=$recruitmentProcess," +
-                "startDate=$startDate)"
+                "startDate=$startDate" +
+                "views = $views)"
     }
 
     @Suppress("unused")
