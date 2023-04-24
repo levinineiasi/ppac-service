@@ -93,4 +93,9 @@ class OpeningServiceImpl(
                 .map { Opening.toBusinessModel(it) }
     }
 
+    override fun getTotalCount(): Int {
+        return openingRepository.findAll()
+                .filter { it.available }
+                .size
+    }
 }
