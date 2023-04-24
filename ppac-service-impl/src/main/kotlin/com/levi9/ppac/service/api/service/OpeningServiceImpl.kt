@@ -83,4 +83,14 @@ class OpeningServiceImpl(
             .sortedByDescending { it.views }
             .map { Opening.toBusinessModel(it) }
     }
+
+    @Transactional
+    override fun findAllFirstCount(count: Int): List<Opening> {
+        return openingRepository.findAll()
+                .filter { it.available }
+                .sortedByDescending { it.views }
+                .take(count)
+                .map { Opening.toBusinessModel(it) }
+    }
+
 }

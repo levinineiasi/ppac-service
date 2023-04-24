@@ -88,12 +88,19 @@ class OpeningsController(
         ]
     )
     @GetMapping("")
-    fun findAll(): ResponseEntity<Any> {
+    fun findAll(@RequestParam(required = false) count: Int?): ResponseEntity<Any> {
 
         logger.info("Returning all companies from database.")
 
         return openingService?.let {
-            ResponseEntity(it.findAll().map { opening ->
+            val openings =
+                    if (count != null) {
+                it.findAllFirstCount(count)
+            } else {
+                it.findAll()
+            }
+
+            ResponseEntity(openings.map { opening ->
                 openingBusinessToDtoMapper.getDestination(opening)
             }, HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
