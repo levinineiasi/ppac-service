@@ -41,6 +41,6 @@ data class CompanyEntity(
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "company")
     var openings: List<OpeningEntity> = ArrayList()
 }

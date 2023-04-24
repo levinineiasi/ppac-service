@@ -218,4 +218,6 @@ class OpeningDto {
     @JMap
     var views: Int = 0
 
+    var company: CompanyDto ? = null
+
 }

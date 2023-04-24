@@ -95,21 +95,19 @@ data class Opening(
     var views: Int = 0
 
     companion object ConverterImpl : Converter<Opening, OpeningEntity> {
-
+        val validator = Validation.buildDefaultValidatorFactory().validator!!
         override fun toBusinessModel(entityObject: OpeningEntity): Opening {
-            val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(entityObject)
             if (violations.isNotEmpty()) {
                 throw ConstraintViolationException(violations)
             }
             val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
                 JMapper(Opening::class.java, OpeningEntity::class.java)
-            val op =  openingEntityToBusinessModelMapper.getDestination(entityObject)
-            return  op.copy().apply { companyId = entityObject.company.id }
+            val opening =  openingEntityToBusinessModelMapper.getDestination(entityObject)
+            return  opening.copy().apply { companyId = entityObject.company.id }
         }
 
         override fun toEntity(businessObject: Opening): OpeningEntity {
-            val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(businessObject)
             if (violations.isNotEmpty()) {
                 throw ConstraintViolationException(violations)
@@ -120,7 +118,6 @@ data class Opening(
         }
 
          fun toEntity(businessObject: Opening, company: CompanyEntity): OpeningEntity {
-            val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(businessObject)
             if (violations.isNotEmpty()) {
                 throw ConstraintViolationException(violations)

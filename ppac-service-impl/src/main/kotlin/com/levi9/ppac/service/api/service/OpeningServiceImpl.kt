@@ -1,5 +1,6 @@
 package com.levi9.ppac.service.api.service
 
+import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
@@ -30,10 +31,6 @@ class OpeningServiceImpl(
             throw AuthenticationException()
         }
 
-
-//        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
-//            throw AuthenticationException()
-//        }
         val companyEntity = companyRepository.findByIdOrNull(opening.companyId)
         val openingEntity = Opening.toEntity(
             opening.apply { id = openingId }, companyEntity!!
@@ -76,5 +73,10 @@ class OpeningServiceImpl(
             .filter { it.available }
             .sortedByDescending { it.views }
             .map { Opening.toBusinessModel(it) }
+    }
+
+    override fun getCompanyById(id: UUID): Company{
+        val companyEntity = companyRepository.findByIdOrNull(id) ?: throw NotFoundException()
+        return Company.toBusinessModel(companyEntity)
     }
 }

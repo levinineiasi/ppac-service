@@ -32,7 +32,7 @@ class CompanyDto {
     var name: String = ""
 
     @JMap
-    var accessCode: AccessCodeDto = AccessCodeDto()
+    var accessCode: AccessCodeDto? = null
 
 
     @field:Schema(
