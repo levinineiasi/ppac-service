@@ -80,7 +80,7 @@ data class Opening(
     @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
 
-    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(min = 10, max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -190,11 +190,12 @@ class OpeningDto {
         description = "The recruitment process for the opened position",
         example = "For this position the recruitment process consists of...",
         type = "String",
+        minLength = 10,
         maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(min = 10, max = 3000, message = "Invalid length for recruitmentProcess field.")
     @JMap
     var recruitmentProcess: String? = null
 
