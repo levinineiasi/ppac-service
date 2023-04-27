@@ -44,11 +44,6 @@ class CodeServiceImpl(
         logger.info("Generated $valueNr value for $name company.")
 
         val accessCodeDTO = AccessCode(UUID.randomUUID(),valueNr,CodeType.COMPANY_CODE)
-        val accessCodeEntity = codeRepository.save(AccessCode.toEntity(accessCodeDTO))
-
-
-        logger.info("Inserted accessCodeEntity with id ${accessCodeEntity.id} into database.")
-
         val companyDTO = Company(UUID.randomUUID(), name, accessCodeDTO)
         val companyEntity = companyRepository.save(Company.toEntity(companyDTO))
 

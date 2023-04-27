@@ -99,7 +99,6 @@ data class OpeningEntity(
     var restrictions: String? = null
 
     @Column(name = "RECRUITMENT_PROCESS", nullable = true)
-    @field:Size(min = 10, max = 2000, message = "Invalid length for recruitmentProcess field.")
     @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 

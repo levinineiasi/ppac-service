@@ -56,7 +56,7 @@ class CompanyServiceImpl(
                 description = companyEntity.description
                 email = companyEntity.email
             }
-           val companyList =  Company.toBusinessModel(companyEntityWithActiveOpenings)
+            val companyList = Company.toBusinessModel(companyEntityWithActiveOpenings)
             companyList.accessCode = null
             companyList
         }

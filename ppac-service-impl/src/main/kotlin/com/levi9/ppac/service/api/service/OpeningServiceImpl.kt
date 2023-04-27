@@ -25,9 +25,9 @@ class OpeningServiceImpl(
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {
 
-        val openingEnt = openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
+        var openingEntity = openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
 
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), openingEnt.company.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), openingEntity.company.id)) {
             throw AuthenticationException()
         }
 
@@ -35,20 +35,20 @@ class OpeningServiceImpl(
             .flatten()
             .toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first() !=  openingEnt.company)) {
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first() !=  openingEntity.company)) {
             throw AuthenticationException()
         }
 
         opening.apply {
-            companyId = openingEnt.company.id
+            companyId = openingEntity.company.id
         }
 
-        val openingEntity = Opening.toEntity(
-            opening.apply { id = openingEnt.id }, openingEnt.company
+         openingEntity = Opening.toEntity(
+            opening.apply { id = openingEntity.id }, openingEntity.company
         )
 
-        val updatedOpeningEntity = openingRepository.save(openingEntity)
-        return Opening.toBusinessModel(updatedOpeningEntity)
+        val savedUpdatedOpeningEntity = openingRepository.save(openingEntity)
+        return Opening.toBusinessModel(savedUpdatedOpeningEntity)
     }
 
     @Transactional
@@ -85,6 +85,21 @@ class OpeningServiceImpl(
             .filter { it.available }
             .sortedByDescending { it.views }
             .map { Opening.toBusinessModel(it) }
+    }
+
+    @Transactional
+    override fun findAllFirstCount(count: Int): List<Opening> {
+        return openingRepository.findAll()
+                .filter { it.available }
+                .sortedByDescending { it.views }
+                .take(count)
+                .map { Opening.toBusinessModel(it) }
+    }
+
+    override fun getTotalCount(): Int {
+        return openingRepository.findAll()
+                .filter { it.available }
+                .size
     }
 
     override fun getCompanyById(id: UUID): Company {

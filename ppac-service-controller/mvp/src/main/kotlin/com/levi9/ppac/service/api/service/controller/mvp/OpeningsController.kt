@@ -16,6 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
 import java.util.UUID
+import javax.validation.Valid
+import javax.validation.constraints.Max
+import javax.validation.constraints.Min
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -29,9 +32,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import javax.validation.Valid
-import javax.validation.constraints.Max
-import javax.validation.constraints.Min
 
 @RestController
 @RequestMapping("/api/v1/openings")
@@ -70,7 +70,7 @@ class OpeningsController(
 
         return openingService?.let {
             val opening = it.findById(id)
-            val company = opening.companyId?.let { it1 -> it.getCompanyById(it1) }
+            val company = opening.companyId?.let { companyId -> it.getCompanyById(companyId) }
             val companyDTO = companyBusinessToDtoMapper.getDestination(company)
             companyDTO.apply {
                 accessCode = null
@@ -100,11 +100,17 @@ class OpeningsController(
         ]
     )
     @GetMapping("")
-    fun findAll(): ResponseEntity<Any> {
+    fun findAll(@RequestParam(required = false) count: Int?): ResponseEntity<Any> {
 
         logger.info("Returning all companies from database.")
+
         return openingService?.let {
-            val openings = it.findAll()
+            val openings =
+                if (count != null) {
+                    it.findAllFirstCount(count)
+                } else {
+                    it.findAll()
+                }
             val openingDTOs = openings.map { opening ->
                 val company = opening.companyId?.let { companyId ->
                     it.getCompanyById(companyId)
@@ -118,7 +124,11 @@ class OpeningsController(
                 openingDTO.company = companyDTO
                 openingDTO
             }
-            ResponseEntity.ok(openingDTOs)
+
+            val response: MutableMap<String, Any> = HashMap()
+            response["totalCount"] = it.getTotalCount()
+            response["openings"] = openingDTOs
+            ResponseEntity(response, HttpStatus.OK)
         } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 

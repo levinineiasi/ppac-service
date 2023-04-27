@@ -104,7 +104,8 @@ data class Opening(
             val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
                 JMapper(Opening::class.java, OpeningEntity::class.java)
             val opening =  openingEntityToBusinessModelMapper.getDestination(entityObject)
-            return  opening.copy().apply { companyId = entityObject.company.id }
+            return  opening.copy().apply { companyId = entityObject.company.id
+            views = entityObject.views}
         }
 
         override fun toEntity(businessObject: Opening): OpeningEntity {
@@ -124,8 +125,11 @@ data class Opening(
             }
             val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
                 JMapper(OpeningEntity::class.java, Opening::class.java)
-            val s =  openingBusinessModelToEntityMapper.getDestination(businessObject)
-             return s.copy(company = company)
+            val openingDTO =  openingBusinessModelToEntityMapper.getDestination(businessObject)
+             openingDTO.apply {
+                 this.company = company
+             }
+             return openingDTO
         }
     }
 
