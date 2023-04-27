@@ -166,7 +166,7 @@ class CodesController(
         @Max(value = 999999, message = "Invalid length for header AccessCode.")
         accessCode: Int,
         @PathVariable
-        @Size(min = 2, max =30 , message =  "Invalid length for name field")
+        @Size(min = 2, max =150 , message =  "Invalid length for name field")
         name: String
     ): ResponseEntity<Any> {
 

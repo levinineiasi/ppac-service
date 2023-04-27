@@ -13,9 +13,7 @@ import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.repository.TrainerRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.config.TestConfig
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -29,6 +27,11 @@ import org.springframework.test.context.BootstrapWith
 import org.springframework.test.context.TestPropertySource
 import java.util.UUID
 import javax.naming.AuthenticationException
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.assertThrows
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException
 
 @SpringBootTest(
@@ -54,9 +57,6 @@ class CompanyServiceImplTest {
 
     @Autowired
     lateinit var companyRepository: CompanyRepository
-
-    @Autowired
-    lateinit var codeRepository: CodeRepository
 
     @Autowired
     lateinit var openingRepository: OpeningRepository
@@ -89,19 +89,18 @@ class CompanyServiceImplTest {
             available = false
             company = companyEntity
         }
-        val ce = companyEntity.copy().apply { openings = listOf(openingAvailable) }
+        val companyEntityWithOpenings = companyEntity.copy().apply { openings = listOf(openingAvailable) }
         private val accessCodeEntityForCompany2 = AccessCodeEntity(UUID.randomUUID(), 112233)
 
         private val companyEntity2 = CompanyEntity(UUID.randomUUID(), "Amazon", accessCodeEntityForCompany2)
 
-        private val accessCodeEntityForCompany3 = AccessCodeEntity(UUID.randomUUID(), 223344)
         private val companyEntity3 = CompanyEntity(UUID.randomUUID(), "Facebook", accessCodeEntityForCompany2)
     }
 
     @Test
     fun `addOpening SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
         securityContext.setAccessCode(accessCodeEntityForCompany.value)
 
@@ -122,7 +121,7 @@ class CompanyServiceImplTest {
     @Test
     fun `addOpening SHOULD THROW AuthenticationException WHEN AccessCode is not set`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
         assertThrows<AuthenticationException> {
             companyService.addOpening(
@@ -135,7 +134,7 @@ class CompanyServiceImplTest {
     @Test
     fun `addOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
         securityContext.setAccessCode(accessCodeEntityForCompany.value + 1)
 
@@ -168,15 +167,21 @@ class CompanyServiceImplTest {
     @Test
     fun `findAll SHOULD RETURN all companies WHEN multiple companies exit in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
-        insertCompanyInDb(accessCodeEntityForCompany3, companyEntity3)
+        companyRepository.save(companyEntity2)
+        companyRepository.save(companyEntity3)
 
         val result = companyService.findAll()
 
         assertEquals(2, result.size)
 
-        assertEquals(Company.toBusinessModel(companyEntity2), result[0])
-        assertEquals(Company.toBusinessModel(companyEntity3), result[1])
+        val companyEntity2DTO = Company.toBusinessModel(companyEntity2)
+        val companyEntity3DTO = Company.toBusinessModel(companyEntity3)
+
+        companyEntity2DTO.accessCode = null
+        companyEntity3DTO.accessCode = null
+
+        assertEquals(companyEntity2DTO, result[0])
+        assertEquals(companyEntity3DTO, result[1])
     }
 
     @Test
@@ -190,15 +195,17 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD RETURN company with only available openings WHEN onlyAvailable = true`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
-        securityContext.setAccessCode(accessCodeEntityForCompany.value)
+        securityContext.setAccessCode(companyEntity.accessCode.value)
 
-        companyService.addOpening(ce.id, Opening.toBusinessModel(openingAvailable))
-        companyService.addOpening(ce.id, Opening.toBusinessModel(openingUnavailable))
+        companyService.addOpening(companyEntityWithOpenings.id, Opening.toBusinessModel(openingAvailable))
+        companyService.addOpening(companyEntityWithOpenings.id, Opening.toBusinessModel(openingUnavailable))
 
-        val result = companyService.findById(ce.id, true)
-        val expected = Company.toBusinessModel(ce.copy().apply { openings = listOf(openingAvailable) })
+        val result = companyService.findById(companyEntityWithOpenings.id, true)
+        openingAvailable.id = result.openings!![0].id
+        val expected = Company.toBusinessModel(companyEntityWithOpenings.copy().apply { openings = listOf(openingAvailable) })
+        expected.accessCode = null
 
         assertEquals(expected, result)
     }
@@ -209,18 +216,13 @@ class CompanyServiceImplTest {
         companyEntity.openings = listOf(openingAvailable)
 
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
         securityContext.setAccessCode(accessCodeEntityForCompany.value)
 
         openingRepository.save(openingAvailable)
 
         openingRepository.save(openingUnavailable)
-
-
-
-//        companyService.addOpening(companyEntity.id, openingAvailableDTO)
-//        companyService.addOpening(companyEntity.id, openingUnavailableDTO)
 
         val result = companyService.findById(companyEntity.id, false)
 
@@ -234,7 +236,7 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD THROW NotFoundException WHEN companyID is not present in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany, companyEntity)
+        companyRepository.save(companyEntity)
 
         assertThrows(NotFoundException::class.java)
         { companyService.findById(companyEntity2.id, true) }
@@ -243,7 +245,7 @@ class CompanyServiceImplTest {
     @Test
     fun `updateById SHOULD BE successful`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
+        companyRepository.save(companyEntity2)
 
         securityContext.setAccessCode(accessCodeEntityForCompany2.value)
 
@@ -259,17 +261,9 @@ class CompanyServiceImplTest {
     @Test
     fun `updatedById SHOULD THROW AuthenticationException WHEN companyID is not present in DB`() {
 
-        insertCompanyInDb(accessCodeEntityForCompany2, companyEntity2)
+        companyRepository.save(companyEntity2)
 
         assertThrows(AuthenticationException::class.java)
         { companyService.updateById(companyEntity3.id, Company.toBusinessModel(companyEntity3)) }
-    }
-
-    fun insertCompanyInDb(
-        accessCodeEntity: AccessCodeEntity,
-        companyEntity: CompanyEntity,
-    ) {
-        codeRepository.save(accessCodeEntity)
-        companyRepository.save(companyEntity)
     }
 }

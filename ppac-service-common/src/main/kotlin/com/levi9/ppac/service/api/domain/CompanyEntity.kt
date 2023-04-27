@@ -4,6 +4,7 @@ import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
@@ -21,10 +22,10 @@ data class CompanyEntity(
     var id: UUID,
 
     @Column(name = "NAME", unique = true,  nullable = false)
-    @field:Size(min = 2, max = 30, message = "Invalid length for name field.")
+    @field:Size(min = 2, max = 150, message = "Invalid length for name field.")
     var name: String,
 
-    @OneToOne(cascade = [CascadeType.ALL])
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "CODE_ID", referencedColumnName = "ID")
     var accessCode: AccessCodeEntity
 ) {
@@ -33,7 +34,7 @@ data class CompanyEntity(
     var logo: ByteArray? = null
 
     @Column(name = "DESCRIPTION", nullable = true)
-    @field:Size(min = 40, max = 1000, message = "Invalid length for description field.")
+    @field:Size(min = 20, max = 3000, message = "Invalid length for description field.")
     var description: String? = null
 
     @Column(name = "EMAIL", nullable = true)
@@ -41,6 +42,6 @@ data class CompanyEntity(
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
 
-    @OneToMany(cascade = [CascadeType.ALL], mappedBy = "company")
+    @OneToMany(fetch =  FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "company")
     var openings: List<OpeningEntity> = ArrayList()
 }

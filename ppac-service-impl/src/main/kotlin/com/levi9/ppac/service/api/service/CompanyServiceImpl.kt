@@ -56,7 +56,9 @@ class CompanyServiceImpl(
                 description = companyEntity.description
                 email = companyEntity.email
             }
-            Company.toBusinessModel(companyEntityWithActiveOpenings)
+           val companyList =  Company.toBusinessModel(companyEntityWithActiveOpenings)
+            companyList.accessCode = null
+            companyList
         }
     }
 
@@ -72,7 +74,9 @@ class CompanyServiceImpl(
                 description = companyEntity.description
                 email = companyEntity.email
             }
-            return Company.toBusinessModel(companyEntityWithActiveOpenings)
+            val company = Company.toBusinessModel(companyEntityWithActiveOpenings)
+            company.accessCode = null
+            return company
         } else {
 
             val company = Company.toBusinessModel(companyEntity.apply {
@@ -89,7 +93,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun updateById(id: UUID, updatedObject: Company): Company {
 
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(),id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
             throw AuthenticationException()
         }
 

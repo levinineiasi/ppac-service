@@ -3,11 +3,11 @@ package com.levi9.ppac.service.api.service.controller.mvp
 import com.googlecode.jmapper.JMapper
 import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
-import com.levi9.ppac.service.api.integration.mvp.AccessCodeDto
 import com.levi9.ppac.service.api.integration.mvp.CompanyDto
 import com.levi9.ppac.service.api.integration.mvp.OpeningDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.OpeningService
+import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.NOT_FOUND_MESSAGE
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.responses.ApiResponses
 import io.swagger.v3.oas.annotations.tags.Tag
+import java.util.UUID
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
 import javax.validation.Valid
 import javax.validation.constraints.Max
 import javax.validation.constraints.Min
@@ -73,7 +73,7 @@ class OpeningsController(
             val company = opening.companyId?.let { it1 -> it.getCompanyById(it1) }
             val companyDTO = companyBusinessToDtoMapper.getDestination(company)
             companyDTO.apply {
-                accessCode = AccessCodeDto()
+                accessCode = null
                 openings = null
             }
             val openingDTO =
@@ -119,7 +119,7 @@ class OpeningsController(
                 openingDTO
             }
             ResponseEntity.ok(openingDTOs)
-        } ?: ResponseEntity.noContent().build()
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 
     @Operation(
@@ -148,9 +148,20 @@ class OpeningsController(
     ): ResponseEntity<Any> {
 
         return openingService?.let {
-            val responseDto = it.updateOpening(openingId, openingDtoToBusinessMapper.getDestination(opening))
-            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+            val updatedOpening = it.updateOpening(openingId, openingDtoToBusinessMapper.getDestination(opening))
+            val company = updatedOpening.companyId?.let { it1 -> it.getCompanyById(it1) }
+            val companyDTO = companyBusinessToDtoMapper.getDestination(company)
+            companyDTO.apply {
+                this.accessCode = null
+                openings = null
+            }
+            val updatedOpeningDTO =
+                openingBusinessToDtoMapper.getDestination(updatedOpening)
+            updatedOpeningDTO.company = companyDTO
+
+
+            ResponseEntity(updatedOpeningDTO, HttpStatus.CREATED)
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 
     @Operation(
@@ -181,6 +192,6 @@ class OpeningsController(
         return openingService?.let {
             val responseDto = it.changeAvailability(openingId, available)
             ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.OK)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 }

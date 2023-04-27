@@ -71,7 +71,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN true WHEN company code is correct and companyId match`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertTrue(codeRepository.isCompanyCode(codeEntityForCompany.value, company.id))
     }
@@ -79,7 +79,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN false WHEN company code is incorrect and companyId doesn't`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertFalse(codeRepository.isCompanyCode(654321, company.id))
     }
@@ -88,7 +88,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN false WHEN company code is correct and companyId doesn't match`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value, UUID.randomUUID()))
     }
@@ -170,10 +170,5 @@ class CodeServiceImplTest {
 
         assertEquals(1, result.size)
 
-    }
-
-    fun insertCompanyInDb() {
-        codeRepository.save(codeEntityForCompany)
-        companyRepository.save(company)
     }
 }

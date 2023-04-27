@@ -11,6 +11,7 @@ import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
@@ -69,14 +70,14 @@ data class OpeningEntity(
     @field:NotNull
     var signAgreement: Boolean,
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var trainers: List<TrainerEntity>,
 
     @Column(name = "AVAILABLE", nullable = false)
     @field:NotNull
     var available: Boolean = true,
 
-    @ManyToOne(cascade = [CascadeType.ALL])
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name="COMPANY_ID", referencedColumnName = "ID")
     var company: CompanyEntity
     ) {

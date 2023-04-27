@@ -1,7 +1,6 @@
 package com.levi9.ppac.service.api.service
 
 import com.levi9.ppac.service.api.business.Opening
-import com.levi9.ppac.service.api.business.Trainer
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
@@ -13,7 +12,6 @@ import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
 import com.levi9.ppac.service.api.service.config.TestConfig
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
@@ -114,10 +112,12 @@ class OpeningServiceImplTest {
 //
 //        val updatedOpeningEntity = openingEntity.copy().apply {
 //            this.trainers = listOf(trainerEntity)
+//            this.company = companyEntity
 //        }
 //
 //        val updatedOpening = openingService.updateOpening(
 //            openingEntity.id, Opening.toBusinessModel(updatedOpeningEntity))
+//
 //
 //        assertEquals(Opening.toBusinessModel(updatedOpeningEntity), updatedOpening)
 //    }
@@ -125,8 +125,7 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD THROW AuthenticationException WHEN AccessCode is invalid`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity)
-
+        companyRepository.save(companyEntity)
         openingRepository.save(openingEntity)
 
         securityContext.setAccessCode(accessCodeEntity.value + 1)
@@ -142,7 +141,7 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD RETURN BAD_REQUEST WHEN opening has an invalid openingId`() {
 
-        insertCompanyInDb(accessCodeEntity2, companyEntity2)
+        companyRepository.save(companyEntity2)
 
         assertThrows<NotFoundException> {
             openingService.updateOpening(
@@ -155,8 +154,7 @@ class OpeningServiceImplTest {
     @Test
     fun `updateOpening SHOULD THROW NotFoundException WHEN opening is not from company`() {
 
-        insertCompanyInDb(accessCodeEntity, companyEntity)
-
+        companyRepository.save(companyEntity)
         openingRepository.save(openingEntityWithTrainer)
 
         assertThrows<NotFoundException> {
@@ -167,30 +165,29 @@ class OpeningServiceImplTest {
         }
     }
 
-//    @Test
-//    fun `updateOpening SHOULD throw AuthenticationException WHEN opening has a trainer from another company `() {
-//
-//        insertCompanyInDb(accessCodeEntity, companyEntity)
-//        insertCompanyInDb(accessCodeEntity2, companyEntity2)
-//
-//        openingRepository.save(openingEntity)
-//
-//        securityContext.setAccessCode(accessCodeEntity.value)
-//
-//        assertThrows<AuthenticationException> {
-//            openingService.updateOpening(
-//                openingEntity.id,
-//                Opening.toBusinessModel(openingEntityWithTrainer)
-//            )
-//        }
-//    }
+    @Test
+    fun `updateOpening SHOULD throw AuthenticationException WHEN opening has a trainer from another company `() {
+
+        companyRepository.save(companyEntity)
+        companyRepository.save(companyEntity2)
+        openingRepository.save(openingEntity)
+
+        securityContext.setAccessCode(222222)
+
+        assertThrows<AuthenticationException> {
+            openingService.updateOpening(
+                openingEntity.id,
+                Opening.toBusinessModel(openingEntityWithTrainer)
+            )
+        }
+    }
 
     @Test
     fun `changeAvailability SHOULD BE successful`() {
 
         companyEntity.openings += openingEntity
 
-        insertCompanyInDb(accessCodeEntity, companyEntity)
+        companyRepository.save(companyEntity)
 
         securityContext.setAccessCode(accessCodeEntity.value)
 
@@ -238,7 +235,7 @@ class OpeningServiceImplTest {
 
         companyEntity2.openings = listOf(openingEntity)
 
-        insertCompanyInDb(accessCodeEntity2, companyEntity2)
+        companyRepository.save(companyEntity2)
 
         assertThrows<AuthenticationException> {
             openingService.changeAvailability(
@@ -246,13 +243,5 @@ class OpeningServiceImplTest {
                 false
             )
         }
-    }
-
-    fun insertCompanyInDb(
-        accessCodeEntity: AccessCodeEntity,
-        companyEntity: CompanyEntity,
-    ) {
-        codeRepository.save(accessCodeEntity)
-        companyRepository.save(companyEntity)
     }
 }

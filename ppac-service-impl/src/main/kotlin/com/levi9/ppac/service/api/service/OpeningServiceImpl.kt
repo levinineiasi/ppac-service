@@ -31,10 +31,22 @@ class OpeningServiceImpl(
             throw AuthenticationException()
         }
 
-        val companyEntity = companyRepository.findByIdOrNull(opening.companyId)
+        val companySet = opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }
+            .flatten()
+            .toSet()
+
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first() !=  openingEnt.company)) {
+            throw AuthenticationException()
+        }
+
+        opening.apply {
+            companyId = openingEnt.company.id
+        }
+
         val openingEntity = Opening.toEntity(
-            opening.apply { id = openingId }, companyEntity!!
+            opening.apply { id = openingEnt.id }, openingEnt.company
         )
+
         val updatedOpeningEntity = openingRepository.save(openingEntity)
         return Opening.toBusinessModel(updatedOpeningEntity)
     }
@@ -75,7 +87,7 @@ class OpeningServiceImpl(
             .map { Opening.toBusinessModel(it) }
     }
 
-    override fun getCompanyById(id: UUID): Company{
+    override fun getCompanyById(id: UUID): Company {
         val companyEntity = companyRepository.findByIdOrNull(id) ?: throw NotFoundException()
         return Company.toBusinessModel(companyEntity)
     }
