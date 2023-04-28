@@ -104,8 +104,7 @@ data class Opening(
             val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
                 JMapper(Opening::class.java, OpeningEntity::class.java)
             val opening =  openingEntityToBusinessModelMapper.getDestination(entityObject)
-            return  opening.copy().apply { companyId = entityObject.company.id
-            views = entityObject.views}
+            return  opening.apply { companyId = entityObject.company.id}
         }
 
         override fun toEntity(businessObject: Opening): OpeningEntity {
