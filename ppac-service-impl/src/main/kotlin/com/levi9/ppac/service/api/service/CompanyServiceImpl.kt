@@ -3,7 +3,6 @@ package com.levi9.ppac.service.api.service
 import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.repository.OpeningRepository
 import com.levi9.ppac.service.api.security.SecurityContext
@@ -22,7 +21,6 @@ class CompanyServiceImpl(
     private val companyRepository: CompanyRepository,
     private val codeRepository: CodeRepository,
     private val openingRepository: OpeningRepository,
-    private val companyCodeRepository: CompanyCodeRepository
 ) : CompanyService<Company, UUID, Opening> {
 
     @Transactional
@@ -32,21 +30,15 @@ class CompanyServiceImpl(
             throw AuthenticationException()
         }
 
-        val companySet =
-            opening.trainers.map { companyRepository.findCompanyEntitiesByOpeningsTrainersId(it.id) }.flatten().toSet()
-
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != id)) throw NotFoundException()
+        val companyEntity = companyRepository.findById(id).orElseThrow { NotFoundException() }
 
         val openingDTO = opening.apply { this.id = UUID.randomUUID() }
-        val openingEntity = Opening.toEntity(openingDTO)
-
+        val openingEntity = Opening.toEntity(openingDTO, companyEntity)
         if (openingEntity.views != 0) {
             openingEntity.views = 0
         }
-
         val savedOpening = openingRepository.save(openingEntity)
 
-        val companyEntity = companyRepository.findByIdOrNull(id)!!
         companyEntity.openings += savedOpening
         companyRepository.save(companyEntity)
 
@@ -64,7 +56,9 @@ class CompanyServiceImpl(
                 description = companyEntity.description
                 email = companyEntity.email
             }
-            Company.toBusinessModel(companyEntityWithActiveOpenings)
+            val companyList = Company.toBusinessModel(companyEntityWithActiveOpenings)
+            companyList.accessCode = null
+            companyList
         }
     }
 
@@ -80,7 +74,9 @@ class CompanyServiceImpl(
                 description = companyEntity.description
                 email = companyEntity.email
             }
-            return Company.toBusinessModel(companyEntityWithActiveOpenings)
+            val company = Company.toBusinessModel(companyEntityWithActiveOpenings)
+            company.accessCode = null
+            return company
         } else {
 
             val company = Company.toBusinessModel(companyEntity.apply {
@@ -97,7 +93,7 @@ class CompanyServiceImpl(
     @Transactional
     override fun updateById(id: UUID, updatedObject: Company): Company {
 
-        require(companyCodeRepository.isCompanyCode(id, securityContext.getAccessCode())) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), id)) {
             throw AuthenticationException()
         }
 

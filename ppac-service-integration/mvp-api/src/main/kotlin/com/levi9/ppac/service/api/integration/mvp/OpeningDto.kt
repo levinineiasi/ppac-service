@@ -1,8 +1,6 @@
 package com.levi9.ppac.service.api.integration.mvp
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonRootName
 import com.googlecode.jmapper.annotations.JMap
 import com.levi9.ppac.service.api.enums.PeriodType
@@ -190,12 +188,11 @@ class OpeningDto {
         description = "The recruitment process for the opened position",
         example = "For this position the recruitment process consists of...",
         type = "String",
-        minLength = 10,
         maxLength = 3000,
         nullable = true
     )
 
-    @field:Size(min = 10, max = 3000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     @JMap
     var recruitmentProcess: String? = null
 
@@ -220,5 +217,7 @@ class OpeningDto {
     @field:Min(value = 0, message = "The number of views should be greater or equal to 0.")
     @JMap
     var views: Int = 0
+
+    var company: CompanyDto ? = null
 
 }

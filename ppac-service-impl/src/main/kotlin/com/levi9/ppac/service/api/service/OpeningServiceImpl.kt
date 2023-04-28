@@ -1,5 +1,6 @@
 package com.levi9.ppac.service.api.service
 
+import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
 import com.levi9.ppac.service.api.repository.CodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
@@ -24,13 +25,9 @@ class OpeningServiceImpl(
     @Transactional
     override fun updateOpening(openingId: UUID, opening: Opening): Opening {
 
-        openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
+        var openingEntity = openingRepository.findByIdOrNull(openingId) ?: throw NotFoundException()
 
-        val companyEntity =
-            companyRepository.findFirstByOpeningsId(openingId)
-                ?: throw NotFoundException()
-
-        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), companyEntity.id)) {
+        require(codeRepository.isCompanyCode(securityContext.getAccessCode(), openingEntity.company.id)) {
             throw AuthenticationException()
         }
 
@@ -38,14 +35,20 @@ class OpeningServiceImpl(
             .flatten()
             .toSet()
 
-        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first().id != companyEntity.id)) {
+        if (companySet.isNotEmpty() && (companySet.size > 1 || companySet.first() !=  openingEntity.company)) {
             throw AuthenticationException()
         }
 
-        val openingEntity = Opening.toEntity(
-            opening.apply { id = openingId })
-        val updatedOpeningEntity = openingRepository.save(openingEntity)
-        return Opening.toBusinessModel(updatedOpeningEntity)
+        opening.apply {
+            companyId = openingEntity.company.id
+        }
+
+         openingEntity = Opening.toEntity(
+            opening.apply { id = openingEntity.id }, openingEntity.company
+        )
+
+        val savedUpdatedOpeningEntity = openingRepository.save(openingEntity)
+        return Opening.toBusinessModel(savedUpdatedOpeningEntity)
     }
 
     @Transactional
@@ -97,5 +100,10 @@ class OpeningServiceImpl(
         return openingRepository.findAll()
                 .filter { it.available }
                 .size
+    }
+
+    override fun getCompanyById(id: UUID): Company {
+        val companyEntity = companyRepository.findByIdOrNull(id) ?: throw NotFoundException()
+        return Company.toBusinessModel(companyEntity)
     }
 }

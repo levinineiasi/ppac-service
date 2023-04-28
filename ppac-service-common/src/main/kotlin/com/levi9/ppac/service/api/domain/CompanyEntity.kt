@@ -4,8 +4,11 @@ import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
 import javax.persistence.OneToMany
+import javax.persistence.OneToOne
 import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.Size
@@ -20,7 +23,11 @@ data class CompanyEntity(
 
     @Column(name = "NAME", unique = true,  nullable = false)
     @field:Size(min = 2, max = 150, message = "Invalid length for name field.")
-    var name: String
+    var name: String,
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "CODE_ID", referencedColumnName = "ID")
+    var accessCode: AccessCodeEntity
 ) {
 
     @Column(name = "LOGO", nullable = true)
@@ -35,6 +42,6 @@ data class CompanyEntity(
     @field:Email(message = "The company email should be a valid one.")
     var email: String? = null
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(fetch =  FetchType.LAZY, cascade = [CascadeType.ALL], mappedBy = "company")
     var openings: List<OpeningEntity> = ArrayList()
 }

@@ -11,7 +11,10 @@ import javax.persistence.ElementCollection
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
+import javax.persistence.FetchType
 import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
 import javax.persistence.OneToMany
 import javax.persistence.Table
 import javax.validation.constraints.FutureOrPresent
@@ -67,13 +70,16 @@ data class OpeningEntity(
     @field:NotNull
     var signAgreement: Boolean,
 
-    @OneToMany(cascade = [CascadeType.ALL])
+    @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     var trainers: List<TrainerEntity>,
 
     @Column(name = "AVAILABLE", nullable = false)
     @field:NotNull
     var available: Boolean = true,
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name="COMPANY_ID", referencedColumnName = "ID")
+    var company: CompanyEntity
     ) {
 
     @Column(name = "TITLE", nullable = true)
@@ -93,7 +99,7 @@ data class OpeningEntity(
     var restrictions: String? = null
 
     @Column(name = "RECRUITMENT_PROCESS", nullable = true)
-    @field:Size(min = 10, max = 3000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @Column(name = "START_DATE", nullable = true)

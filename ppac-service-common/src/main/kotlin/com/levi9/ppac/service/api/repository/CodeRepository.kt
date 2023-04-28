@@ -15,10 +15,10 @@ interface CodeRepository : JpaRepository<AccessCodeEntity, UUID> {
     fun isAdminCode(@Param("value") value: Int): Boolean
 
     @Query("""SELECT COUNT(*) = 1
-    FROM CompanyCodeEntity companyCode
-    WHERE companyCode.accessCode.value = :value
-    AND companyCode.accessCode.type = 'COMPANY_CODE'
-    AND companyCode.company.id = :companyId"""
+    FROM CompanyEntity company
+    WHERE company.accessCode.value = :value
+    AND company.accessCode.type = 'COMPANY_CODE'
+    AND company.id = :companyId"""
     )
     fun isCompanyCode(@Param("value") value: Int, @Param("companyId") companyId: UUID): Boolean
 

@@ -31,6 +31,9 @@ class CompanyDto {
     @JMap
     var name: String = ""
 
+    @JMap
+    var accessCode: AccessCodeDto? = null
+
     @field:Schema(
         description = "Logo of the company",
         example = "[10,20,30,40]",

@@ -1,12 +1,10 @@
 package com.levi9.ppac.service.api.service
 
-import com.levi9.ppac.service.api.business.CompanyCode
+import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.domain.AccessCodeEntity
-import com.levi9.ppac.service.api.domain.CompanyCodeEntity
 import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.repository.CodeRepository
-import com.levi9.ppac.service.api.repository.CompanyCodeRepository
 import com.levi9.ppac.service.api.repository.CompanyRepository
 import com.levi9.ppac.service.api.service.config.TestConfig
 import org.junit.jupiter.api.Assertions
@@ -40,7 +38,7 @@ import java.util.UUID
 class CodeServiceImplTest {
 
     @Autowired
-    lateinit var codeService: CodeService<CompanyCode, UUID>
+    lateinit var codeService: CodeService<Company, UUID>
 
     @Autowired
     lateinit var codeRepository: CodeRepository
@@ -48,14 +46,10 @@ class CodeServiceImplTest {
     @Autowired
     lateinit var companyRepository: CompanyRepository
 
-    @Autowired
-    lateinit var companyCodeRepository: CompanyCodeRepository
-
     companion object {
         val codeEntityForAdmin = AccessCodeEntity(UUID.randomUUID(), 234567).apply { type = CodeType.ADMIN_CODE }
         val codeEntityForCompany = AccessCodeEntity(UUID.randomUUID(), 123456)
-        val company = CompanyEntity(UUID.randomUUID(), "Levi9")
-        val companyCodeEntity = CompanyCodeEntity(UUID.randomUUID(), codeEntityForCompany, company)
+        val company = CompanyEntity(UUID.randomUUID(), "Levi9", codeEntityForCompany)
     }
 
     @Test
@@ -77,7 +71,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN true WHEN company code is correct and companyId match`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertTrue(codeRepository.isCompanyCode(codeEntityForCompany.value, company.id))
     }
@@ -85,7 +79,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN false WHEN company code is incorrect and companyId doesn't`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertFalse(codeRepository.isCompanyCode(654321, company.id))
     }
@@ -94,7 +88,7 @@ class CodeServiceImplTest {
     @Test
     fun `isCompanyCode SHOULD RETURN false WHEN company code is correct and companyId doesn't match`() {
 
-        insertCompanyInDb()
+        companyRepository.save(company)
 
         Assertions.assertFalse(codeRepository.isCompanyCode(codeEntityForCompany.value, UUID.randomUUID()))
     }
@@ -104,21 +98,17 @@ class CodeServiceImplTest {
 
         codeRepository.save(codeEntityForAdmin)
 
-        val companyCode1 = codeService.createCompanyCode("Levi9")
-        val companyCode2 = codeService.createCompanyCode("Endava")
-        val companyCode3 = codeService.createCompanyCode("Eon")
+        val company1 = codeService.createCompanyCode("Levi9")
+        val company2 = codeService.createCompanyCode("Endava")
+        val company3 = codeService.createCompanyCode("Eon")
 
         val result = codeService.findAll()
 
         assertEquals(3, result.size)
 
-        assertEquals(companyCode1, result[0])
-        assertEquals(companyCode2, result[1])
-        assertEquals(companyCode3, result[2])
-
-        codeService.deleteById(companyCode1.id)
-        codeService.deleteById(companyCode2.id)
-        codeService.deleteById(companyCode3.id)
+        assertEquals(company1, result[0])
+        assertEquals(company2, result[1])
+        assertEquals(company3, result[2])
     }
 
     @Test
@@ -180,11 +170,5 @@ class CodeServiceImplTest {
 
         assertEquals(1, result.size)
 
-    }
-
-    fun insertCompanyInDb() {
-        codeRepository.save(codeEntityForCompany)
-        companyRepository.save(company)
-        companyCodeRepository.save(companyCodeEntity)
     }
 }

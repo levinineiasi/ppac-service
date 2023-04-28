@@ -1,8 +1,8 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.googlecode.jmapper.JMapper
-import com.levi9.ppac.service.api.business.CompanyCode
-import com.levi9.ppac.service.api.integration.mvp.CompanyCodeDto
+import com.levi9.ppac.service.api.business.Company
+import com.levi9.ppac.service.api.integration.mvp.CompanyDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.CodeService
 import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.OK
@@ -38,10 +38,10 @@ import javax.validation.constraints.Size
 @Tag(name = "Codes Controller")
 @Validated
 class CodesController(
-    private val codeService: CodeService<CompanyCode, UUID>?
+    private val codeService: CodeService<Company, UUID>?
 ) {
-    val codesBusinessToDtoMapper: JMapper<CompanyCodeDto, CompanyCode> =
-        JMapper(CompanyCodeDto::class.java, CompanyCode::class.java)
+    val codesBusinessToDtoMapper: JMapper<CompanyDto, Company> =
+        JMapper(CompanyDto::class.java, Company::class.java)
 
     @Operation(
         summary = "Check if user has admin rights",
@@ -116,7 +116,7 @@ class CodesController(
                 responseCode = "200",
                 content = [Content(
                     mediaType = "application/json",
-                    array = ArraySchema(schema = Schema(implementation = CompanyCodeDto::class))
+                    array = ArraySchema(schema = Schema(implementation = CompanyDto::class))
                 )]
             ),
             ApiResponse(responseCode = "204", description = "No Content")
@@ -153,7 +153,7 @@ class CodesController(
                 content = [Content(
                     mediaType = "application/json",
                     schema = Schema(
-                        implementation = CompanyCodeDto::class
+                        implementation = CompanyDto::class
                     )
                 )]
             ),
@@ -166,7 +166,7 @@ class CodesController(
         @Max(value = 999999, message = "Invalid length for header AccessCode.")
         accessCode: Int,
         @PathVariable
-        @Size(min = 2, max =30 , message =  "Invalid length for name field")
+        @Size(min = 2, max =150 , message =  "Invalid length for name field")
         name: String
     ): ResponseEntity<Any> {
 

@@ -1,10 +1,13 @@
 package com.levi9.ppac.service.api.service.controller.mvp
 
 import com.googlecode.jmapper.JMapper
+import com.levi9.ppac.service.api.business.Company
 import com.levi9.ppac.service.api.business.Opening
+import com.levi9.ppac.service.api.integration.mvp.CompanyDto
 import com.levi9.ppac.service.api.integration.mvp.OpeningDto
 import com.levi9.ppac.service.api.logging.logger
 import com.levi9.ppac.service.api.service.OpeningService
+import com.levi9.ppac.service.api.service.controller.mvp.constants.ResponseMessages.NOT_FOUND_MESSAGE
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
@@ -40,6 +43,7 @@ class OpeningsController(
 ) {
     val openingBusinessToDtoMapper: JMapper<OpeningDto, Opening> = JMapper(OpeningDto::class.java, Opening::class.java)
     val openingDtoToBusinessMapper: JMapper<Opening, OpeningDto> = JMapper(Opening::class.java, OpeningDto::class.java)
+    val companyBusinessToDtoMapper: JMapper<CompanyDto, Company> = JMapper(CompanyDto::class.java, Company::class.java)
 
     @Operation(
         summary = "Retrieves opening by id",
@@ -65,10 +69,18 @@ class OpeningsController(
         logger.info("Returning opening by id from database.")
 
         return openingService?.let {
-            ResponseEntity(
-                openingBusinessToDtoMapper.getDestination(it.findById(id)),
-                HttpStatus.OK
-            )
+            val opening = it.findById(id)
+            val company = opening.companyId?.let { companyId -> it.getCompanyById(companyId) }
+            val companyDTO = companyBusinessToDtoMapper.getDestination(company)
+            companyDTO.apply {
+                accessCode = null
+                openings = null
+            }
+            val openingDTO =
+                openingBusinessToDtoMapper.getDestination(opening)
+            openingDTO.company = companyDTO
+
+            ResponseEntity(openingDTO, HttpStatus.OK)
         } ?: ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
@@ -94,19 +106,30 @@ class OpeningsController(
 
         return openingService?.let {
             val openings =
-                    if (count != null) {
-                it.findAllFirstCount(count)
-            } else {
-                it.findAll()
+                if (count != null) {
+                    it.findAllFirstCount(count)
+                } else {
+                    it.findAll()
+                }
+            val openingDTOs = openings.map { opening ->
+                val company = opening.companyId?.let { companyId ->
+                    it.getCompanyById(companyId)
+                }
+                val companyDTO = companyBusinessToDtoMapper.getDestination(company)
+                companyDTO.apply {
+                    accessCode = null
+                    this.openings = null
+                }
+                val openingDTO = openingBusinessToDtoMapper.getDestination(opening)
+                openingDTO.company = companyDTO
+                openingDTO
             }
-             val openingDtoList = openings.map { opening -> openingBusinessToDtoMapper.getDestination(opening) }
 
             val response: MutableMap<String, Any> = HashMap()
             response["totalCount"] = it.getTotalCount()
-            response["openings"] = openingDtoList
-
+            response["openings"] = openingDTOs
             ResponseEntity(response, HttpStatus.OK)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 
     @Operation(
@@ -135,9 +158,20 @@ class OpeningsController(
     ): ResponseEntity<Any> {
 
         return openingService?.let {
-            val responseDto = it.updateOpening(openingId, openingDtoToBusinessMapper.getDestination(opening))
-            ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.CREATED)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+            val updatedOpening = it.updateOpening(openingId, openingDtoToBusinessMapper.getDestination(opening))
+            val company = updatedOpening.companyId?.let { it1 -> it.getCompanyById(it1) }
+            val companyDTO = companyBusinessToDtoMapper.getDestination(company)
+            companyDTO.apply {
+                this.accessCode = null
+                openings = null
+            }
+            val updatedOpeningDTO =
+                openingBusinessToDtoMapper.getDestination(updatedOpening)
+            updatedOpeningDTO.company = companyDTO
+
+
+            ResponseEntity(updatedOpeningDTO, HttpStatus.CREATED)
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 
     @Operation(
@@ -168,6 +202,6 @@ class OpeningsController(
         return openingService?.let {
             val responseDto = it.changeAvailability(openingId, available)
             ResponseEntity(openingBusinessToDtoMapper.getDestination(responseDto), HttpStatus.OK)
-        } ?: ResponseEntity(HttpStatus.NOT_FOUND)
+        } ?: ResponseEntity(NOT_FOUND_MESSAGE, HttpStatus.NOT_FOUND)
     }
 }

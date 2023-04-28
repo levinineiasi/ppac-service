@@ -21,7 +21,9 @@ data class Company(
 
     @field:NotNull
     @field:Size(min = 2, max = 150, message = "Invalid length for name field.")
-    var name: String
+    var name: String,
+
+    var accessCode: AccessCode? = null
 ) {
     var logo: ByteArray? = null
 

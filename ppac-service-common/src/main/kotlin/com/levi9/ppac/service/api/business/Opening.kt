@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import com.googlecode.jmapper.JMapper
 import com.googlecode.jmapper.annotations.JGlobalMap
 import com.levi9.ppac.service.api.business.converter.Converter
+import com.levi9.ppac.service.api.domain.CompanyEntity
 import com.levi9.ppac.service.api.domain.OpeningEntity
 import com.levi9.ppac.service.api.enums.PeriodType
 import com.levi9.ppac.service.api.validator.annotations.ValidPeriodType
@@ -66,7 +67,9 @@ data class Opening(
     var trainers: List<Trainer> = mutableListOf(),
 
     @field:NotNull
-    var available: Boolean = true
+    var available: Boolean = true,
+
+    var companyId: UUID? = UUID.randomUUID()
 ) {
     @field:Size(min = 5, max = 150, message = "Invalid length for title field.")
     var title: String? = null
@@ -80,7 +83,7 @@ data class Opening(
     @field:Size(max = 3000, message = "Invalid length for restrictions field.")
     var restrictions: String? = null
 
-    @field:Size(min = 10, max = 3000, message = "Invalid length for recruitmentProcess field.")
+    @field:Size(max = 3000, message = "Invalid length for recruitmentProcess field.")
     var recruitmentProcess: String? = null
 
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -92,20 +95,20 @@ data class Opening(
     var views: Int = 0
 
     companion object ConverterImpl : Converter<Opening, OpeningEntity> {
-
+        val validator = Validation.buildDefaultValidatorFactory().validator!!
         override fun toBusinessModel(entityObject: OpeningEntity): Opening {
-            val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(entityObject)
             if (violations.isNotEmpty()) {
                 throw ConstraintViolationException(violations)
             }
             val openingEntityToBusinessModelMapper: JMapper<Opening, OpeningEntity> =
                 JMapper(Opening::class.java, OpeningEntity::class.java)
-            return openingEntityToBusinessModelMapper.getDestination(entityObject)
+            val opening =  openingEntityToBusinessModelMapper.getDestination(entityObject)
+            return  opening.copy().apply { companyId = entityObject.company.id
+            views = entityObject.views}
         }
 
         override fun toEntity(businessObject: Opening): OpeningEntity {
-            val validator = Validation.buildDefaultValidatorFactory().validator
             val violations = validator.validate(businessObject)
             if (violations.isNotEmpty()) {
                 throw ConstraintViolationException(violations)
@@ -113,6 +116,20 @@ data class Opening(
             val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
                 JMapper(OpeningEntity::class.java, Opening::class.java)
             return openingBusinessModelToEntityMapper.getDestination(businessObject)
+        }
+
+         fun toEntity(businessObject: Opening, company: CompanyEntity): OpeningEntity {
+            val violations = validator.validate(businessObject)
+            if (violations.isNotEmpty()) {
+                throw ConstraintViolationException(violations)
+            }
+            val openingBusinessModelToEntityMapper: JMapper<OpeningEntity, Opening> =
+                JMapper(OpeningEntity::class.java, Opening::class.java)
+            val openingDTO =  openingBusinessModelToEntityMapper.getDestination(businessObject)
+             openingDTO.apply {
+                 this.company = company
+             }
+             return openingDTO
         }
     }
 
@@ -135,8 +152,8 @@ data class Opening(
                 "requirements=$requirements," +
                 "restrictions=$restrictions," +
                 "recruitmentProcess=$recruitmentProcess," +
-                "startDate=$startDate," +
-                "views=$views)"
+                "startDate=$startDate" +
+                "views = $views)"
     }
 
     @Suppress("unused")
