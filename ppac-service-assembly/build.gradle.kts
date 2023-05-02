@@ -31,6 +31,8 @@ dependencies {
     testImplementation("org.awaitility:awaitility-kotlin")
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-web")
+    testImplementation("org.apache.tomcat.embed:tomcat-embed-core:10.1.7")
 }
 
 tasks.named<BootJar>("bootJar") {
@@ -40,3 +42,4 @@ tasks.named<BootJar>("bootJar") {
 tasks.getByName<Jar>("jar") {
     enabled = false
 }
+
