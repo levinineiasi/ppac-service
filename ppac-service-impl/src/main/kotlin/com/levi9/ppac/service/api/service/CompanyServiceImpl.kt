@@ -65,29 +65,21 @@ class CompanyServiceImpl(
     @Transactional
     override fun findById(id: UUID, onlyAvailableOpenings: Boolean): Company {
         val companyEntity = companyRepository.findById(id).orElseThrow { throw NotFoundException() }
-        if (onlyAvailableOpenings) {
-            val activeOpenings = companyEntity.openings.filter { it.available }
-            val companyEntityWithActiveOpenings = companyEntity.copy().apply {
-                openings = activeOpenings
-                name = companyEntity.name
-                logo = companyEntity.logo
-                description = companyEntity.description
-                email = companyEntity.email
-            }
-            val company = Company.toBusinessModel(companyEntityWithActiveOpenings)
-            company.accessCode = null
-            return company
-        } else {
 
-            val company = Company.toBusinessModel(companyEntity.apply {
-                openings = companyEntity.openings
-                name = companyEntity.name
-                logo = companyEntity.logo
-                description = companyEntity.description
-                email = companyEntity.email
-            })
-            return company
+        val openings = if (onlyAvailableOpenings) {
+            companyEntity.openings.filter { it.available }
+        } else {
+            companyEntity.openings
         }
+        val companyWithOpeningsFiltered = companyEntity.copy().apply {
+            this.openings = openings
+            this.description = companyEntity.description
+            this.logo = companyEntity.logo
+            this.email = companyEntity.email
+        }
+        val company = Company.toBusinessModel(companyWithOpeningsFiltered)
+        company.accessCode = null
+        return company
     }
 
     @Transactional
