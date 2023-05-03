@@ -213,15 +213,13 @@ class CompanyServiceImplTest {
     @Test
     fun `findById SHOULD RETURN company with all openings WHEN onlyAvailable = false`() {
 
-        companyEntity.openings = listOf(openingAvailable)
-
+        companyEntity.openings = listOf(openingAvailable, openingUnavailable)
 
         companyRepository.save(companyEntity)
 
         securityContext.setAccessCode(accessCodeEntityForCompany.value)
 
         openingRepository.save(openingAvailable)
-
         openingRepository.save(openingUnavailable)
 
         val result = companyService.findById(companyEntity.id, false)
@@ -229,6 +227,7 @@ class CompanyServiceImplTest {
         val expected =
             Company.toBusinessModel(
                 companyEntity.copy().apply { openings = listOf(openingAvailable, openingUnavailable) })
+        expected.accessCode = null
 
         assertEquals(expected, result)
     }
