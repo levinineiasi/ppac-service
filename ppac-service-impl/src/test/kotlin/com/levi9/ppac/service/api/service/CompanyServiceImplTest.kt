@@ -204,7 +204,8 @@ class CompanyServiceImplTest {
 
         val result = companyService.findById(companyEntityWithOpenings.id, true)
         openingAvailable.id = result.openings!![0].id
-        val expected = Company.toBusinessModel(companyEntityWithOpenings.copy().apply { openings = listOf(openingAvailable) })
+        val expected = Company.toBusinessModel(companyEntityWithOpenings.copy()
+                .apply { openings = listOf(openingAvailable) })
         expected.accessCode = null
 
         assertEquals(expected, result)

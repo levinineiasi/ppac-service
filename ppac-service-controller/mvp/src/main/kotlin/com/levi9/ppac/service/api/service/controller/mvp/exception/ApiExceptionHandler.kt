@@ -206,8 +206,9 @@ class ApiExceptionHandler {
                         ExampleObject(
                             name = "METHOD_NOT_ALLOWED_MESSAGE",
                             value = METHOD_NOT_ALLOWED_MESSAGE,
-                            description = """An HTTP request is made using an unsupported HTTP method,
-                                 such as attempting to make a POST request to a resource that only supports GET requests"""
+                            description = """An HTTP request is made using an unsupported HTTP 
+                                method, such as attempting to make a POST request to a resource 
+                                that only supports GET requests"""
                         )
                     ]
                 )]
