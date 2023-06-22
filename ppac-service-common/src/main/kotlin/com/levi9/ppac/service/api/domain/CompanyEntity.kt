@@ -1,5 +1,6 @@
 package com.levi9.ppac.service.api.domain
 
+import org.hibernate.annotations.Type
 import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
@@ -18,7 +19,9 @@ import javax.validation.constraints.Size
 data class CompanyEntity(
 
     @field:Id
-    @Column(name = "ID", unique = true, nullable = false)
+    @Column(name = "ID", unique = true, nullable = false, columnDefinition = "VARCHAR(36)")
+    // TODO: replace with this after migrating to hibernate 6 @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Type(type = "uuid-char")
     var id: UUID,
 
     @Column(name = "NAME", unique = true,  nullable = false)
@@ -30,7 +33,7 @@ data class CompanyEntity(
     var accessCode: AccessCodeEntity
 ) {
 
-    @Column(name = "LOGO", nullable = true)
+    @Column(name = "LOGO", nullable = true, columnDefinition = "LONGBLOB")
     var logo: ByteArray? = null
 
     @Column(name = "DESCRIPTION", nullable = true)

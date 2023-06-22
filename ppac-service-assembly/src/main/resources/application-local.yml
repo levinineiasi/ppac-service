@@ -2,19 +2,19 @@ feature:
   mvp: true
 
 sql:
-  instance: localhost:5434
-  database: postgres-local
-  schema: public
+  instance: localhost:3306
+  database: mariadb-local
+  schema: mariadb-local
   db-admin-username: db_admin
-  db-admin-password: postgres
+  db-admin-password: mariadb
   app-admin-username: db_admin
-  app-admin-password: postgres
+  app-admin-password: mariadb
   read-write-username: db_admin
-  read-write-password: postgres
+  read-write-password: mariadb
   read-only-username: db_admin
-  read-only-password: postgres
+  read-only-password: mariadb
   business-read-only-username: db_admin
-  business-read-only-password: postgres
+  business-read-only-password: mariadb
 
   hibernate:
     ddl-auto: validate

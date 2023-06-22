@@ -75,7 +75,7 @@ allprojects {
             dependency("org.springframework.boot:spring-boot-starter-cache:${CoreVersion.SPRING_BOOT}")
             dependency("org.springframework.boot:spring-boot-starter-validation:${CoreVersion.SPRING_BOOT}")
             dependency("org.awaitility:awaitility-kotlin:${CoreVersion.AWAITILITY}")
-            dependency("com.google.cloud.sql:postgres-socket-factory:${CoreVersion.CLOUD_SQL_SOCKET_FACTORY}")
+            dependency("com.google.cloud.sql:mariadb-socket-factory:${CoreVersion.CLOUD_SQL_SOCKET_FACTORY}")
             dependency("com.oracle.database.jdbc:ojdbc8:${CoreVersion.ORACLE}")
             dependency("org.hibernate:hibernate-validator:${CoreVersion.HIBERNATE_VALIDATOR}")
             dependency("org.junit.jupiter:junit-jupiter-engine:${CoreVersion.JUNIT}")

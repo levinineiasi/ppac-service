@@ -22,7 +22,7 @@ import javax.sql.DataSource
         entityManagerFactoryRef = "entityManagerFactory",
         transactionManagerRef = "transactionManager",
 )
-class DataSourcePostgresConfig(
+class DataSourceMariaDBConfig(
         private val dataSourceFactory: DataSourceFactory,
         private val env: Environment
 ) {
@@ -43,7 +43,7 @@ class DataSourcePostgresConfig(
         properties["org.hibernate.envers.audit_table_suffix"] =
                 env.getProperty("sql.properties.org.hibernate.envers.audit_table_suffix")
         properties["hibernate.physical_naming_strategy"] =
-                "org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy"
+                "org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl"
 
         return object : LocalContainerEntityManagerFactoryBean() {
             init {

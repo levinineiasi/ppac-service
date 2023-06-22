@@ -6,6 +6,7 @@ dependencies {
     implementation("io.konform:konform")
     implementation("com.github.ben-manes.caffeine:caffeine")
     implementation("org.hibernate:hibernate-envers")
+    implementation("org.hibernate:hibernate-core")
     implementation("org.hibernate:hibernate-validator")
     implementation("org.jetbrains.kotlin:kotlin-noarg")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

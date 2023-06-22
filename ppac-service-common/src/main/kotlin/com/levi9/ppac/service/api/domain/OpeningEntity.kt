@@ -3,6 +3,7 @@ package com.levi9.ppac.service.api.domain
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.levi9.ppac.service.api.enums.PeriodType
 import com.levi9.ppac.service.api.validator.annotations.ValidPeriodType
+import org.hibernate.annotations.Type
 import java.time.LocalDate
 import java.util.UUID
 import javax.persistence.CascadeType
@@ -30,7 +31,9 @@ data class OpeningEntity(
 
     @field:NotNull
     @field:Id
-    @Column(name = "ID")
+    @Column(name = "ID", columnDefinition = "VARCHAR(36)")
+    // TODO: replace with this after migrating to hibernate 6 @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Type(type = "uuid-char")
     var id: UUID,
 
     @field:NotNull
