@@ -2,6 +2,7 @@ package com.levi9.ppac.service.api.domain
 
 import com.levi9.ppac.service.api.enums.CodeType
 import com.levi9.ppac.service.api.validator.annotations.ValidCodeType
+import org.hibernate.annotations.Type
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -19,7 +20,9 @@ import javax.validation.constraints.NotNull
 data class AccessCodeEntity(
 
     @field:Id
-    @Column(name = "ID", unique = true, nullable = false)
+    @Column(name = "ID", unique = true, nullable = false, columnDefinition = "VARCHAR(36)")
+    // TODO: replace with this after migrating to hibernate 6 @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Type(type = "uuid-char")
     var id: UUID,
 
     @Column(name = "VALUE", unique = true, nullable = false)

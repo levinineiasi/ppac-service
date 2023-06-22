@@ -5,13 +5,13 @@ import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
 @Component
-internal class LocalDataSourceFactory(
+internal class URLDataSourceFactory(
     val sqlConfigurations: SqlConfigurations
 ) : DataSourceFactory(sqlConfigurations) {
 
     override fun createDataSource(userAccess: UserAccess): DataSource {
         val baseConfig = getBaseConfigurations(userAccess)
-        baseConfig.jdbcUrl = "jdbc:postgresql://${sqlConfigurations.instance}/${sqlConfigurations.database}"
+        baseConfig.jdbcUrl = "jdbc:mariadb://${sqlConfigurations.instance}/${sqlConfigurations.database}?useUnicode=true&amp;character_set_server=utf8mb4"
         return HikariDataSource(baseConfig)
     }
 }

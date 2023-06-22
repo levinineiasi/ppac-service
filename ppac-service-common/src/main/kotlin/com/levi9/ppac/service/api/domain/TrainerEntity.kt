@@ -1,5 +1,6 @@
 package com.levi9.ppac.service.api.domain
 
+import org.hibernate.annotations.Type
 import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -12,7 +13,9 @@ import javax.validation.constraints.Size
 data class TrainerEntity(
 
     @field:Id
-    @Column(name = "ID", nullable = false)
+    @Column(name = "ID", nullable = false, columnDefinition = "VARCHAR(36)")
+    // TODO: replace with this after migrating to hibernate 6 @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Type(type = "uuid-char")
     var id: UUID,
 
     @Column(name = "NAME", nullable = false)
@@ -28,6 +31,6 @@ data class TrainerEntity(
     @field:Size(min = 15, max = 100, message = "Invalid size Linkedin URL")
     var linkedinURL: String? = null
 
-    @Column(name = "AVATAR", nullable = true)
+    @Column(name = "AVATAR", nullable = true, columnDefinition = "LONGBLOB")
     var avatar: ByteArray? = null
 }
