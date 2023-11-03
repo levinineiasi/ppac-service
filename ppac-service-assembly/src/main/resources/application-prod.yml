@@ -1,0 +1,13 @@
+feature:
+  mvp: true
+
+sql:
+  hibernate:
+    ddl-auto: validate
+  properties:
+    hibernate:
+      generate_statistics: false
+    org:
+      hibernate:
+        envers:
+          audit_table_suffix: _audit_log

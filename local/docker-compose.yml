@@ -12,6 +12,23 @@ services:
     networks:
       - db_bridge-network
 
+  ppac-service-docker-prod:
+    build:
+      context: ..
+      dockerfile: local/Dockerfile
+    container_name: ppac-service-docker
+    environment:
+      SPRING_PROFILES: prod
+      DB_HOST: ppac-mariadb-local:3306
+      DB_NAME: mariadb-local
+      DB_SCHEMA: mariadb-local
+      DB_USER: db_admin
+      DB_PASS: mariadb
+    ports:
+      - "55055:8080"
+    networks:
+      - db_bridge-network
+
 networks:
   db_bridge-network:
     name: db_bridge-network

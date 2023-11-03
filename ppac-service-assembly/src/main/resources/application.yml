@@ -20,6 +20,21 @@ feature:
   ppac-v1: false
   ppac-service: false
 
+sql:
+  instance: ${DB_HOST}
+  database: ${DB_NAME}
+  schema: ${DB_SCHEMA}
+  db-admin-username: ${DB_USER}
+  db-admin-password: ${DB_PASS}
+  app-admin-username: ${DB_USER}
+  app-admin-password: ${DB_PASS}
+  read-write-username: ${DB_USER}
+  read-write-password: ${DB_PASS}
+  read-only-username: ${DB_USER}
+  read-only-password: ${DB_PASS}
+  business-read-only-username: ${DB_USER}
+  business-read-only-password: ${DB_PASS}
+
 spring:
   datasource:
     hikari:
